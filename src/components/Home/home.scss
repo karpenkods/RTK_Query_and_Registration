@@ -1,0 +1,36 @@
+@import '../../index.scss';
+
+.home {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  &__title {
+    margin-bottom: 30px;
+    color: tomato;
+  }
+
+  &__textBlock {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  &__description {
+    margin: 0 20px;
+    color: blueviolet;
+    font-size: 24px;
+  }
+
+  &__link {
+    font-size: 24px;
+    text-decoration: none;
+    color: blue;
+    transition: 0.3s;
+    &:hover {
+      color: tomato;
+    }
+  }
+}

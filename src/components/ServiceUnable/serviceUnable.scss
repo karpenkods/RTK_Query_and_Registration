@@ -1,0 +1,19 @@
+@import '../../index.scss';
+
+.unable {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  padding-bottom: 100px;
+  background-image: url('../../assets/500.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 100vw;
+  height: 100vh;
+
+  &__title {
+    font-size: 48px;
+    margin-bottom: 50px;
+  }
+}
