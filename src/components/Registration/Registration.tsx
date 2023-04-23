@@ -318,7 +318,7 @@ export const Registration: FC = () => {
             marginBottom: '20px',
           }}
         >
-          <Typography variant="h6">Зарегистрироваться с помощью:</Typography>
+          <Typography variant="h6">Войти с помощью:</Typography>
           <IconButton
             onClick={() => {
               handleSubmitGoogle(), setSubmit(true)

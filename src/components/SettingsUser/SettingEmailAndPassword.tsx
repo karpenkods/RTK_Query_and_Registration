@@ -49,8 +49,7 @@ export const SettingEmailAndPassword: FC = () => {
       oldPassword: '',
     },
     validationSchema: settingsEmailSchema,
-    enableReinitialize: true,
-    onSubmit: () => {
+    onSubmit: async () => {
       handleChangeEmail()
     },
   })
@@ -62,8 +61,7 @@ export const SettingEmailAndPassword: FC = () => {
       confirmPassword: '',
     },
     validationSchema: settingsPasswordSchema,
-    enableReinitialize: true,
-    onSubmit: () => {
+    onSubmit: async () => {
       handleChangePassword()
     },
   })
@@ -85,12 +83,10 @@ export const SettingEmailAndPassword: FC = () => {
               location.reload()
             })
             .catch(() => {
-              formikEmail.setSubmitting(false)
               dispatch(pushDangerNotification('Ошибка, попробуйте позднее'))
             })
         })
         .catch(() => {
-          formikEmail.setSubmitting(false)
           dispatch(pushDangerNotification('Текущий пароль введён неверно'))
         })
     }
@@ -111,19 +107,13 @@ export const SettingEmailAndPassword: FC = () => {
               dispatch(pushSuccessNotification('Пароль изменён'))
               setShowPasswordInput(false)
               setShowPassword(false)
-              formikPassword.setSubmitting(false)
-              formikPassword.setTouched({}, false)
-              formikPassword.setFieldValue('oldPassword', '')
-              formikPassword.setFieldValue('password', '')
-              formikPassword.setFieldValue('confirmPassword', '')
+              formikPassword.resetForm()
             })
             .catch(() => {
-              formikPassword.setSubmitting(false)
               dispatch(pushDangerNotification('Ошибка, попробуйте позднее'))
             })
         })
         .catch(() => {
-          formikPassword.setSubmitting(false)
           dispatch(pushDangerNotification('Текущий пароль введён неверно'))
         })
     }
@@ -241,10 +231,9 @@ export const SettingEmailAndPassword: FC = () => {
           >
             <CostumButton
               onClick={() => {
-                setShowInput(false), setShowPassword(false)
-                formikEmail.setFieldValue('email', ''),
-                  formikEmail.setFieldValue('oldPassword', ''),
-                  formikEmail.setTouched({}, false)
+                setShowInput(false),
+                  setShowPassword(false),
+                  formikEmail.resetForm()
               }}
               variant="contained"
               disabled={formikEmail.isSubmitting}
@@ -346,10 +335,7 @@ export const SettingEmailAndPassword: FC = () => {
               onClick={() => {
                 setShowPasswordInput(false),
                   setShowPassword(false),
-                  formikPassword.setFieldValue('oldPassword', ''),
-                  formikPassword.setFieldValue('password', ''),
-                  formikPassword.setFieldValue('confirmPassword', ''),
-                  formikPassword.setTouched({}, false)
+                  formikPassword.resetForm()
               }}
               variant="contained"
               disabled={formikPassword.isSubmitting}
@@ -372,8 +358,8 @@ export const SettingEmailAndPassword: FC = () => {
       )}
       {close && (
         <Typography variant="h6" color="primary" sx={{ marginTop: '50px' }}>
-          При регистрации(авторизации) через Google или GitHub изменить Email
-          или пароль нельзя.
+          При авторизации через Google или GitHub изменить Email или пароль
+          нельзя.
         </Typography>
       )}
     </Stack>

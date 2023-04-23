@@ -15,14 +15,14 @@ const oldPassword = Yup.string()
   .required('Обязательное поле')
   .min(6, 'Минимум 6 символов')
   .matches(passwordRules, {
-    message: 'Пароль должен состоять из латинских букв и(или) цифр',
+    message: 'Только латинские буквы и(или) цифры',
   })
 
 const password = Yup.string()
   .required('Обязательное поле')
   .min(6, 'Минимум 6 символов')
   .matches(passwordRules, {
-    message: 'Пароль должен состоять из латинских букв и(или) цифр',
+    message: 'Только латинские буквы и(или) цифры',
   })
 
 export const settingsNameSchema = Yup.object().shape({ name })
@@ -30,6 +30,8 @@ export const settingsNameSchema = Yup.object().shape({ name })
 export const settingsRemoveSchema = Yup.object().shape({ oldPassword })
 
 export const settingsEmailSchema = Yup.object().shape({ email, oldPassword })
+
+export const loginSchema = Yup.object().shape({ email, password })
 
 export const settingsPasswordSchema = Yup.object().shape({
   oldPassword,

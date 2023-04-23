@@ -42,8 +42,7 @@ export const SettingRemoveAccount: FC = () => {
       oldPassword: '',
     },
     validationSchema: settingsRemoveSchema,
-    enableReinitialize: true,
-    onSubmit: () => {
+    onSubmit: async () => {
       handleRemoveAccaunt()
     },
   })
@@ -61,12 +60,10 @@ export const SettingRemoveAccount: FC = () => {
               location.reload()
             })
             .catch(() => {
-              formik.setSubmitting(false)
               dispatch(pushDangerNotification('Ошибка, попробуйте позднее'))
             })
         })
         .catch(() => {
-          formik.setSubmitting(false)
           dispatch(pushDangerNotification('Текущий пароль введён неверно'))
         })
     }
@@ -146,8 +143,7 @@ export const SettingRemoveAccount: FC = () => {
             <CostumButton
               onClick={() => {
                 setShowInput(false), setShowPassword(false)
-                formik.setFieldValue('oldPassword', ''),
-                  formik.setTouched({}, false)
+                formik.resetForm()
               }}
               variant="contained"
               disabled={formik.isSubmitting}

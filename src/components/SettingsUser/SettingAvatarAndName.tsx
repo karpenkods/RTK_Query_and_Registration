@@ -36,8 +36,7 @@ export const SettingAvatarAndName: FC = () => {
       name: '',
     },
     validationSchema: settingsNameSchema,
-    enableReinitialize: true,
-    onSubmit: () => {
+    onSubmit: async () => {
       handleChangeName()
     },
   })
@@ -72,15 +71,10 @@ export const SettingAvatarAndName: FC = () => {
       })
         .then(() => {
           setShowInput(false)
-          formik.setSubmitting(false)
-          formik.setFieldValue('name', '')
-          formik.setTouched({}, false)
+          formik.resetForm()
           dispatch(pushSuccessNotification('Имя пользователя успешно изменено'))
         })
         .catch(() => {
-          formik.setSubmitting(false)
-          formik.setFieldValue('name', '')
-          formik.setTouched({}, false)
           dispatch(pushDangerNotification('Ошибка, попробуйте позднее'))
         })
     }
@@ -123,7 +117,7 @@ export const SettingAvatarAndName: FC = () => {
           {user?.displayName}
         </Typography>
         {showInput && (
-          <>
+          <Fragment>
             <TextField
               label="Новое имя"
               type="text"
@@ -149,9 +143,7 @@ export const SettingAvatarAndName: FC = () => {
             >
               <CostumButton
                 onClick={() => {
-                  setShowInput(false),
-                    formik.setFieldValue('name', ''),
-                    formik.setTouched({}, false)
+                  setShowInput(false), formik.resetForm()
                 }}
                 variant="contained"
                 disabled={formik.isSubmitting}
@@ -168,7 +160,7 @@ export const SettingAvatarAndName: FC = () => {
                 Сохранить
               </CostumButton>
             </Stack>
-          </>
+          </Fragment>
         )}
         <Stack
           direction="row"

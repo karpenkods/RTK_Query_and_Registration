@@ -1,5 +1,6 @@
-import { ChangeEvent, FC, useState, MouseEvent, useEffect } from 'react'
+import { FC, useState, MouseEvent, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useFormik } from 'formik'
 import {
   GithubAuthProvider,
   GoogleAuthProvider,
@@ -10,13 +11,13 @@ import {
 } from 'firebase/auth'
 
 import {
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   IconButton,
   InputAdornment,
+  Stack,
   TextField,
   Tooltip,
   Typography,
@@ -27,125 +28,95 @@ import GoogleIcon from '@mui/icons-material/Google'
 import GitHubIcon from '@mui/icons-material/GitHub'
 
 import {
+  CostumButton,
+  loginSchema,
   pushDangerNotification,
   pushInfoNotification,
   pushSuccessNotification,
   useAppDispatch,
-  useEmail,
 } from '../../common'
 import { NewPasswordModal } from '../Modals'
 
 export const Login: FC = () => {
   const [open, setOpen] = useState(true)
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
-  const [inputErrorEmail, setInputErrorEmail] = useState(false)
-  const [inputErrorPassword, setInputErrorPassword] = useState(false)
   const [successAuth, setSuccessAuth] = useState(false)
   const [errorAuth, setErrorAuth] = useState(false)
-  const [submit, setSubmit] = useState(false)
+  const [errorGit, setErrortGit] = useState(false)
+  const [disabledGit, setDisabledGit] = useState(false)
   const [openNewPassword, setOpenNewPassword] = useState(false)
-  const [errorGit, setErrorGit] = useState(false)
 
   const auth = getAuth()
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const correctEmail = useEmail(email)
 
   const providerGoogle = new GoogleAuthProvider()
   const providerGitHub = new GithubAuthProvider()
 
-  const handleChangeEmail = (e: ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value)
-    setSubmit(false)
-  }
-  const handleChangePassword = (e: ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value)
-    setSubmit(false)
-  }
-
-  const handleClickShowPassword = (event: MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault()
-    setShowPassword((show) => !show)
-  }
-
-  const handleErrorEmail = () => {
-    if (!email.length || correctEmail === false) {
-      setInputErrorEmail(true)
-    } else setInputErrorEmail(false)
-  }
-  const handleErrorPassword = () => {
-    if (!password.length || password.length < 6) {
-      setInputErrorPassword(true)
-    } else setInputErrorPassword(false)
-  }
+  const formik = useFormik({
+    initialValues: {
+      email: '',
+      password: '',
+    },
+    validationSchema: loginSchema,
+    onSubmit: async () => {
+      handleSubmit()
+    },
+  })
 
   const handleSubmitGoogle = () => {
-    setErrorAuth(false)
-    setErrorGit(false)
+    setDisabledGit(true)
     signInWithPopup(auth, providerGoogle)
       .then(() => {
         setSuccessAuth(true)
         dispatch(pushInfoNotification('Вы успешно вошли через Google'))
       })
       .catch(() => {
-        setErrorAuth(true)
-        setSubmit(false)
-        dispatch(pushDangerNotification('Неверный email или пароль'))
+        setErrortGit(true)
+        setDisabledGit(false)
+        dispatch(pushDangerNotification('Выберите другой способ входа'))
       })
   }
 
   const handleSubmitGitHub = () => {
-    setErrorAuth(false)
+    setDisabledGit(true)
     signInWithPopup(auth, providerGitHub)
       .then(() => {
         setSuccessAuth(true)
         dispatch(pushInfoNotification('Вы успешно вошли через GitHub'))
       })
       .catch(() => {
-        setErrorGit(true)
-        setSubmit(false)
+        setErrortGit(true)
+        setDisabledGit(false)
         dispatch(pushDangerNotification('Выберите другой способ входа'))
       })
   }
 
   const handleSubmit = () => {
-    if (!email.length || correctEmail === false) {
-      setInputErrorEmail(true)
-      return
-    } else if (!password.length || password.length < 6) {
-      setInputErrorPassword(true)
-      return
-    } else {
-      setInputErrorPassword(false)
-      setInputErrorEmail(false)
-      setErrorGit(false)
-      setErrorAuth(false)
-      signInWithEmailAndPassword(auth, email, password)
-        .then(({ user }) => {
-          user
-          setSuccessAuth(true)
-          dispatch(pushSuccessNotification('Вход выполнен'))
-        })
-        .catch(() => {
-          setErrorAuth(true)
-          setSubmit(false)
-          dispatch(pushDangerNotification('Неверный email или пароль'))
-        })
-    }
+    signInWithEmailAndPassword(
+      auth,
+      formik.values.email,
+      formik.values.password,
+    )
+      .then(() => {
+        setSuccessAuth(true)
+        dispatch(pushSuccessNotification('Вход выполнен'))
+      })
+      .catch(() => {
+        setErrorAuth(true)
+        dispatch(pushDangerNotification('Неверный email или пароль'))
+      })
   }
 
   const handleSubmitAnonymous = () => {
-    setErrorGit(false)
-    setErrorAuth(false)
+    setDisabledGit(true)
     signInAnonymously(auth)
       .then(() => {
         setSuccessAuth(true)
         dispatch(pushSuccessNotification('Вы вошли как анонимный пользователь'))
       })
       .catch(() => {
-        setSubmit(false)
+        setDisabledGit(false)
         dispatch(pushDangerNotification('Ошибка, проверьте подключение к сети'))
       })
   }
@@ -153,6 +124,11 @@ export const Login: FC = () => {
   const handleClose = () => {
     setOpen(false)
     navigate('/')
+  }
+
+  const handleClickShowPassword = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault()
+    setShowPassword((show) => !show)
   }
 
   useEffect(() => {
@@ -166,21 +142,23 @@ export const Login: FC = () => {
       <Dialog open={open} keepMounted>
         <DialogTitle sx={{ padding: '20px 24px 0 24px', textAlign: 'center' }}>
           {successAuth ? (
-            <p style={{ color: 'green' }}>Вход выполнен</p>
+            <Typography variant="h6" color="green">
+              Вход выполнен
+            </Typography>
           ) : errorAuth ? (
-            <p style={{ color: 'red' }}>Неверный email или пароль</p>
+            <Typography variant="h6" color="error">
+              Неверный email или пароль
+            </Typography>
           ) : errorGit ? (
-            <p style={{ color: 'red', fontSize: '18px' }}>
+            <Typography variant="h6" color="error">
               Выберите другой способ входа
-            </p>
+            </Typography>
           ) : (
             'Авторизация'
           )}
         </DialogTitle>
         <DialogContent
           sx={{
-            display: 'flex',
-            flexDirection: 'column',
             width: '450px',
             padding: '20px 20px 0 20px',
             '&.MuiDialogContent-root': {
@@ -188,68 +166,61 @@ export const Login: FC = () => {
             },
           }}
         >
-          <TextField
-            label="Почта"
-            type="email"
-            value={email}
-            onChange={(event: never) => {
-              handleChangeEmail(event), setErrorAuth(false)
-            }}
-            onBlur={handleErrorEmail}
-            fullWidth
-            size="medium"
-            sx={{ marginBottom: '20px' }}
-            error={inputErrorEmail && (!email.length || correctEmail === false)}
-            helperText={
-              inputErrorEmail && !email.length
-                ? 'Обязательное поле'
-                : inputErrorEmail && correctEmail === false
-                ? 'Введите корректный email'
-                : ' '
-            }
-          />
-          <TextField
-            label="Пароль"
-            type={showPassword ? 'text' : 'password'}
-            value={password}
-            onChange={(event: never) => {
-              handleChangePassword(event), setErrorAuth(false)
-            }}
-            onBlur={handleErrorPassword}
-            fullWidth
-            size="medium"
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={handleClickShowPassword}>
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-            error={
-              inputErrorPassword && (!password.length || password.length < 6)
-            }
-            helperText={
-              inputErrorPassword && !password.length
-                ? 'Обязательное поле'
-                : inputErrorPassword && password.length < 6
-                ? 'Длина пароля должна не менее 6 символов'
-                : ' '
-            }
-          />
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              marginBottom: '20px',
+          <Stack direction="column" gap={'15px'} sx={{ marginBottom: '15px' }}>
+            <TextField
+              label="Email"
+              type="email"
+              name="email"
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur('email')}
+              fullWidth
+              size="medium"
+              error={Boolean(formik.errors.email) && formik.touched.email}
+              helperText={
+                formik.errors.email && formik.touched.email
+                  ? formik.errors.email
+                  : ' '
+              }
+            />
+            <TextField
+              label="Пароль"
+              name="password"
+              type={showPassword ? 'text' : 'password'}
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              fullWidth
+              size="medium"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={handleClickShowPassword}>
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              error={Boolean(formik.errors.password) && formik.touched.password}
+              helperText={
+                formik.errors.password && formik.touched.password
+                  ? formik.errors.password
+                  : ' '
+              }
+            />
+          </Stack>
+          <Stack
+            direction="row"
+            alignItems="center"
+            sx={{
+              marginBottom: '25px',
             }}
           >
             <Typography variant="h6">Войти с помощью:</Typography>
             <IconButton
               onClick={() => {
-                handleSubmitGoogle(), setSubmit(true)
+                handleSubmitGoogle()
               }}
+              disabled={disabledGit}
               color="info"
               style={{ margin: '0 7px 0 10px' }}
             >
@@ -257,30 +228,26 @@ export const Login: FC = () => {
             </IconButton>
             <IconButton
               onClick={() => {
-                handleSubmitGitHub(), setSubmit(true)
+                handleSubmitGitHub()
               }}
+              disabled={disabledGit}
               color="inherit"
             >
               <GitHubIcon style={{ width: '30px', height: '30px' }} />
             </IconButton>
-          </div>
+          </Stack>
           <Tooltip title="Некоторые функции ограничены" placement="right">
-            <Button
+            <CostumButton
               variant="contained"
               color="warning"
-              sx={{
-                textTransform: 'none',
-                padding: '5px 10px',
-                marginBottom: '20px',
-                width: 'fit-content',
-              }}
-              disabled={submit}
+              sx={{ marginBottom: '20px' }}
+              disabled={disabledGit}
               onClick={() => {
-                handleSubmitAnonymous(), setSubmit(true)
+                handleSubmitAnonymous()
               }}
             >
               Войти как анонимный пользователь
-            </Button>
+            </CostumButton>
           </Tooltip>
         </DialogContent>
         <DialogActions
@@ -288,80 +255,57 @@ export const Login: FC = () => {
             display: 'flex',
             flexDirection: 'column',
             padding: '20px',
+            '&.MuiDialogActions-root>:not(:first-of-type)': {
+              marginLeft: 0,
+            },
           }}
         >
-          <div
-            style={{
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            sx={{
               width: '100%',
-              display: 'flex',
-              justifyContent: 'space-between',
-              marginBottom: '20px',
+              marginBottom: '25px',
             }}
           >
-            <Button
+            <CostumButton
               onClick={handleClose}
               variant="contained"
               color="error"
-              sx={{ textTransform: 'none', padding: '5px 10px' }}
+              disabled={disabledGit}
             >
               Отмена
-            </Button>
-            <Button
+            </CostumButton>
+            <CostumButton
               variant="contained"
               color="success"
-              sx={{ textTransform: 'none', padding: '5px 30px' }}
-              disabled={submit}
-              onClick={() => {
-                handleSubmit(), setSubmit(true)
-              }}
+              disabled={formik.isSubmitting || !formik.dirty || disabledGit}
+              onClick={() => formik.handleSubmit()}
             >
               Войти
-            </Button>
-          </div>
-          <div
-            style={{
-              display: 'flex',
-              alignSelf: 'flex-start',
-              alignItems: 'center',
-              margin: 0,
-              marginBottom: '15px',
-            }}
-          >
+            </CostumButton>
+          </Stack>
+          <Stack direction="row" alignItems="center" alignSelf="flex-start">
             <Typography variant="body1">Ещё нет аккаунта?</Typography>
-            <Button
+            <CostumButton
               variant="text"
-              sx={{
-                textTransform: 'none',
-                fontSize: '18px',
-                padding: '0 10px',
-              }}
               onClick={() => navigate('/registration')}
+              disabled={disabledGit}
+              sx={{ fontSize: '16px' }}
             >
               Регистрация
-            </Button>
-          </div>
-          <div
-            style={{
-              display: 'flex',
-              alignSelf: 'flex-start',
-              alignItems: 'center',
-              margin: 0,
+            </CostumButton>
+          </Stack>
+          <CostumButton
+            variant="text"
+            disabled={disabledGit}
+            sx={{ fontSize: '16px', padding: 0, alignSelf: 'flex-start' }}
+            onClick={() => {
+              setOpenNewPassword(true), setOpen(false)
             }}
           >
-            <Button
-              variant="text"
-              sx={{
-                textTransform: 'none',
-                fontSize: '16px',
-                padding: 0,
-              }}
-              onClick={() => {
-                setOpenNewPassword(true), setOpen(false)
-              }}
-            >
-              Забыли пароль?
-            </Button>
-          </div>
+            Забыли пароль?
+          </CostumButton>
         </DialogActions>
       </Dialog>
       <NewPasswordModal
