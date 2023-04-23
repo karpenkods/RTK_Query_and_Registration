@@ -1,48 +1,68 @@
-import { FC } from 'react'
+import { FC, Fragment } from 'react'
 import { Link } from 'react-router-dom'
 
-import { useUser } from '../../common/hooks'
-import { EmailModal } from '../EmailModal/EmailModal'
+import { Stack, Typography } from '@mui/material'
 
-import './home.scss'
+import { closeFunction, useUser } from '../../common'
+import { EmailConfirmModal } from '../Modals'
+
+const linkStyle = {
+  fontSize: '24px',
+  textDecoration: 'none',
+  color: 'blue',
+  transition: '0.3s',
+  '&:hover': {
+    color: 'tomato',
+  },
+}
 
 export const Home: FC = () => {
   const user = useUser()
-  const userGitHub = user?.providerData.length
-    ? user?.providerData[0].providerId.includes('github')
-    : true
+  const close = closeFunction(user ?? null)
 
   return (
-    <div className="home">
-      <h2 className="home__title">Запросы с RTK Query</h2>
+    <Stack direction="column" alignItems="center">
+      <Typography variant="h1" color="tomato" sx={{ marginBottom: '30px' }}>
+        Запросы с RTK Query
+      </Typography>
       {user ? (
-        <>
-          <p className="home__description">
+        <Fragment>
+          <Typography variant="h6" color="blueviolet" sx={{ margin: '0 20px' }}>
             Добро пожаловать,{' '}
             <span style={{ color: 'green' }}>
               {user.displayName
                 ? `${user?.displayName}`
                 : 'Анонимный пользователь'}
             </span>
-          </p>
-          {!user?.emailVerified && !userGitHub && <EmailModal />}
-        </>
+          </Typography>
+          {!user?.emailVerified && !close && !user.isAnonymous && (
+            <EmailConfirmModal />
+          )}
+        </Fragment>
       ) : (
-        <>
-          <h3 className="home__description">
+        <Fragment>
+          <Typography variant="h6" color="blueviolet" sx={{ margin: '0 20px' }}>
             Чтобы перейти к странице с постами
-          </h3>
-          <div className="home__textBlock">
-            <Link className="home__link" to={'/login'}>
+          </Typography>
+          <Stack
+            direction="row"
+            justifyContent="center"
+            alignItems="center"
+            gap={'20px'}
+            sx={{ width: '100%', marginTop: '10px' }}
+          >
+            <Link to={'/login'} style={linkStyle}>
               войдите
             </Link>
-            <h3 className="home__description">или</h3>
-            <Link className="home__link" to={'/register'}>
+            <Typography variant="h6" color="blueviolet">
+              или
+            </Typography>
+            <Link to={'/registration'} style={linkStyle}>
               зарегистрируйтесь
             </Link>
-          </div>
-        </>
+          </Stack>
+        </Fragment>
       )}
-    </div>
+    </Stack>
   )
 }

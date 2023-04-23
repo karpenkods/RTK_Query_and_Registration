@@ -1,15 +1,20 @@
 import { FC } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { getAuth } from 'firebase/auth'
 
-import { Avatar, Button, IconButton } from '@mui/material'
+import { Avatar, IconButton } from '@mui/material'
 
-import { useAppDispatch, useAvatar, useUser } from '../../common/hooks'
-import { openReducer } from '../../common/redux'
-import { IAvatarProps } from '../../common/models'
+import {
+  useAppDispatch,
+  costumAvatar,
+  CostumButton,
+  IAvatarProps,
+  openReducer,
+} from '../../common'
 
 export const AvatarUser: FC<IAvatarProps> = ({ fontSize }) => {
-  const user = useUser()
-  const avatar = useAvatar(user?.displayName ? user.displayName : 'А П')
+  const user = getAuth().currentUser
+  const avatar = costumAvatar(user?.displayName ? user.displayName : 'А П')
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
 
@@ -42,13 +47,12 @@ export const AvatarUser: FC<IAvatarProps> = ({ fontSize }) => {
       </IconButton>
     )
   ) : (
-    <Button
+    <CostumButton
       variant="contained"
       color="error"
       onClick={() => navigate('/login')}
-      sx={{ padding: '2px 10px', textTransform: 'none', fontSize: '18px' }}
     >
       Войти
-    </Button>
+    </CostumButton>
   )
 }

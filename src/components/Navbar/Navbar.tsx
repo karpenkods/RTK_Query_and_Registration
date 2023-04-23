@@ -1,11 +1,11 @@
 import { FC } from 'react'
 import { NavLink } from 'react-router-dom'
 
-import { AvatarUser } from '../Avatar/Avatar'
-import { MenuUser } from '../Menu/Menu'
-import { useUser } from '../../common/hooks'
+import { MenuUser } from '../MenuUser/MenuUser'
+import { AvatarUser } from '../AvatarUser/AvatarUser'
 
 import './navbar.scss'
+import { useUser } from '../../common'
 
 export const Navbar: FC = () => {
   const user = useUser()

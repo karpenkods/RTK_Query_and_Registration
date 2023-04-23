@@ -9,7 +9,6 @@ import {
   signInWithPopup,
 } from 'firebase/auth'
 
-import { Visibility, VisibilityOff } from '@mui/icons-material'
 import {
   Button,
   Dialog,
@@ -22,16 +21,19 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material'
+import Visibility from '@mui/icons-material/Visibility'
+import VisibilityOff from '@mui/icons-material/VisibilityOff'
 import GoogleIcon from '@mui/icons-material/Google'
 import GitHubIcon from '@mui/icons-material/GitHub'
 
-import { useAppDispatch, useEmail } from '../../common/hooks'
 import {
   pushDangerNotification,
   pushInfoNotification,
   pushSuccessNotification,
-} from '../../common/redux'
-import { NewPasswordModal } from '../NewPasswordModal/NewPasswordModal'
+  useAppDispatch,
+  useEmail,
+} from '../../common'
+import { NewPasswordModal } from '../Modals'
 
 export const Login: FC = () => {
   const [open, setOpen] = useState(true)
@@ -333,7 +335,7 @@ export const Login: FC = () => {
                 fontSize: '18px',
                 padding: '0 10px',
               }}
-              onClick={() => navigate('/register')}
+              onClick={() => navigate('/registration')}
             >
               Регистрация
             </Button>

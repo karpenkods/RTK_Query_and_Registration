@@ -22,14 +22,14 @@ import {
 import { TransitionProps } from '@mui/material/transitions'
 import CloseIcon from '@mui/icons-material/Close'
 
-import { IPropsModal } from '../../common/models'
-import { useAppDispatch } from '../../common/hooks'
 import {
+  IPropsModal,
   pushDangerNotification,
   pushSuccessNotification,
+  useAppDispatch,
   useCreatePostMutation,
   useCreateUsersMutation,
-} from '../../common/redux'
+} from '../../common'
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {

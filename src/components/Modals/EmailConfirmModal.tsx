@@ -2,7 +2,6 @@ import { FC, forwardRef, ReactElement, Ref } from 'react'
 import { deleteUser, getAuth } from 'firebase/auth'
 
 import {
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
@@ -11,6 +10,8 @@ import {
   Typography,
 } from '@mui/material'
 import { TransitionProps } from '@mui/material/transitions'
+
+import { CostumButton } from '../../common'
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -21,11 +22,11 @@ const Transition = forwardRef(function Transition(
   return <Slide direction="down" ref={ref} {...props} />
 })
 
-export const EmailModal: FC = () => {
+export const EmailConfirmModal: FC = () => {
   const auth = getAuth()
   const currentUser = auth.currentUser
 
-  const handleDeleteAuth = () => {
+  const handleDeleteUser = () => {
     if (currentUser) {
       deleteUser(currentUser)
         .then(() => {
@@ -48,8 +49,8 @@ export const EmailModal: FC = () => {
         <Typography variant="h6">
           На почту{' '}
           <span style={{ color: 'green' }}>{`${currentUser?.email}`}</span>{' '}
-          выслано подтверждение. Пожалуйста, перейдите по ссылке в письме.
-          Иначе, пользователь будет удалён.
+          выслано подтверждение. Пожалуйста, перейдите по ссылке в письме. Иначе
+          пользователь будет удалён.
         </Typography>
       </DialogContent>
       <DialogActions
@@ -60,32 +61,24 @@ export const EmailModal: FC = () => {
           justifyContent: 'space-between',
         }}
       >
-        <Button
-          onClick={handleDeleteAuth}
+        <CostumButton
+          onClick={handleDeleteUser}
           variant="contained"
           color="error"
           size="large"
-          sx={{
-            textTransform: 'none',
-            fontSize: '20px',
-            padding: '5px 10px',
-          }}
+          sx={{ fontSize: '20px' }}
         >
           Не хочу!
-        </Button>
-        <Button
+        </CostumButton>
+        <CostumButton
           onClick={() => location.reload()}
           variant="contained"
           color="success"
           size="large"
-          sx={{
-            textTransform: 'none',
-            fontSize: '20px',
-            padding: '5px 10px',
-          }}
+          sx={{ fontSize: '20px' }}
         >
           Подтвердить
-        </Button>
+        </CostumButton>
       </DialogActions>
     </Dialog>
   )

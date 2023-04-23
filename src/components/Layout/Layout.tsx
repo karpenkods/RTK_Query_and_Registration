@@ -1,8 +1,7 @@
 import { FC, PropsWithChildren } from 'react'
 
-import SEO from '../../common/SEO/SEO'
-import { Navbar } from '../Navbar/Navbar'
-import { ILayoutProps } from '../../common/models/layout'
+import { Navbar } from '../Navbar'
+import { ILayoutProps, SEO } from '../../common'
 
 import './layout.scss'
 

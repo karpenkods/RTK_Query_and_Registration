@@ -30,14 +30,15 @@ import GitHubIcon from '@mui/icons-material/GitHub'
 import DoneIcon from '@mui/icons-material/Done'
 import DoneAllIcon from '@mui/icons-material/DoneAll'
 
-import { useAppDispatch, useEmail } from '../../common/hooks'
 import {
   pushDangerNotification,
   pushInfoNotification,
   pushSuccessNotification,
-} from '../../common/redux'
+  useAppDispatch,
+  useEmail,
+} from '../../common'
 
-export const Register: FC = () => {
+export const Registration: FC = () => {
   const [open, setOpen] = useState(true)
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')

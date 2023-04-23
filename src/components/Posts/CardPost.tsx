@@ -5,13 +5,13 @@ import clsx from 'clsx'
 import Button from '@mui/material/Button'
 
 import {
+  IPostCardProps,
   pushDangerNotification,
   pushWarningNotification,
+  useAppDispatch,
   useDeletePostMutation,
   useDeleteUserMutation,
-} from '../../common/redux'
-import { IPostCardProps } from '../../common/models'
-import { useAppDispatch } from '../../common/hooks'
+} from '../../common'
 
 import './posts.scss'
 

@@ -13,13 +13,14 @@ import {
   Typography,
 } from '@mui/material'
 
-import { IPropsNewPasswordModal } from '../../common/models'
-import { useAppDispatch, useEmail } from '../../common/hooks'
 import {
+  IPropsNewPasswordModal,
   pushDangerNotification,
   pushInfoNotification,
   pushSuccessNotification,
-} from '../../common/redux'
+  useAppDispatch,
+  useEmail,
+} from '../../common'
 
 export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
   openNewPassword,
@@ -230,7 +231,7 @@ export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
           }}
         >
           <Button
-            onClick={() => navigate('/register')}
+            onClick={() => navigate('/registration')}
             variant="contained"
             color="info"
             sx={{ textTransform: 'none', padding: '5px 10px' }}

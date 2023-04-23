@@ -5,22 +5,22 @@ import { getAuth, updateProfile } from 'firebase/auth'
 import { getDownloadURL, getStorage, ref, uploadString } from 'firebase/storage'
 
 import {
-  Box,
-  Button,
   CircularProgress,
   IconButton,
   Modal,
   Slider,
+  Stack,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import CenterFocusWeakIcon from '@mui/icons-material/CenterFocusWeak'
 
-import { IPropsCropperModal } from '../../common/models'
-import { useAppDispatch } from '../../common/hooks'
 import {
+  CostumButton,
+  IPropsCropperModal,
   pushDangerNotification,
   pushSuccessNotification,
-} from '../../common/redux'
+  useAppDispatch,
+} from '../../common'
 
 export const CropperModal: FC<IPropsCropperModal> = ({
   src,
@@ -31,14 +31,12 @@ export const CropperModal: FC<IPropsCropperModal> = ({
   const [loadingImage, setLoadingImage] = useState(false)
   const [file, setFile] = useState(null)
 
-  const auth = getAuth()
-  const user = auth.currentUser
+  const user = getAuth().currentUser
   const storage = getStorage()
-
   const cropRef = useRef<any>(null)
   const dispatch = useAppDispatch()
 
-  const handleSave = async () => {
+  const handleSave = () => {
     if (cropRef.current) {
       setLoadingImage(true)
       const dataUrl = cropRef.current.getImageScaledToCanvas().toDataURL()
@@ -90,15 +88,14 @@ export const CropperModal: FC<IPropsCropperModal> = ({
           style={{ width: '80px', height: '80px' }}
         />
       ) : (
-        <Box
+        <Stack
+          direction="column"
+          justifyContent="center"
+          alignItems="center"
           sx={{
             position: 'relative',
             width: '350px',
             height: '350px',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
           }}
         >
           <AvatarEditor
@@ -111,22 +108,20 @@ export const CropperModal: FC<IPropsCropperModal> = ({
             scale={slideValue / 10}
             rotate={0}
           />
-          <Box
-            sx={{
-              margin: '30px 0 20px 0',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            sx={{ margin: '30px 0 20px 0' }}
           >
             <IconButton
               onClick={() => setSlideValue(slideValue === 10 ? 50 : 10)}
-              sx={{ margin: 0, padding: 0, marginRight: '20px' }}
+              sx={{ margin: 0, padding: 0, marginRight: '30px' }}
             >
               <CenterFocusWeakIcon
                 sx={{
-                  width: '30px',
-                  height: '30px',
+                  width: '35px',
+                  height: '35px',
                   color: '#1976D2',
                 }}
               />
@@ -135,7 +130,7 @@ export const CropperModal: FC<IPropsCropperModal> = ({
               min={10}
               max={50}
               sx={{
-                width: '300px',
+                width: '285px',
                 color: '#1976D2',
               }}
               size="medium"
@@ -145,7 +140,7 @@ export const CropperModal: FC<IPropsCropperModal> = ({
                 setSlideValue(newValue as number)
               }
             />
-          </Box>
+          </Stack>
           <IconButton
             onClick={() => {
               setModalOpen(false), setFile(null), setSlideValue(10)
@@ -164,19 +159,15 @@ export const CropperModal: FC<IPropsCropperModal> = ({
               }}
             />
           </IconButton>
-          <Button
+          <CostumButton
             color="primary"
             variant="contained"
             onClick={handleSave}
-            sx={{
-              alignSelf: 'flex-end',
-              padding: '5px 20px',
-              textTransform: 'none',
-            }}
+            sx={{ alignSelf: 'flex-end' }}
           >
             Сохранить
-          </Button>
-        </Box>
+          </CostumButton>
+        </Stack>
       )}
     </Modal>
   )

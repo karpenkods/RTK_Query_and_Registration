@@ -2,11 +2,13 @@ import { FC, useEffect } from 'react'
 
 import {
   pushDangerNotification,
+  useAppDispatch,
+  useAppSelector,
+  useDebounce,
   useGetPostsQuery,
   useGetUsersQuery,
-} from '../../common/redux'
-import { Posts } from '../Posts/Posts'
-import { useAppDispatch, useAppSelector, useDebounce } from '../../common/hooks'
+} from '../../common'
+import { Posts } from '../Posts'
 
 export const RTK: FC = () => {
   const dispatch = useAppDispatch()

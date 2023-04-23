@@ -5,7 +5,7 @@ import {
   LoginPage,
   PostPage,
   RTKPage,
-  RegisterPage,
+  RegistrationPage,
   ServiceUnablePage,
 } from './pages'
 import './index.scss'
@@ -17,7 +17,7 @@ function App() {
       <Route path="rtk-query" element={<RTKPage />} />
       <Route path="post/:id" element={<PostPage />} />
       <Route path="login" element={<LoginPage />} />
-      <Route path="register" element={<RegisterPage />} />
+      <Route path="registration" element={<RegistrationPage />} />
       <Route path={'*' || '500'} element={<ServiceUnablePage />} />
     </Routes>
   )

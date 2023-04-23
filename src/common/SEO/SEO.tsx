@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async'
 
 import { ISeoProps } from '../models'
 
-const SEO: FC<ISeoProps> = (props) => {
+export const SEO: FC<ISeoProps> = (props) => {
   return (
     <Helmet>
       <title>QUERIES - {props.title}</title>
@@ -14,5 +14,3 @@ const SEO: FC<ISeoProps> = (props) => {
     </Helmet>
   )
 }
-
-export default SEO

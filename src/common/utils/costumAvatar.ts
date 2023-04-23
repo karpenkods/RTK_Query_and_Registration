@@ -16,7 +16,7 @@ function stringToColor(string: string) {
   return color
 }
 
-export function useAvatar(name: string) {
+export function costumAvatar(name: string) {
   const secondWord = name.includes(' ')
   return {
     sx: {

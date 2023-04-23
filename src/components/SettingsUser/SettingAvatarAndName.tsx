@@ -1,39 +1,41 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { FC, useEffect, useRef, useState } from 'react'
+import { FC, Fragment, useState } from 'react'
 import { getAuth, updateProfile } from 'firebase/auth'
 import { useFormik } from 'formik'
 
-import { Avatar, Typography, Button, TextField } from '@mui/material'
+import { Avatar, Typography, TextField, Stack, Button } from '@mui/material'
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount'
-import CreateIcon from '@mui/icons-material/Create'
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline'
+import CreateIcon from '@mui/icons-material/Create'
 
-import { useAppDispatch, useAvatar } from '../../common/hooks'
+import { CropperModal } from '../Modals/CropperModal'
 import {
+  CostumButton,
+  costumAvatar,
   pushDangerNotification,
   pushSuccessNotification,
-} from '../../common/redux'
-import { CropperModal } from '../CrooperModal/CropperModal'
-import { settingsUserSchema } from '../../common/validations/validationSchema'
+  settingsNameSchema,
+  useAppDispatch,
+  useFocus,
+} from '../../common'
 
-export const SettingAvatar: FC = () => {
+export const SettingAvatarAndName: FC = () => {
   const [showInput, setShowInput] = useState(false)
   const [modalOpen, setModalOpen] = useState(false)
   const [disabled, setDisabled] = useState(false)
-
+  const [showDelete, setShowDelete] = useState(false)
   const [src, setSrc] = useState<string | null>(null)
 
-  const auth = getAuth()
-  const user = auth.currentUser
-  const avatar = useAvatar(user?.displayName ? user.displayName : 'А П')
-  const refFocus = useRef<HTMLInputElement>(null)
+  const user = getAuth().currentUser
+  const avatar = costumAvatar(user?.displayName ? user.displayName : 'А П')
+  const focus = useFocus(showInput)
   const dispatch = useAppDispatch()
 
   const formik = useFormik({
     initialValues: {
       name: '',
     },
-    validationSchema: settingsUserSchema,
+    validationSchema: settingsNameSchema,
     enableReinitialize: true,
     onSubmit: () => {
       handleChangeName()
@@ -49,10 +51,12 @@ export const SettingAvatar: FC = () => {
       })
         .then(() => {
           setDisabled(false)
+          setShowDelete(false)
           dispatch(pushSuccessNotification('Аватар удалён'))
         })
         .catch(() => {
           setDisabled(false)
+          setShowDelete(false)
           dispatch(pushDangerNotification('Ошибка, попробуйте позднее'))
         })
     }
@@ -82,10 +86,6 @@ export const SettingAvatar: FC = () => {
     }
   }
 
-  useEffect(() => {
-    if (showInput) refFocus?.current?.focus()
-  }, [showInput])
-
   const handleImageUpload = (e: any) => {
     if (e.target.files.length !== 0) {
       setSrc(URL.createObjectURL(e.target.files[0]))
@@ -94,15 +94,8 @@ export const SettingAvatar: FC = () => {
   }
 
   return (
-    <>
-      <div
-        style={{
-          width: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
+    <Fragment>
+      <Stack direction="column" alignItems="center" sx={{ width: '100%' }}>
         {user?.photoURL ? (
           <Avatar
             alt="avatar"
@@ -133,13 +126,12 @@ export const SettingAvatar: FC = () => {
           <>
             <TextField
               label="Новое имя"
-              required
               type="text"
               name="name"
-              value={formik.values.name ?? ''}
+              value={formik.values.name}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur('name')}
-              inputRef={refFocus}
+              inputRef={focus}
               fullWidth
               size="medium"
               sx={{ marginBottom: '20px' }}
@@ -150,15 +142,12 @@ export const SettingAvatar: FC = () => {
                   : ' '
               }
             />
-            <div
-              style={{
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'space-between',
-                marginBottom: '20px',
-              }}
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              sx={{ width: '100%', marginBottom: '20px' }}
             >
-              <Button
+              <CostumButton
                 onClick={() => {
                   setShowInput(false),
                     formik.setFieldValue('name', ''),
@@ -167,46 +156,35 @@ export const SettingAvatar: FC = () => {
                 variant="contained"
                 disabled={formik.isSubmitting}
                 color="error"
-                sx={{
-                  textTransform: 'none',
-                  padding: '5px 20px',
-                }}
               >
                 Отмена
-              </Button>
-              <Button
+              </CostumButton>
+              <CostumButton
                 onClick={() => formik.handleSubmit()}
                 variant="contained"
                 color="primary"
                 disabled={formik.isSubmitting || !formik.dirty}
-                sx={{
-                  textTransform: 'none',
-                  padding: '5px 20px',
-                }}
               >
                 Сохранить
-              </Button>
-            </div>
+              </CostumButton>
+            </Stack>
           </>
         )}
-        <div
-          style={{
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'space-between',
-            marginBottom: '25px',
-          }}
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          sx={{ width: '100%', marginBottom: '25px' }}
         >
           <Button
             variant="contained"
             component="label"
             startIcon={<SupervisorAccountIcon sx={{ color: 'white' }} />}
-            disabled={showInput || disabled}
-            color="success"
+            disabled={showInput || disabled || showDelete}
             sx={{
               textTransform: 'none',
-              padding: '5px 10px',
+              padding: '5px 15px',
             }}
+            color="success"
           >
             Изменить аватар
             <input
@@ -216,47 +194,76 @@ export const SettingAvatar: FC = () => {
               type="file"
             />
           </Button>
-          <Button
+          <CostumButton
             onClick={() => {
               setShowInput(true)
             }}
             variant="contained"
             color="primary"
             startIcon={<CreateIcon sx={{ color: 'white' }} />}
-            disabled={showInput || disabled}
-            sx={{
-              textTransform: 'none',
-              padding: '5px 10px',
-            }}
+            disabled={showInput || disabled || showDelete}
           >
             Изменить имя
-          </Button>
-        </div>
+          </CostumButton>
+        </Stack>
         {!modalOpen && (
-          <Button
+          <CostumButton
             variant="contained"
-            component="label"
             startIcon={<RemoveCircleOutlineIcon sx={{ color: 'white' }} />}
-            disabled={showInput || !user?.photoURL?.length || disabled}
-            onClick={handleImageDelete}
+            disabled={
+              showInput || !user?.photoURL?.length || disabled || showDelete
+            }
+            onClick={() => setShowDelete(true)}
             color="error"
-            sx={{
-              alignSelf: 'flex-start',
-              textTransform: 'none',
-              padding: '5px 10px',
-            }}
+            sx={{ alignSelf: 'flex-start', marginBottom: '30px' }}
           >
             Удалить аватар
-          </Button>
+          </CostumButton>
         )}
-      </div>
-      <main className="container">
-        <CropperModal
-          src={src}
-          modalOpen={modalOpen}
-          setModalOpen={setModalOpen}
-        />
-      </main>
-    </>
+        {showDelete && (
+          <Fragment>
+            <Stack
+              direction="column"
+              alignItems="center"
+              sx={{ marginBottom: '20px' }}
+            >
+              <Typography variant="h5" color="error">
+                Вы уверены?
+              </Typography>
+              <Typography variant="body1" color="error">
+                Это действие необратимо
+              </Typography>
+            </Stack>
+            <Stack
+              direction="row"
+              justifyContent="space-evenly"
+              sx={{ width: '100%' }}
+            >
+              <CostumButton
+                onClick={() => setShowDelete(false)}
+                variant="contained"
+                disabled={disabled}
+                color="error"
+              >
+                Отмена
+              </CostumButton>
+              <CostumButton
+                onClick={handleImageDelete}
+                variant="contained"
+                color="success"
+                disabled={disabled}
+              >
+                Удалить
+              </CostumButton>
+            </Stack>
+          </Fragment>
+        )}
+      </Stack>
+      <CropperModal
+        src={src}
+        modalOpen={modalOpen}
+        setModalOpen={setModalOpen}
+      />
+    </Fragment>
   )
 }

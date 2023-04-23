@@ -3,11 +3,15 @@ import { Link } from 'react-router-dom'
 
 import { Button, CircularProgress, TextField, Typography } from '@mui/material'
 
-import { IPost, IPostsProps } from '../../common/models'
-import { useAppDispatch, useAppSelector } from '../../common/hooks'
+import {
+  IPost,
+  IPostsProps,
+  limitReducer,
+  useAppDispatch,
+  useAppSelector,
+} from '../../common'
 import { CardPost } from './CardPost'
-import { CreatePostModal } from '../CreatePostModal/CreatePostModsl'
-import { limitReducer } from '../../common/redux'
+import { CreatePostModal } from '../Modals'
 
 import './posts.scss'
 
@@ -22,10 +26,10 @@ export const Posts: FC<IPostsProps> = ({
   const [openModal, setOpenModal] = useState(false)
 
   const dispatch = useAppDispatch()
-
   const limit = useAppSelector((store) => store.posts.limit)
+  const user = users?.map((el) => el.name)
 
-  const searchPosts = posts?.filter((el) =>
+  const searchPosts = posts?.filter((el: IPost) =>
     el.title?.includes(searchPost.toLowerCase() || searchPost.toUpperCase()),
   )
 
@@ -40,8 +44,6 @@ export const Posts: FC<IPostsProps> = ({
   const handleUpdate = () => {
     dispatch(limitReducer(100))
   }
-
-  const user = users?.map((el) => el.name)
 
   if (errorPosts || errorUsers) {
     return (

@@ -10,14 +10,14 @@ import {
 } from '@mui/material'
 import ReplyAllIcon from '@mui/icons-material/ReplyAll'
 
-import { useAppDispatch } from '../../common/hooks'
 import {
   pushDangerNotification,
   pushSuccessNotification,
+  useAppDispatch,
   useGetPostQuery,
   useGetUsersQuery,
   usePutPostMutation,
-} from '../../common/redux'
+} from '../../common'
 
 import './posts.scss'
 

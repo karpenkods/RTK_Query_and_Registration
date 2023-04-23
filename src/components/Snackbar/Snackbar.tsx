@@ -5,8 +5,7 @@ import type { SnackbarKey } from 'notistack'
 import { IconButton } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 
-import { useAppDispatch, useAppSelector } from '../../common/hooks'
-import { removeSnackbar } from '../../common/redux'
+import { removeSnackbar, useAppDispatch, useAppSelector } from '../../common'
 
 export const Snackbar: FC = () => {
   const displayedNotifications = useRef<SnackbarKey[]>([])

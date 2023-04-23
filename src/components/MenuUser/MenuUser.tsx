@@ -9,18 +9,19 @@ import {
   Menu,
   Typography,
 } from '@mui/material'
-import { Logout } from '@mui/icons-material'
+import Logout from '@mui/icons-material/Logout'
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts'
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle'
 
-import { useAppDispatch, useAppSelector } from '../../common/hooks'
 import {
   openReducer,
   pushDangerNotification,
   pushInfoNotification,
-} from '../../common/redux'
-import { AvatarUser } from '../Avatar/Avatar'
-import { SettingsUser } from '../SettingsUser/SettingsUser'
+  useAppDispatch,
+  useAppSelector,
+} from '../../common'
+import { AvatarUser } from '../AvatarUser'
+import { SettingsUser } from '../SettingsUser'
 
 export const MenuUser: FC = () => {
   const [successSingOut, setSuccessSingOut] = useState(false)
