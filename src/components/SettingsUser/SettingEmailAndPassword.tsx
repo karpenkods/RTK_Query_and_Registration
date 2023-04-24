@@ -23,6 +23,8 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff'
 
 import {
   CostumButton,
+  IChangeEmailValues,
+  IChangePasswordValues,
   closeFunction,
   pushDangerNotification,
   pushSuccessNotification,
@@ -49,8 +51,8 @@ export const SettingEmailAndPassword: FC = () => {
       oldPassword: '',
     },
     validationSchema: settingsEmailSchema,
-    onSubmit: async () => {
-      handleChangeEmail()
+    onSubmit: async (values) => {
+      handleChangeEmail(values)
     },
   })
 
@@ -61,22 +63,19 @@ export const SettingEmailAndPassword: FC = () => {
       confirmPassword: '',
     },
     validationSchema: settingsPasswordSchema,
-    onSubmit: async () => {
-      handleChangePassword()
+    onSubmit: async (values) => {
+      handleChangePassword(values)
     },
   })
 
-  const handleChangeEmail = () => {
+  const handleChangeEmail = (values: IChangeEmailValues) => {
     if (user && user.email) {
       reauthenticateWithCredential(
         user,
-        EmailAuthProvider.credential(
-          user.email,
-          formikPassword.values.oldPassword,
-        ),
+        EmailAuthProvider.credential(user.email, values.oldPassword),
       )
         .then(() => {
-          updateEmail(user, formikEmail.values.email)
+          updateEmail(user, values.oldPassword)
             .then(() => {
               dispatch(pushSuccessNotification('Email изменён'))
               sendEmailVerification(user)
@@ -92,17 +91,14 @@ export const SettingEmailAndPassword: FC = () => {
     }
   }
 
-  const handleChangePassword = () => {
+  const handleChangePassword = (values: IChangePasswordValues) => {
     if (user && user.email) {
       reauthenticateWithCredential(
         user,
-        EmailAuthProvider.credential(
-          user.email,
-          formikPassword.values.oldPassword,
-        ),
+        EmailAuthProvider.credential(user.email, values.oldPassword),
       )
         .then(() => {
-          updatePassword(user, formikPassword.values.password)
+          updatePassword(user, values.password)
             .then(() => {
               dispatch(pushSuccessNotification('Пароль изменён'))
               setShowPasswordInput(false)
@@ -186,6 +182,7 @@ export const SettingEmailAndPassword: FC = () => {
             label="Введите новый Email"
             value={formikEmail.values.email}
             onChange={formikEmail.handleChange}
+            disabled={formikEmail.isSubmitting}
             inputRef={focusEmail}
             onBlur={formikEmail.handleBlur('email')}
             error={
@@ -204,6 +201,7 @@ export const SettingEmailAndPassword: FC = () => {
             fullWidth
             type={showPassword ? 'text' : 'password'}
             value={formikEmail.values.oldPassword}
+            disabled={formikEmail.isSubmitting}
             onChange={formikEmail.handleChange}
             error={
               Boolean(formikEmail.errors.oldPassword) &&
@@ -266,6 +264,7 @@ export const SettingEmailAndPassword: FC = () => {
             type={showPassword ? 'text' : 'password'}
             value={formikPassword.values.oldPassword}
             onChange={formikPassword.handleChange}
+            disabled={formikPassword.isSubmitting}
             inputRef={focusPassword}
             error={
               Boolean(formikPassword.errors.oldPassword) &&
@@ -295,6 +294,7 @@ export const SettingEmailAndPassword: FC = () => {
             type={showPassword ? 'text' : 'password'}
             value={formikPassword.values.password}
             onChange={formikPassword.handleChange}
+            disabled={formikPassword.isSubmitting}
             onBlur={formikPassword.handleBlur('password')}
             error={
               Boolean(formikPassword.errors.password) &&
@@ -314,6 +314,7 @@ export const SettingEmailAndPassword: FC = () => {
             type={showPassword ? 'text' : 'password'}
             value={formikPassword.values.confirmPassword}
             onChange={formikPassword.handleChange}
+            disabled={formikPassword.isSubmitting}
             onBlur={formikPassword.handleBlur('confirmPassword')}
             error={
               Boolean(formikPassword.errors.confirmPassword) &&

@@ -11,6 +11,7 @@ export interface IPropsModal {
 export interface IPropsNewPasswordModal {
   openNewPassword: boolean
   onOpen: (value: boolean) => void
+  onOpenLoginModal: (value: boolean) => void
 }
 
 export interface IPropsCropperModal {

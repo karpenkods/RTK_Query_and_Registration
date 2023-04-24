@@ -1,115 +1,101 @@
-import { FC, useState, useEffect, ChangeEvent } from 'react'
+import { FC, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getAuth, signInAnonymously } from 'firebase/auth'
+import { useFormik } from 'formik'
 import { send } from 'emailjs-com'
 
 import {
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  IconButton,
+  Stack,
   TextField,
   Typography,
 } from '@mui/material'
+import CloseIcon from '@mui/icons-material/Close'
 
 import {
+  CostumButton,
+  INewPasswordValues,
   IPropsNewPasswordModal,
+  newPasswordSchema,
   pushDangerNotification,
   pushInfoNotification,
   pushSuccessNotification,
   useAppDispatch,
-  useEmail,
+  useFocus,
 } from '../../common'
 
 export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
   openNewPassword,
   onOpen,
+  onOpenLoginModal,
 }) => {
   const [successAuth, setSuccessAuth] = useState(false)
-  const [submit, setSubmit] = useState(false)
   const [showContent, setShowContent] = useState(false)
-  const [email, setEmail] = useState('')
-  const [message, setMessage] = useState('Сбросить пароль в приложении Queries')
-  const [inputErrorEmail, setInputErrorEmail] = useState(false)
-  const [inputErrorMessage, setInputErrorMessage] = useState(false)
 
   const auth = getAuth()
+  const focus = useFocus(showContent)
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
-  const correctEmail = useEmail(email)
 
-  const handleChangeEmail = (e: ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value)
-    setSubmit(false)
-  }
-  const handleChangeMessage = (e: ChangeEvent<HTMLInputElement>) => {
-    setMessage(e.target.value)
-    setSubmit(false)
-  }
+  const formik = useFormik({
+    initialValues: {
+      email: auth.currentUser?.email ?? '',
+      message: 'Сбросить пароль в приложении Queries',
+    },
+    validationSchema: newPasswordSchema,
+    onSubmit: async (values: INewPasswordValues) => {
+      onSendEmail(values)
+    },
+  })
 
-  const handleErrorEmail = () => {
-    if (!email.length || correctEmail === false) {
-      setInputErrorEmail(true)
-    } else setInputErrorEmail(false)
-  }
-  const handleErrorMessage = () => {
-    if (!message.length || message.length < 3) {
-      setInputErrorMessage(true)
-    } else setInputErrorMessage(false)
-  }
-
-  const handleSubmit = () => {
+  const handleSubmitAnonymous = () => {
     signInAnonymously(auth)
       .then(() => {
         setSuccessAuth(true)
         dispatch(pushSuccessNotification('Вы вошли как анонимный пользователь'))
       })
       .catch(() => {
-        setSubmit(false)
         dispatch(pushDangerNotification('Ошибка, проверьте подключение к сети'))
       })
   }
 
-  const onSendEmail = (e: { preventDefault: () => void }) => {
-    e.preventDefault()
-    if (!email.length || correctEmail === false) {
-      setInputErrorEmail(true)
-      return
-    } else if (!message.length || message.length < 10) {
-      setInputErrorMessage(true)
-      return
+  const onSendEmail = (values: INewPasswordValues) => {
+    if (values.email === auth.currentUser?.email) {
+      send(
+        process.env.REACT_APP_SERVICE_ID ?? '',
+        process.env.REACT_APP_TEMPLATE_ID ?? '',
+        {
+          message: values.message,
+          email: values.email,
+        },
+        process.env.REACT_APP_USER_ID,
+      )
+        .then(() => {
+          onOpen(false)
+          setSuccessAuth(true)
+          dispatch(
+            pushInfoNotification(
+              'Сообщение отправлено. На Вашу почту придёт письмо с инструкцией по смене пароля',
+            ),
+          )
+        })
+        .catch(() => {
+          dispatch(pushDangerNotification('Ошибка, попробуйте позднее'))
+        })
     } else {
-      setInputErrorMessage(false),
-        setInputErrorEmail(false),
-        send(
-          process.env.REACT_APP_SERVICE_ID ?? '',
-          process.env.REACT_APP_TEMPLATE_ID ?? '',
-          {
-            message: message,
-            email: email,
-          },
-          process.env.REACT_APP_USER_ID,
-        )
-          .then(() => {
-            onOpen(false)
-            setSuccessAuth(true)
-            dispatch(
-              pushInfoNotification(
-                'Сообщение отправлено. На Вашу почту придёт письмо с инструкцией по смене пароля',
-              ),
-            )
-          })
-          .catch(() => {
-            setSubmit(false)
-            dispatch(pushDangerNotification('Ошибка, попробуйте позднее'))
-          })
+      dispatch(pushDangerNotification('Введите свой Email'))
     }
   }
 
   const handleClose = () => {
     onOpen(false)
-    navigate('/')
+    onOpenLoginModal(true)
+    setShowContent(false)
+    formik.resetForm()
   }
 
   useEffect(() => {
@@ -120,7 +106,14 @@ export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
 
   return (
     <Dialog open={openNewPassword} keepMounted>
-      <DialogTitle sx={{ padding: '20px 24px 0 24px', alignSelf: 'center' }}>
+      <IconButton
+        color="error"
+        onClick={handleClose}
+        sx={{ alignSelf: 'flex-end' }}
+      >
+        <CloseIcon style={{ width: '30px', height: '30px' }} />
+      </IconButton>
+      <DialogTitle sx={{ padding: '0 24px 0 24px', alignSelf: 'center' }}>
         Сброс пароля
       </DialogTitle>
       <DialogContent
@@ -145,74 +138,70 @@ export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
           ограничены) или зарегистрироваться.
         </Typography>
         {showContent && (
-          <>
+          <Stack direction="column" gap={'15px'} sx={{ marginTop: '10px' }}>
             <TextField
               label="Почта"
               type="email"
-              value={email}
-              onChange={handleChangeEmail}
-              onBlur={handleErrorEmail}
+              name="email"
               fullWidth
               size="medium"
-              sx={{ marginBottom: '20px' }}
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur('email')}
+              disabled={formik.isSubmitting}
+              inputRef={focus}
               error={
-                inputErrorEmail && (!email.length || correctEmail === false)
+                (Boolean(formik.errors.email) && formik.touched.email) ||
+                formik.values.email !== auth.currentUser?.email
               }
               helperText={
-                inputErrorEmail && !email.length
-                  ? 'Обязательное поле'
-                  : inputErrorEmail && correctEmail === false
-                  ? 'Введите корректный email'
+                formik.errors.email && formik.touched.email
+                  ? formik.errors.email
+                  : formik.values.email !== auth.currentUser?.email
+                  ? 'Введите свой Email'
                   : ' '
               }
             />
             <TextField
               label="Сообщение администратору"
               type="text"
-              value={message}
-              onChange={handleChangeMessage}
-              onBlur={handleErrorMessage}
+              name="message"
               fullWidth
               size="medium"
-              sx={{ marginBottom: '10px' }}
-              error={
-                inputErrorMessage && (!message.length || message.length < 10)
-              }
+              multiline
+              maxRows={3}
+              value={formik.values.message}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur('message')}
+              disabled={formik.isSubmitting}
+              error={Boolean(formik.errors.message) && formik.touched.message}
               helperText={
-                inputErrorMessage && !message.length
-                  ? 'Обязательное поле'
-                  : inputErrorMessage && message.length < 10
-                  ? 'Сообщение должно быть не менее 10 символов'
+                formik.errors.message && formik.touched.message
+                  ? formik.errors.message
                   : ' '
               }
             />
-            <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
-              <Button
+            <Stack direction="row" justifyContent="space-evenly">
+              <CostumButton
                 onClick={() => {
-                  setShowContent(false),
-                    setSubmit(false),
-                    setEmail(''),
-                    setMessage('Сбросить пароль в приложении Queries')
+                  setShowContent(false), formik.resetForm()
                 }}
+                disabled={formik.isSubmitting}
                 variant="contained"
                 color="error"
-                sx={{ textTransform: 'none', padding: '5px 10px' }}
               >
                 Не хочу
-              </Button>
-              <Button
-                onClick={(e) => {
-                  onSendEmail(e), setSubmit(true)
-                }}
+              </CostumButton>
+              <CostumButton
                 variant="contained"
                 color="primary"
-                disabled={submit}
-                sx={{ textTransform: 'none', padding: '5px 10px' }}
+                disabled={formik.isSubmitting}
+                onClick={() => formik.handleSubmit()}
               >
                 Отправить
-              </Button>
-            </div>
-          </>
+              </CostumButton>
+            </Stack>
+          </Stack>
         )}
       </DialogContent>
       <DialogActions
@@ -222,63 +211,52 @@ export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
           padding: '20px 20px 10px 20px',
         }}
       >
-        <div
-          style={{
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'space-between',
-            marginBottom: '20px',
-          }}
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          sx={{ width: '100%', marginBottom: '20px' }}
         >
-          <Button
+          <CostumButton
             onClick={() => navigate('/registration')}
+            disabled={showContent}
             variant="contained"
             color="info"
-            sx={{ textTransform: 'none', padding: '5px 10px' }}
           >
             Регистрация
-          </Button>
-          <Button
+          </CostumButton>
+          <CostumButton
             variant="contained"
             color="success"
-            sx={{ textTransform: 'none', padding: '5px 10px' }}
-            disabled={submit || showContent}
+            disabled={showContent}
             onClick={() => {
               setShowContent(true)
             }}
           >
             Сообщение администратору
-          </Button>
-        </div>
-        <div
-          style={{
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'space-between',
-            marginLeft: 0,
-            marginBottom: '10px',
-          }}
+          </CostumButton>
+        </Stack>
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          sx={{ width: '100%', margin: '0 0 10px 0' }}
         >
-          <Button
+          <CostumButton
             onClick={handleClose}
+            disabled={formik.isSubmitting}
             variant="contained"
             color="error"
-            sx={{ textTransform: 'none', padding: '5px 10px' }}
           >
-            Отмена
-          </Button>
-          <Button
+            Назад
+          </CostumButton>
+          <CostumButton
             variant="contained"
             color="warning"
-            sx={{ textTransform: 'none', padding: '5px 10px' }}
-            disabled={submit || showContent}
-            onClick={() => {
-              handleSubmit(), setSubmit(true)
-            }}
+            disabled={showContent}
+            onClick={handleSubmitAnonymous}
           >
             Войти как анонимный пользователь
-          </Button>
-        </div>
+          </CostumButton>
+        </Stack>
       </DialogActions>
     </Dialog>
   )

@@ -125,6 +125,7 @@ export const SettingAvatarAndName: FC = () => {
               value={formik.values.name}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur('name')}
+              disabled={formik.isSubmitting}
               inputRef={focus}
               fullWidth
               size="medium"

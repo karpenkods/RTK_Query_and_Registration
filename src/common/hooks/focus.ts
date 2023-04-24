@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 
 export function useFocus(showInput: boolean) {
   const refFocus = useRef<HTMLInputElement>(null)
@@ -8,4 +8,14 @@ export function useFocus(showInput: boolean) {
   }, [showInput])
 
   return refFocus
+}
+
+export const useAutoFocus = () => {
+  const inputRef = useCallback((inputElement: { focus: () => void }) => {
+    if (inputElement) {
+      inputElement.focus()
+    }
+  }, [])
+
+  return inputRef
 }

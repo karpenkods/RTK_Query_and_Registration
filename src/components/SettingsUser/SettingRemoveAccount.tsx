@@ -115,6 +115,7 @@ export const SettingRemoveAccount: FC = () => {
             fullWidth
             type={showPassword ? 'text' : 'password'}
             value={formik.values.oldPassword}
+            disabled={formik.isSubmitting}
             inputRef={focus}
             onChange={formik.handleChange}
             error={

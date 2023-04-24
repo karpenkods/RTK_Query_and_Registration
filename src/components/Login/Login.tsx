@@ -29,11 +29,14 @@ import GitHubIcon from '@mui/icons-material/GitHub'
 
 import {
   CostumButton,
+  ILoginValues,
+  closeFunction,
   loginSchema,
   pushDangerNotification,
   pushInfoNotification,
   pushSuccessNotification,
   useAppDispatch,
+  useAutoFocus,
 } from '../../common'
 import { NewPasswordModal } from '../Modals'
 
@@ -47,8 +50,10 @@ export const Login: FC = () => {
   const [openNewPassword, setOpenNewPassword] = useState(false)
 
   const auth = getAuth()
+  const close = closeFunction(auth.currentUser)
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
+  const focus = useAutoFocus()
 
   const providerGoogle = new GoogleAuthProvider()
   const providerGitHub = new GithubAuthProvider()
@@ -59,8 +64,8 @@ export const Login: FC = () => {
       password: '',
     },
     validationSchema: loginSchema,
-    onSubmit: async () => {
-      handleSubmit()
+    onSubmit: async (values) => {
+      handleSubmit(values)
     },
   })
 
@@ -92,12 +97,8 @@ export const Login: FC = () => {
       })
   }
 
-  const handleSubmit = () => {
-    signInWithEmailAndPassword(
-      auth,
-      formik.values.email,
-      formik.values.password,
-    )
+  const handleSubmit = (values: ILoginValues) => {
+    signInWithEmailAndPassword(auth, values.email, values.password)
       .then(() => {
         setSuccessAuth(true)
         dispatch(pushSuccessNotification('Вход выполнен'))
@@ -174,6 +175,8 @@ export const Login: FC = () => {
               value={formik.values.email}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur('email')}
+              disabled={disabledGit || formik.isSubmitting}
+              inputRef={focus}
               fullWidth
               size="medium"
               error={Boolean(formik.errors.email) && formik.touched.email}
@@ -189,6 +192,7 @@ export const Login: FC = () => {
               type={showPassword ? 'text' : 'password'}
               value={formik.values.password}
               onChange={formik.handleChange}
+              disabled={disabledGit || formik.isSubmitting}
               fullWidth
               size="medium"
               InputProps={{
@@ -220,7 +224,7 @@ export const Login: FC = () => {
               onClick={() => {
                 handleSubmitGoogle()
               }}
-              disabled={disabledGit}
+              disabled={disabledGit || formik.isSubmitting}
               color="info"
               style={{ margin: '0 7px 0 10px' }}
             >
@@ -230,7 +234,7 @@ export const Login: FC = () => {
               onClick={() => {
                 handleSubmitGitHub()
               }}
-              disabled={disabledGit}
+              disabled={disabledGit || formik.isSubmitting}
               color="inherit"
             >
               <GitHubIcon style={{ width: '30px', height: '30px' }} />
@@ -241,7 +245,7 @@ export const Login: FC = () => {
               variant="contained"
               color="warning"
               sx={{ marginBottom: '20px' }}
-              disabled={disabledGit}
+              disabled={disabledGit || formik.isSubmitting}
               onClick={() => {
                 handleSubmitAnonymous()
               }}
@@ -272,7 +276,7 @@ export const Login: FC = () => {
               onClick={handleClose}
               variant="contained"
               color="error"
-              disabled={disabledGit}
+              disabled={disabledGit || formik.isSubmitting}
             >
               Отмена
             </CostumButton>
@@ -290,7 +294,7 @@ export const Login: FC = () => {
             <CostumButton
               variant="text"
               onClick={() => navigate('/registration')}
-              disabled={disabledGit}
+              disabled={disabledGit || formik.isSubmitting}
               sx={{ fontSize: '16px' }}
             >
               Регистрация
@@ -298,7 +302,7 @@ export const Login: FC = () => {
           </Stack>
           <CostumButton
             variant="text"
-            disabled={disabledGit}
+            disabled={disabledGit || formik.isSubmitting || close}
             sx={{ fontSize: '16px', padding: 0, alignSelf: 'flex-start' }}
             onClick={() => {
               setOpenNewPassword(true), setOpen(false)
@@ -311,6 +315,7 @@ export const Login: FC = () => {
       <NewPasswordModal
         openNewPassword={openNewPassword}
         onOpen={setOpenNewPassword}
+        onOpenLoginModal={setOpen}
       />
     </>
   )
