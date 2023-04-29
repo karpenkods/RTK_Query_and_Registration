@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from 'react'
+import { FC, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getAuth, signInAnonymously } from 'firebase/auth'
 import { useFormik } from 'formik'
@@ -24,6 +24,7 @@ import {
   pushDangerNotification,
   pushInfoNotification,
   pushSuccessNotification,
+  refreshReducer,
   useAppDispatch,
   useFocus,
 } from '../../common'
@@ -33,8 +34,8 @@ export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
   onOpen,
   onOpenLoginModal,
 }) => {
-  const [successAuth, setSuccessAuth] = useState(false)
   const [showContent, setShowContent] = useState(false)
+  const [diasbledButton, setDisabledButton] = useState(false)
 
   const auth = getAuth()
   const focus = useFocus(showContent)
@@ -52,13 +53,20 @@ export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
     },
   })
 
+  const goodAuth = () => {
+    dispatch(refreshReducer(false))
+    setTimeout(() => navigate('/'), 1000)
+  }
+
   const handleSubmitAnonymous = () => {
+    setDisabledButton(true)
     signInAnonymously(auth)
       .then(() => {
-        setSuccessAuth(true)
+        goodAuth()
         dispatch(pushSuccessNotification('Вы вошли как анонимный пользователь'))
       })
       .catch(() => {
+        setDisabledButton(false)
         dispatch(pushDangerNotification('Ошибка, проверьте подключение к сети'))
       })
   }
@@ -76,7 +84,7 @@ export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
       )
         .then(() => {
           onOpen(false)
-          setSuccessAuth(true)
+          goodAuth()
           dispatch(
             pushInfoNotification(
               'Сообщение отправлено. На Вашу почту придёт письмо с инструкцией по смене пароля',
@@ -97,12 +105,6 @@ export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
     setShowContent(false)
     formik.resetForm()
   }
-
-  useEffect(() => {
-    if (successAuth) {
-      setTimeout(() => navigate('/'), 1500)
-    }
-  }, [navigate, successAuth])
 
   return (
     <Dialog open={openNewPassword} keepMounted>
@@ -218,7 +220,7 @@ export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
         >
           <CostumButton
             onClick={() => navigate('/registration')}
-            disabled={showContent}
+            disabled={showContent || diasbledButton}
             variant="contained"
             color="info"
           >
@@ -227,7 +229,7 @@ export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
           <CostumButton
             variant="contained"
             color="success"
-            disabled={showContent}
+            disabled={showContent || diasbledButton}
             onClick={() => {
               setShowContent(true)
             }}
@@ -242,7 +244,7 @@ export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
         >
           <CostumButton
             onClick={handleClose}
-            disabled={formik.isSubmitting}
+            disabled={formik.isSubmitting || diasbledButton}
             variant="contained"
             color="error"
           >
@@ -251,7 +253,7 @@ export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
           <CostumButton
             variant="contained"
             color="warning"
-            disabled={showContent}
+            disabled={showContent || diasbledButton}
             onClick={handleSubmitAnonymous}
           >
             Войти как анонимный пользователь

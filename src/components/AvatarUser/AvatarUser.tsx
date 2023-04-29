@@ -10,6 +10,7 @@ import {
   CostumButton,
   IAvatarProps,
   openReducer,
+  refreshReducer,
 } from '../../common'
 
 export const AvatarUser: FC<IAvatarProps> = ({ fontSize }) => {
@@ -20,6 +21,7 @@ export const AvatarUser: FC<IAvatarProps> = ({ fontSize }) => {
 
   const handleClick = () => {
     dispatch(openReducer(true))
+    dispatch(refreshReducer(true))
   }
 
   return user ? (

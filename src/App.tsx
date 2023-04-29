@@ -18,7 +18,7 @@ function App() {
       <Route path="post/:id" element={<PostPage />} />
       <Route path="login" element={<LoginPage />} />
       <Route path="registration" element={<RegistrationPage />} />
-      <Route path={'*' || '500'} element={<ServiceUnablePage />} />
+      <Route path={'*' || '404'} element={<ServiceUnablePage />} />
     </Routes>
   )
 }

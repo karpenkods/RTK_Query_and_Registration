@@ -24,4 +24,5 @@ export interface ISnackbar {
 
 export interface IMenuState {
   open: boolean
+  refresh: boolean
 }

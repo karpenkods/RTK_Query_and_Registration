@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react'
+import { FC, Fragment, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getAuth, signOut } from 'firebase/auth'
 
@@ -8,6 +8,7 @@ import {
   MenuItem,
   Menu,
   Typography,
+  Stack,
 } from '@mui/material'
 import Logout from '@mui/icons-material/Logout'
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts'
@@ -17,6 +18,7 @@ import {
   openReducer,
   pushDangerNotification,
   pushInfoNotification,
+  refreshReducer,
   useAppDispatch,
   useAppSelector,
 } from '../../common'
@@ -24,8 +26,8 @@ import { AvatarUser } from '../AvatarUser'
 import { SettingsUser } from '../SettingsUser'
 
 export const MenuUser: FC = () => {
-  const [successSingOut, setSuccessSingOut] = useState(false)
   const [openSettings, setOpenSettings] = useState(false)
+
   const navigate = useNavigate()
   const auth = getAuth()
   const currentUser = auth.currentUser
@@ -40,8 +42,8 @@ export const MenuUser: FC = () => {
     signOut(auth)
       .then(() => {
         dispatch(pushInfoNotification('Вы вышли из аккаунта'))
-        setSuccessSingOut(true)
         dispatch(openReducer(false))
+        dispatch(refreshReducer(false))
         navigate('/')
       })
       .catch(() => {
@@ -49,14 +51,8 @@ export const MenuUser: FC = () => {
       })
   }
 
-  useEffect(() => {
-    if (successSingOut) {
-      setTimeout(() => location.reload(), 1500)
-    }
-  }, [successSingOut])
-
   return (
-    <>
+    <Fragment>
       <Menu
         id="account-menu"
         open={open}
@@ -75,19 +71,18 @@ export const MenuUser: FC = () => {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 66 }}
       >
-        <div
-          style={{
-            width: '300px',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            flexDirection: 'column',
-            paddingTop: '5px',
-          }}
-        >
-          <AvatarUser fontSize={'450%'} />
-          {currentUser && (
+        {currentUser && (
+          <Stack
+            direction="column"
+            justifyContent="center"
+            alignItems="center"
+            sx={{
+              width: '300px',
+              paddingTop: '5px',
+            }}
+          >
             <>
+              <AvatarUser fontSize={'450%'} />
               <Typography
                 variant="h6"
                 color="grey"
@@ -105,40 +100,49 @@ export const MenuUser: FC = () => {
                 {currentUser.email}
               </Typography>
             </>
-          )}
-        </div>
-        <Divider sx={{ margin: '10px 0 8px 0' }} />
-        <MenuItem
-          sx={{ height: '50px' }}
-          disabled={currentUser?.isAnonymous}
-          onClick={() => {
-            setOpenSettings(true), handleClose()
-          }}
-        >
-          <ListItemIcon>
-            <ManageAccountsIcon fontSize="medium" />
-          </ListItemIcon>
-          Настройки
-        </MenuItem>
-        <MenuItem
-          sx={{ height: '50px' }}
-          onClick={() => {
-            navigate('/login')
-          }}
-        >
-          <ListItemIcon>
-            <ChangeCircleIcon fontSize="medium" />
-          </ListItemIcon>
-          Сменить тип аккаунта
-        </MenuItem>
-        <MenuItem sx={{ height: '50px' }} onClick={handleSignOut}>
-          <ListItemIcon>
-            <Logout fontSize="medium" />
-          </ListItemIcon>
-          Выйти из аккаунта
-        </MenuItem>
+            <Divider sx={{ margin: '10px 0 8px 0', width: '100%' }} />
+            <Stack
+              direction="column"
+              alignItems="flex-start"
+              sx={{ width: '100%' }}
+            >
+              <MenuItem
+                sx={{ height: '50px', width: '100%' }}
+                disabled={currentUser?.isAnonymous}
+                onClick={() => {
+                  setOpenSettings(true), handleClose()
+                }}
+              >
+                <ListItemIcon>
+                  <ManageAccountsIcon fontSize="medium" />
+                </ListItemIcon>
+                Настройки
+              </MenuItem>
+              <MenuItem
+                sx={{ height: '50px', width: '100%' }}
+                onClick={() => {
+                  navigate('/login')
+                }}
+              >
+                <ListItemIcon>
+                  <ChangeCircleIcon fontSize="medium" />
+                </ListItemIcon>
+                Сменить тип аккаунта
+              </MenuItem>
+              <MenuItem
+                sx={{ height: '50px', width: '100%' }}
+                onClick={handleSignOut}
+              >
+                <ListItemIcon>
+                  <Logout fontSize="medium" />
+                </ListItemIcon>
+                Выйти из аккаунта
+              </MenuItem>
+            </Stack>
+          </Stack>
+        )}
       </Menu>
       <SettingsUser openSettings={openSettings} onChange={setOpenSettings} />
-    </>
+    </Fragment>
   )
 }

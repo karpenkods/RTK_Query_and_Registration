@@ -1,4 +1,5 @@
 import { FC, useState, MouseEvent } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   EmailAuthProvider,
   deleteUser,
@@ -23,6 +24,7 @@ import {
   closeFunction,
   pushDangerNotification,
   pushSuccessNotification,
+  refreshReducer,
   settingsRemoveSchema,
   useAppDispatch,
   useFocus,
@@ -36,6 +38,7 @@ export const SettingRemoveAccount: FC = () => {
   const close = closeFunction(user)
   const focus = useFocus(showInput)
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
 
   const formik = useFormik({
     initialValues: {
@@ -57,7 +60,8 @@ export const SettingRemoveAccount: FC = () => {
           deleteUser(user)
             .then(() => {
               dispatch(pushSuccessNotification('Аккаунт удалён'))
-              location.reload()
+              dispatch(refreshReducer(false))
+              navigate('/')
             })
             .catch(() => {
               dispatch(pushDangerNotification('Ошибка, попробуйте позднее'))

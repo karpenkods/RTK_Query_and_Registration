@@ -1,4 +1,4 @@
-import { FC, useState, MouseEvent, useEffect } from 'react'
+import { FC, useState, MouseEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useFormik } from 'formik'
 import {
@@ -35,6 +35,7 @@ import {
   pushDangerNotification,
   pushInfoNotification,
   pushSuccessNotification,
+  refreshReducer,
   useAppDispatch,
   useAutoFocus,
 } from '../../common'
@@ -69,11 +70,17 @@ export const Login: FC = () => {
     },
   })
 
+  const goodAuth = () => {
+    setSuccessAuth(true)
+    dispatch(refreshReducer(false))
+    setTimeout(() => navigate('/'), 1000)
+  }
+
   const handleSubmitGoogle = () => {
     setDisabledGit(true)
     signInWithPopup(auth, providerGoogle)
       .then(() => {
-        setSuccessAuth(true)
+        goodAuth()
         dispatch(pushInfoNotification('Вы успешно вошли через Google'))
       })
       .catch(() => {
@@ -87,7 +94,7 @@ export const Login: FC = () => {
     setDisabledGit(true)
     signInWithPopup(auth, providerGitHub)
       .then(() => {
-        setSuccessAuth(true)
+        goodAuth()
         dispatch(pushInfoNotification('Вы успешно вошли через GitHub'))
       })
       .catch(() => {
@@ -98,12 +105,14 @@ export const Login: FC = () => {
   }
 
   const handleSubmit = (values: ILoginValues) => {
+    setDisabledGit(true)
     signInWithEmailAndPassword(auth, values.email, values.password)
       .then(() => {
-        setSuccessAuth(true)
+        goodAuth()
         dispatch(pushSuccessNotification('Вход выполнен'))
       })
       .catch(() => {
+        setDisabledGit(false)
         setErrorAuth(true)
         dispatch(pushDangerNotification('Неверный email или пароль'))
       })
@@ -113,11 +122,12 @@ export const Login: FC = () => {
     setDisabledGit(true)
     signInAnonymously(auth)
       .then(() => {
-        setSuccessAuth(true)
+        goodAuth()
         dispatch(pushSuccessNotification('Вы вошли как анонимный пользователь'))
       })
       .catch(() => {
         setDisabledGit(false)
+        setErrortGit(true)
         dispatch(pushDangerNotification('Ошибка, проверьте подключение к сети'))
       })
   }
@@ -131,12 +141,6 @@ export const Login: FC = () => {
     event.preventDefault()
     setShowPassword((show) => !show)
   }
-
-  useEffect(() => {
-    if (successAuth) {
-      setTimeout(() => navigate('/'), 1500)
-    }
-  }, [navigate, successAuth])
 
   return (
     <>
@@ -245,7 +249,11 @@ export const Login: FC = () => {
               variant="contained"
               color="warning"
               sx={{ marginBottom: '20px' }}
-              disabled={disabledGit || formik.isSubmitting}
+              disabled={
+                disabledGit ||
+                formik.isSubmitting ||
+                auth.currentUser?.isAnonymous
+              }
               onClick={() => {
                 handleSubmitAnonymous()
               }}
@@ -302,7 +310,13 @@ export const Login: FC = () => {
           </Stack>
           <CostumButton
             variant="text"
-            disabled={disabledGit || formik.isSubmitting || close}
+            disabled={
+              disabledGit ||
+              formik.isSubmitting ||
+              close ||
+              auth.currentUser?.isAnonymous ||
+              !auth.currentUser
+            }
             sx={{ fontSize: '16px', padding: 0, alignSelf: 'flex-start' }}
             onClick={() => {
               setOpenNewPassword(true), setOpen(false)

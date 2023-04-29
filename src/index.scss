@@ -7,7 +7,9 @@ html {
 body {
   margin: 0 auto;
   font-size: 16px;
-  background-color: #eee;
+  background: url('./assets/light.png');
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 ::-webkit-scrollbar {
@@ -45,9 +47,6 @@ button {
   border: none;
 }
 
-
-// const theme = useTheme()
-  // const isDesktop = useMediaQuery(theme.breakpoints.down(600))
 
 
 

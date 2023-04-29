@@ -1,4 +1,5 @@
 import { FC, forwardRef, ReactElement, Ref } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { deleteUser, getAuth } from 'firebase/auth'
 
 import {
@@ -11,7 +12,13 @@ import {
 } from '@mui/material'
 import { TransitionProps } from '@mui/material/transitions'
 
-import { CostumButton } from '../../common'
+import {
+  CostumButton,
+  pushDangerNotification,
+  pushInfoNotification,
+  refreshReducer,
+  useAppDispatch,
+} from '../../common'
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -25,14 +32,19 @@ const Transition = forwardRef(function Transition(
 export const EmailConfirmModal: FC = () => {
   const auth = getAuth()
   const currentUser = auth.currentUser
+  const dispatch = useAppDispatch()
+  const navigate = useNavigate()
 
   const handleDeleteUser = () => {
     if (currentUser) {
       deleteUser(currentUser)
         .then(() => {
-          location.reload()
+          dispatch(refreshReducer(false))
+          navigate('/')
+          dispatch(pushInfoNotification('Пользователь удалён'))
         })
         .catch(() => {
+          dispatch(pushDangerNotification('Ошибка'))
           return
         })
     }
@@ -71,7 +83,10 @@ export const EmailConfirmModal: FC = () => {
           Не хочу!
         </CostumButton>
         <CostumButton
-          onClick={() => location.reload()}
+          onClick={() => {
+            dispatch(refreshReducer(false))
+            navigate('/')
+          }}
           variant="contained"
           color="success"
           size="large"

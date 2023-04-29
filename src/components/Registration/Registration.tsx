@@ -1,4 +1,4 @@
-import { FC, useState, MouseEvent, useEffect } from 'react'
+import { FC, useState, MouseEvent } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useFormik } from 'formik'
 import {
@@ -30,6 +30,7 @@ import {
   IRegistrationValues,
   pushDangerNotification,
   pushSuccessNotification,
+  refreshReducer,
   registrationSchema,
   useAppDispatch,
   useAutoFocus,
@@ -68,6 +69,8 @@ export const Registration: FC = () => {
         })
         sendEmailVerification(user)
         setSuccessAuth(true)
+        dispatch(refreshReducer(false))
+        setTimeout(() => navigate('/'), 1000)
         dispatch(pushSuccessNotification('Вы успешно зарегистрировались'))
       })
       .catch(() => {
@@ -85,12 +88,6 @@ export const Registration: FC = () => {
     event.preventDefault()
     setShowPassword((show: any) => !show)
   }
-
-  useEffect(() => {
-    if (successAuth) {
-      setTimeout(() => navigate('/'), 1500)
-    }
-  }, [navigate, successAuth])
 
   return (
     <Dialog open={open} keepMounted>

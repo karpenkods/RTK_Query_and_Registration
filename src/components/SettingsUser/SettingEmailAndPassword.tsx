@@ -7,6 +7,7 @@ import {
   updateEmail,
   updatePassword,
 } from 'firebase/auth'
+import { useNavigate } from 'react-router-dom'
 import { useFormik } from 'formik'
 
 import {
@@ -28,6 +29,7 @@ import {
   closeFunction,
   pushDangerNotification,
   pushSuccessNotification,
+  refreshReducer,
   settingsEmailSchema,
   settingsPasswordSchema,
   useAppDispatch,
@@ -44,6 +46,7 @@ export const SettingEmailAndPassword: FC = () => {
   const focusEmail = useFocus(showInput)
   const focusPassword = useFocus(showPasswordInput)
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
 
   const formikEmail = useFormik({
     initialValues: {
@@ -79,7 +82,8 @@ export const SettingEmailAndPassword: FC = () => {
             .then(() => {
               dispatch(pushSuccessNotification('Email изменён'))
               sendEmailVerification(user)
-              location.reload()
+              dispatch(refreshReducer(false))
+              navigate('/')
             })
             .catch(() => {
               dispatch(pushDangerNotification('Ошибка, попробуйте позднее'))

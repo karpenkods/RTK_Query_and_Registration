@@ -1,9 +1,10 @@
-import { FC, Fragment } from 'react'
+import { FC, Fragment, useEffect, useState } from 'react'
+import { User, getAuth, onAuthStateChanged } from 'firebase/auth'
 import { Link } from 'react-router-dom'
 
-import { Stack, Typography } from '@mui/material'
+import { CircularProgress, Stack, Typography } from '@mui/material'
 
-import { closeFunction, useUser } from '../../common'
+import { closeFunction, useAppSelector } from '../../common'
 import { EmailConfirmModal } from '../Modals'
 
 const linkStyle = {
@@ -17,15 +18,31 @@ const linkStyle = {
 }
 
 export const Home: FC = () => {
-  const user = useUser()
+  const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
+
   const close = closeFunction(user ?? null)
+  const auth = getAuth()
+  const refresh = useAppSelector((store) => store.menu.refresh)
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      setUser(user)
+      setLoading(false)
+    })
+  }, [auth, refresh])
 
   return (
     <Stack direction="column" alignItems="center">
       <Typography variant="h1" color="tomato" sx={{ marginBottom: '30px' }}>
         Запросы с RTK Query
       </Typography>
-      {user ? (
+      {loading ? (
+        <CircularProgress
+          color="success"
+          style={{ width: '50px', height: '50px' }}
+        />
+      ) : user ? (
         <Fragment>
           <Typography variant="h6" color="blueviolet" sx={{ margin: '0 20px' }}>
             Добро пожаловать,{' '}

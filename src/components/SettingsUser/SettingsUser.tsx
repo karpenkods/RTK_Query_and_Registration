@@ -1,4 +1,5 @@
 import { FC, ReactElement, Ref, forwardRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import {
   Dialog,
@@ -18,7 +19,12 @@ import PersonRemoveIcon from '@mui/icons-material/PersonRemove'
 import { SettingAvatarAndName } from './SettingAvatarAndName'
 import { SettingEmailAndPassword } from './SettingEmailAndPassword'
 import { SettingRemoveAccount } from './SettingRemoveAccount'
-import { CostumButton, IPropsSettings } from '../../common'
+import {
+  CostumButton,
+  IPropsSettings,
+  refreshReducer,
+  useAppDispatch,
+} from '../../common'
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -34,6 +40,9 @@ export const SettingsUser: FC<IPropsSettings> = ({
   onChange,
 }) => {
   const [selectedIndex, setSelectedIndex] = useState(0)
+
+  const navigate = useNavigate()
+  const dispatch = useAppDispatch()
 
   const handleMenuItemClick = (index: number) => {
     setSelectedIndex(index)
@@ -102,7 +111,7 @@ export const SettingsUser: FC<IPropsSettings> = ({
       >
         <CostumButton
           onClick={() => {
-            handleClose(), location.reload()
+            handleClose(), navigate('/'), dispatch(refreshReducer(false))
           }}
           variant="contained"
           color="error"
