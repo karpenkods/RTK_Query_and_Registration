@@ -1,4 +1,5 @@
 import { FC } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { getAuth } from 'firebase/auth'
 
@@ -15,7 +16,10 @@ import {
 
 export const AvatarUser: FC<IAvatarProps> = ({ fontSize }) => {
   const user = getAuth().currentUser
-  const avatar = costumAvatar(user?.displayName ? user.displayName : 'А П')
+  const { t } = useTranslation()
+  const avatar = costumAvatar(
+    user?.displayName ? user.displayName : `${t('anonymousUserAvatar')}`,
+  )
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
 
@@ -54,7 +58,7 @@ export const AvatarUser: FC<IAvatarProps> = ({ fontSize }) => {
       color="error"
       onClick={() => navigate('/login')}
     >
-      Войти
+      {t('signIn')}
     </CostumButton>
   )
 }

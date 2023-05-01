@@ -129,11 +129,7 @@ export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
           },
         }}
       >
-        <Typography
-          variant="body1"
-          color="initial"
-          sx={{ marginBottom: '20px' }}
-        >
+        <Typography variant="body1" sx={{ marginBottom: '20px' }}>
           Если Вы не помните пароль, отправьте сообщение администратору. На Вашу
           почту придёт письмо с инструкцией по смене пароля. Вы можете временно
           войти в приложение как анонимный пользователь (некоторые функции будут
@@ -223,6 +219,7 @@ export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
             disabled={showContent || diasbledButton}
             variant="contained"
             color="info"
+            sx={{ color: 'white' }}
           >
             Регистрация
           </CostumButton>

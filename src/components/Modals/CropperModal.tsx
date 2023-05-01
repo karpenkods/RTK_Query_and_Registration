@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { FC, useEffect, useRef, useState } from 'react'
 import AvatarEditor from 'react-avatar-editor'
+import { useTranslation } from 'react-i18next'
 import { getAuth, updateProfile } from 'firebase/auth'
 import { getDownloadURL, getStorage, ref, uploadString } from 'firebase/storage'
 
@@ -35,6 +36,7 @@ export const CropperModal: FC<IPropsCropperModal> = ({
   const storage = getStorage()
   const cropRef = useRef<any>(null)
   const dispatch = useAppDispatch()
+  const { t } = useTranslation()
 
   const handleSave = () => {
     if (cropRef.current) {
@@ -59,12 +61,12 @@ export const CropperModal: FC<IPropsCropperModal> = ({
               .then(() => {
                 setLoadingImage(false)
                 setModalOpen(false)
-                dispatch(pushSuccessNotification('Аватар изменён'))
+                dispatch(pushSuccessNotification(`${t('avatarChanged')}`))
               })
               .catch(() => {
                 setLoadingImage(false)
                 dispatch(
-                  pushDangerNotification('Ошибка загрузки, попробуйте позднее'),
+                  pushDangerNotification(`${t('errorDownloadingTryLater')}`),
                 )
               })
           }
@@ -163,9 +165,9 @@ export const CropperModal: FC<IPropsCropperModal> = ({
             color="primary"
             variant="contained"
             onClick={handleSave}
-            sx={{ alignSelf: 'flex-end' }}
+            sx={{ alignSelf: 'flex-end', color: 'white' }}
           >
-            Сохранить
+            {t('save')}
           </CostumButton>
         </Stack>
       )}

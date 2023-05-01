@@ -1,4 +1,5 @@
 import { FC, ReactElement, Ref, forwardRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
 import {
@@ -43,6 +44,7 @@ export const SettingsUser: FC<IPropsSettings> = ({
 
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
+  const { t } = useTranslation()
 
   const handleMenuItemClick = (index: number) => {
     setSelectedIndex(index)
@@ -69,7 +71,7 @@ export const SettingsUser: FC<IPropsSettings> = ({
       <DialogTitle
         sx={{ padding: '20px 0', alignSelf: 'center', fontSize: '28px' }}
       >
-        Настройки аккаунта
+        {t('accountSettings')}
       </DialogTitle>
       <DialogContent sx={{ display: 'flex', padding: 0 }}>
         <div style={{ marginTop: '20px' }}>
@@ -116,7 +118,7 @@ export const SettingsUser: FC<IPropsSettings> = ({
           variant="contained"
           color="error"
         >
-          Закрыть
+          {t('close')}
         </CostumButton>
       </DialogActions>
     </Dialog>

@@ -91,15 +91,14 @@ export const Registration: FC = () => {
 
   return (
     <Dialog open={open} keepMounted>
-      <DialogTitle sx={{ padding: '20px 24px 0 24px', textAlign: 'center' }}>
+      <DialogTitle
+        sx={{ padding: '20px 24px 0 24px', textAlign: 'center' }}
+        variant="h6"
+      >
         {successAuth ? (
-          <Typography variant="h6" color="green">
-            Вы успешно зарегистрировались
-          </Typography>
+          <Typography color="green">Вы успешно зарегистрировались</Typography>
         ) : errorAuth ? (
-          <Typography variant="h6" color="error">
-            Такой email уже существует
-          </Typography>
+          <Typography color="error">Такой email уже существует</Typography>
         ) : (
           'Новый аккаунт'
         )}
@@ -214,13 +213,16 @@ export const Registration: FC = () => {
             }
             label="Я согласен(на) с "
           />
-          <Link
-            target="_blank"
-            rel="noopener noreferrer"
-            to="https://apps.who.int/iris/bitstream/handle/10665/260442/WHO-RHR-17.03-rus.pdf;jsessionid=9726A654112AA0D0BDA8F83C2EEE8DB1?sequence=1"
-          >
-            Правилами
-          </Link>
+          <CostumButton sx={{ fontSize: '16px', padding: '0 0 0 5px' }}>
+            <Link
+              style={{ color: '#1976D2' }}
+              target="_blank"
+              rel="noopener noreferrer"
+              to="https://apps.who.int/iris/bitstream/handle/10665/260442/WHO-RHR-17.03-rus.pdf;jsessionid=9726A654112AA0D0BDA8F83C2EEE8DB1?sequence=1"
+            >
+              Правилами
+            </Link>
+          </CostumButton>
         </Stack>
       </DialogContent>
       <DialogActions

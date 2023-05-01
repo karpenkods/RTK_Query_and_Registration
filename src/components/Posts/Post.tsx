@@ -11,6 +11,7 @@ import {
 import ReplyAllIcon from '@mui/icons-material/ReplyAll'
 
 import {
+  IPostProps,
   pushDangerNotification,
   pushSuccessNotification,
   useAppDispatch,
@@ -21,7 +22,7 @@ import {
 
 import './posts.scss'
 
-export const Post: FC = () => {
+export const Post: FC<IPostProps> = ({ getNumber }) => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const { id } = useParams()
@@ -55,6 +56,10 @@ export const Post: FC = () => {
     })
     setEditPost(false)
   }
+
+  useEffect(() => {
+    if (post?.id) getNumber(post?.id)
+  }, [post])
 
   useEffect(() => {
     if (successUpdatePost) {

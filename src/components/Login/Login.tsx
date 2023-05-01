@@ -145,19 +145,16 @@ export const Login: FC = () => {
   return (
     <>
       <Dialog open={open} keepMounted>
-        <DialogTitle sx={{ padding: '20px 24px 0 24px', textAlign: 'center' }}>
+        <DialogTitle
+          sx={{ padding: '20px 24px 0 24px', textAlign: 'center' }}
+          variant="h6"
+        >
           {successAuth ? (
-            <Typography variant="h6" color="green">
-              Вход выполнен
-            </Typography>
+            <Typography color="green">Вход выполнен</Typography>
           ) : errorAuth ? (
-            <Typography variant="h6" color="error">
-              Неверный email или пароль
-            </Typography>
+            <Typography color="error">Неверный email или пароль</Typography>
           ) : errorGit ? (
-            <Typography variant="h6" color="error">
-              Выберите другой способ входа
-            </Typography>
+            <Typography color="error">Выберите другой способ входа</Typography>
           ) : (
             'Авторизация'
           )}
@@ -248,7 +245,7 @@ export const Login: FC = () => {
             <CostumButton
               variant="contained"
               color="warning"
-              sx={{ marginBottom: '20px' }}
+              sx={{ marginBottom: '20px', color: 'white' }}
               disabled={
                 disabledGit ||
                 formik.isSubmitting ||
@@ -317,7 +314,11 @@ export const Login: FC = () => {
               auth.currentUser?.isAnonymous ||
               !auth.currentUser
             }
-            sx={{ fontSize: '16px', padding: 0, alignSelf: 'flex-start' }}
+            sx={{
+              fontSize: '16px',
+              padding: 0,
+              alignSelf: 'flex-start',
+            }}
             onClick={() => {
               setOpenNewPassword(true), setOpen(false)
             }}

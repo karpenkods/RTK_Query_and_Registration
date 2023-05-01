@@ -14,6 +14,9 @@ export interface IPostsProps {
   errorPosts?: boolean
   errorUsers?: boolean
 }
+export interface IPostProps {
+  getNumber: (value: number) => void
+}
 
 export interface IPostCardProps {
   post?: IPost

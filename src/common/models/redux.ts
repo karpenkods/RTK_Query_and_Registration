@@ -26,3 +26,6 @@ export interface IMenuState {
   open: boolean
   refresh: boolean
 }
+export interface IThemeState {
+  theme: string
+}

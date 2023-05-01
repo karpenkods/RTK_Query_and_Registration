@@ -7,6 +7,7 @@ import {
   updateEmail,
   updatePassword,
 } from 'firebase/auth'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { useFormik } from 'formik'
 
@@ -33,6 +34,7 @@ import {
   settingsEmailSchema,
   settingsPasswordSchema,
   useAppDispatch,
+  useAppSelector,
   useFocus,
 } from '../../common'
 
@@ -45,8 +47,10 @@ export const SettingEmailAndPassword: FC = () => {
   const close = closeFunction(user)
   const focusEmail = useFocus(showInput)
   const focusPassword = useFocus(showPasswordInput)
+  const darkTheme = useAppSelector((store) => store.theme.theme) === 'dark'
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   const formikEmail = useFormik({
     initialValues: {
@@ -80,17 +84,17 @@ export const SettingEmailAndPassword: FC = () => {
         .then(() => {
           updateEmail(user, values.oldPassword)
             .then(() => {
-              dispatch(pushSuccessNotification('Email изменён'))
+              dispatch(pushSuccessNotification(`${t('emailChanged')}`))
               sendEmailVerification(user)
               dispatch(refreshReducer(false))
               navigate('/')
             })
             .catch(() => {
-              dispatch(pushDangerNotification('Ошибка, попробуйте позднее'))
+              dispatch(pushDangerNotification(`${t('errorTryLater')}`))
             })
         })
         .catch(() => {
-          dispatch(pushDangerNotification('Текущий пароль введён неверно'))
+          dispatch(pushDangerNotification(`${t('passwordIsIncorrect')}`))
         })
     }
   }
@@ -104,17 +108,17 @@ export const SettingEmailAndPassword: FC = () => {
         .then(() => {
           updatePassword(user, values.password)
             .then(() => {
-              dispatch(pushSuccessNotification('Пароль изменён'))
+              dispatch(pushSuccessNotification(`${t('passwordChanged')}`))
               setShowPasswordInput(false)
               setShowPassword(false)
               formikPassword.resetForm()
             })
             .catch(() => {
-              dispatch(pushDangerNotification('Ошибка, попробуйте позднее'))
+              dispatch(pushDangerNotification(`${t('errorTryLater')}`))
             })
         })
         .catch(() => {
-          dispatch(pushDangerNotification('Текущий пароль введён неверно'))
+          dispatch(pushDangerNotification(`${t('passwordIsIncorrect')}`))
         })
     }
   }
@@ -127,15 +131,15 @@ export const SettingEmailAndPassword: FC = () => {
   return (
     <Stack direction="column" alignItems="center">
       <Typography
+        color="primary"
         sx={{
           alignSelf: 'flex-start',
           margin: '15px 0 5px 10px',
           textDecoration: 'underline',
           fontSize: '18px',
-          color: 'green',
         }}
       >
-        Текущий Email:
+        {t('currentEmail')}
       </Typography>
       <Typography variant="h6" sx={{ marginBottom: '30px' }}>
         {user?.email}
@@ -153,14 +157,17 @@ export const SettingEmailAndPassword: FC = () => {
             color="primary"
             disabled={showPasswordInput || close}
             startIcon={<CreateIcon sx={{ color: 'white' }} />}
+            sx={{ color: 'white' }}
           >
-            Изменить Email
+            {t('changeEmail')}
           </CostumButton>
         )}
         {!showInput && (
           <div
             style={{
-              borderTop: '1px solid rgba(0, 0, 0, 0.13)',
+              borderTop: darkTheme
+                ? '1px solid rgba(255, 255, 255, 0.13)'
+                : '1px solid rgba(0, 0, 0, 0.13)',
               width: '100%',
             }}
           />
@@ -171,9 +178,10 @@ export const SettingEmailAndPassword: FC = () => {
             variant="contained"
             color="success"
             startIcon={<KeyIcon sx={{ color: 'white' }} />}
+            sx={{ color: 'white' }}
             disabled={close}
           >
-            Изменить пароль
+            {t('changePassword')}
           </CostumButton>
         )}
       </Stack>
@@ -183,7 +191,7 @@ export const SettingEmailAndPassword: FC = () => {
             name="email"
             size="medium"
             fullWidth
-            label="Введите новый Email"
+            label={t('newEmail')}
             value={formikEmail.values.email}
             onChange={formikEmail.handleChange}
             disabled={formikEmail.isSubmitting}
@@ -199,7 +207,7 @@ export const SettingEmailAndPassword: FC = () => {
             }
           />
           <TextField
-            label="Введите текущий пароль"
+            label={t('currentPassword')}
             name="oldPassword"
             size="medium"
             fullWidth
@@ -241,7 +249,7 @@ export const SettingEmailAndPassword: FC = () => {
               disabled={formikEmail.isSubmitting}
               color="error"
             >
-              Отмена
+              {t('cancel')}
             </CostumButton>
             <CostumButton
               onClick={() => formikEmail.handleSubmit()}
@@ -249,7 +257,7 @@ export const SettingEmailAndPassword: FC = () => {
               color="primary"
               disabled={formikEmail.isSubmitting || !formikEmail.dirty}
             >
-              Сохранить
+              {t('save')}
             </CostumButton>
           </Stack>
         </Stack>
@@ -261,7 +269,7 @@ export const SettingEmailAndPassword: FC = () => {
           sx={{ width: '100%', marginTop: '30px' }}
         >
           <TextField
-            label="Введите текущий пароль"
+            label={t('currentPassword')}
             name="oldPassword"
             size="medium"
             fullWidth
@@ -291,7 +299,7 @@ export const SettingEmailAndPassword: FC = () => {
             }}
           />
           <TextField
-            label="Введите новый пароль"
+            label={t('newPassword')}
             name="password"
             size="medium"
             fullWidth
@@ -311,7 +319,7 @@ export const SettingEmailAndPassword: FC = () => {
             }
           />
           <TextField
-            label="Повторите пароль"
+            label={t('repeatPassword')}
             name="confirmPassword"
             size="medium"
             fullWidth
@@ -346,7 +354,7 @@ export const SettingEmailAndPassword: FC = () => {
               disabled={formikPassword.isSubmitting}
               color="error"
             >
-              Отмена
+              {t('cancel')}
             </CostumButton>
             <CostumButton
               onClick={() => {
@@ -356,15 +364,14 @@ export const SettingEmailAndPassword: FC = () => {
               color="primary"
               disabled={formikPassword.isSubmitting || !formikPassword.dirty}
             >
-              Сохранить
+              {t('save')}
             </CostumButton>
           </Stack>
         </Stack>
       )}
       {close && (
         <Typography variant="h6" color="primary" sx={{ marginTop: '50px' }}>
-          При авторизации через Google или GitHub изменить Email или пароль
-          нельзя.
+          {t('passwordForbidden')}
         </Typography>
       )}
     </Stack>

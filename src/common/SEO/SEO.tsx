@@ -6,7 +6,7 @@ import { ISeoProps } from '../models'
 export const SEO: FC<ISeoProps> = (props) => {
   return (
     <Helmet>
-      <title>QUERIES - {props.title}</title>
+      <title>{props.title}</title>
       <meta name="description" content={props.description} />
       <meta property="og:type" content={props.type} />
       <meta property="og:title" content={props.title} />

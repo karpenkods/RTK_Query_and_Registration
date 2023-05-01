@@ -1,7 +1,7 @@
 import { FC, PropsWithChildren } from 'react'
 
 import { Navbar } from '../Navbar'
-import { ILayoutProps, SEO } from '../../common'
+import { CostumBackground, ILayoutProps, SEO } from '../../common'
 
 import './layout.scss'
 
@@ -18,6 +18,7 @@ export const Layout: FC<PropsWithChildren<ILayoutProps>> = ({
       {container ? (
         <div className="layout">
           {withNavbar && <Navbar />}
+          <CostumBackground />
           <main className="layout__container">{children}</main>
         </div>
       ) : (

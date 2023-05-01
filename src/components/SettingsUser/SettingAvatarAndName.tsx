@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { FC, Fragment, useState } from 'react'
 import { getAuth, updateProfile } from 'firebase/auth'
+import { useTranslation } from 'react-i18next'
 import { useFormik } from 'formik'
 
 import { Avatar, Typography, TextField, Stack, Button } from '@mui/material'
@@ -30,6 +31,7 @@ export const SettingAvatarAndName: FC = () => {
   const avatar = costumAvatar(user?.displayName ? user.displayName : 'А П')
   const focus = useFocus(showInput)
   const dispatch = useAppDispatch()
+  const { t } = useTranslation()
 
   const formik = useFormik({
     initialValues: {
@@ -51,12 +53,12 @@ export const SettingAvatarAndName: FC = () => {
         .then(() => {
           setDisabled(false)
           setShowDelete(false)
-          dispatch(pushSuccessNotification('Аватар удалён'))
+          dispatch(pushSuccessNotification(`${t('avatarRemoved')}`))
         })
         .catch(() => {
           setDisabled(false)
           setShowDelete(false)
-          dispatch(pushDangerNotification('Ошибка, попробуйте позднее'))
+          dispatch(pushDangerNotification(`${t('errorTryLater')}`))
         })
     }
   }
@@ -72,10 +74,12 @@ export const SettingAvatarAndName: FC = () => {
         .then(() => {
           setShowInput(false)
           formik.resetForm()
-          dispatch(pushSuccessNotification('Имя пользователя успешно изменено'))
+          dispatch(
+            pushSuccessNotification(`${t('usernameChangedSuccessfully')}`),
+          )
         })
         .catch(() => {
-          dispatch(pushDangerNotification('Ошибка, попробуйте позднее'))
+          dispatch(pushDangerNotification(`${t('errorTryLater')}`))
         })
     }
   }
@@ -111,7 +115,6 @@ export const SettingAvatarAndName: FC = () => {
         )}
         <Typography
           variant="h5"
-          color="initial"
           sx={{ margin: '20px 0 30px 0', textAlign: 'center' }}
         >
           {user?.displayName}
@@ -119,7 +122,7 @@ export const SettingAvatarAndName: FC = () => {
         {showInput && (
           <Fragment>
             <TextField
-              label="Новое имя"
+              label={t('newName')}
               type="text"
               name="name"
               value={formik.values.name}
@@ -150,7 +153,7 @@ export const SettingAvatarAndName: FC = () => {
                 disabled={formik.isSubmitting}
                 color="error"
               >
-                Отмена
+                {t('cancel')}
               </CostumButton>
               <CostumButton
                 onClick={() => formik.handleSubmit()}
@@ -158,7 +161,7 @@ export const SettingAvatarAndName: FC = () => {
                 color="primary"
                 disabled={formik.isSubmitting || !formik.dirty}
               >
-                Сохранить
+                {t('save')}
               </CostumButton>
             </Stack>
           </Fragment>
@@ -176,10 +179,11 @@ export const SettingAvatarAndName: FC = () => {
             sx={{
               textTransform: 'none',
               padding: '5px 15px',
+              color: 'white',
             }}
             color="success"
           >
-            Изменить аватар
+            {t('changeAvatar')}
             <input
               onChange={handleImageUpload}
               hidden
@@ -196,7 +200,7 @@ export const SettingAvatarAndName: FC = () => {
             startIcon={<CreateIcon sx={{ color: 'white' }} />}
             disabled={showInput || disabled || showDelete}
           >
-            Изменить имя
+            {t('changeName')}
           </CostumButton>
         </Stack>
         {!modalOpen && (
@@ -210,7 +214,7 @@ export const SettingAvatarAndName: FC = () => {
             color="error"
             sx={{ alignSelf: 'flex-start', marginBottom: '30px' }}
           >
-            Удалить аватар
+            {t('removeAvatar')}
           </CostumButton>
         )}
         {showDelete && (
@@ -221,10 +225,10 @@ export const SettingAvatarAndName: FC = () => {
               sx={{ marginBottom: '20px' }}
             >
               <Typography variant="h5" color="error">
-                Вы уверены?
+                {t('areYouSure')}
               </Typography>
               <Typography variant="body1" color="error">
-                Это действие необратимо
+                {t('actionIsIrreversible')}
               </Typography>
             </Stack>
             <Stack
@@ -238,7 +242,7 @@ export const SettingAvatarAndName: FC = () => {
                 disabled={disabled}
                 color="error"
               >
-                Отмена
+                {t('cancel')}
               </CostumButton>
               <CostumButton
                 onClick={handleImageDelete}
@@ -246,7 +250,7 @@ export const SettingAvatarAndName: FC = () => {
                 color="success"
                 disabled={disabled}
               >
-                Удалить
+                {t('remove')}
               </CostumButton>
             </Stack>
           </Fragment>

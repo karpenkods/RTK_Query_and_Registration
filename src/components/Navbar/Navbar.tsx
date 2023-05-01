@@ -1,5 +1,7 @@
 import { FC, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
+import { useTranslation } from 'react-i18next'
 
 import {
   Divider,
@@ -16,7 +18,7 @@ import {
   Skeleton,
 } from '@mui/material'
 import DarkModeIcon from '@mui/icons-material/DarkMode'
-// import LightModeIcon from '@mui/icons-material/LightMode'
+import LightModeIcon from '@mui/icons-material/LightMode'
 import GitHubIcon from '@mui/icons-material/GitHub'
 import CloseIcon from '@mui/icons-material/Close'
 import MenuIcon from '@mui/icons-material/Menu'
@@ -29,7 +31,16 @@ import { grey } from '@mui/material/colors'
 import { MenuUser } from '../MenuUser/MenuUser'
 import { AvatarUser } from '../AvatarUser/AvatarUser'
 import ukImage from '../../assets/uk.png'
-import { AppBar, CostumButton, Drawer, DrawerHeader } from '../../common'
+import ruImage from '../../assets/ru.png'
+import {
+  AppBar,
+  CostumButton,
+  Drawer,
+  DrawerHeader,
+  themeReducer,
+  useAppDispatch,
+  useAppSelector,
+} from '../../common'
 import '../../assets/fonts/fonts.scss'
 
 export const Navbar: FC = () => {
@@ -38,6 +49,15 @@ export const Navbar: FC = () => {
   const [showAvatar, setShowAvatar] = useState(false)
 
   const auth = getAuth()
+  const { t, i18n } = useTranslation()
+  const navigate = useNavigate()
+  const dispatch = useAppDispatch()
+  const darkTheme = useAppSelector((store) => store.theme.theme) === 'dark'
+  const color = darkTheme ? grey[100] : grey[800]
+
+  const changeLanguage = (language: string) => {
+    i18n.changeLanguage(language)
+  }
 
   const handleDrawerShow = () => {
     setShow((prevShow) => !prevShow)
@@ -105,14 +125,18 @@ export const Navbar: FC = () => {
         <Drawer variant="permanent" open={open}>
           <DrawerHeader>
             <CostumButton
-              style={{ marginTop: 15, color: 'inherit', fontSize: 18 }}
+              style={{
+                marginTop: 15,
+                color: color,
+                fontSize: 18,
+              }}
               onClick={() => {
                 handleDrawerOpen()
                 handleDrawerShow()
               }}
             >
               <CloseIcon style={{ marginRight: 10 }} />
-              Закрыть
+              {t('close')}
             </CostumButton>
           </DrawerHeader>
           <List>
@@ -137,116 +161,18 @@ export const Navbar: FC = () => {
                   <ListItemText
                     sx={{
                       opacity: open ? 1 : 0,
-                      color: grey[800],
+                      color: color,
                     }}
                   >
-                    Главная
+                    {t('homePage')}
                   </ListItemText>
                 </ListItemButton>
               </Link>
-            </ListItem>
-            <ListItem disablePadding sx={{ display: 'block' }}>
-              <Link href="/rtk-query" sx={{ textDecoration: 'none' }}>
-                <ListItemButton
-                  sx={{
-                    minHeight: 48,
-                    justifyContent: open ? 'initial' : 'center',
-                    px: 2,
-                  }}
-                >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 0,
-                      mr: open ? 3 : 'auto',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <PagesIcon />
-                  </ListItemIcon>
-                  <ListItemText
-                    sx={{
-                      opacity: open ? 1 : 0,
-                      color: grey[800],
-                    }}
-                  >
-                    RTK Query
-                  </ListItemText>
-                </ListItemButton>
-              </Link>
-            </ListItem>
-          </List>
-          <Divider />
-          <List>
-            <ListItem disablePadding sx={{ display: 'block' }}>
-              <Link href="*" sx={{ textDecoration: 'none' }}>
-                <ListItemButton
-                  sx={{
-                    minHeight: 48,
-                    justifyContent: open ? 'initial' : 'center',
-                    px: 2,
-                  }}
-                >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 0,
-                      mr: open ? 3 : 'auto',
-                    }}
-                  >
-                    <img src={ukImage} width={40} height={25} />
-                  </ListItemIcon>
-                  <ListItemText
-                    sx={{
-                      opacity: open ? 1 : 0,
-                      color: grey[800],
-                    }}
-                  >
-                    Язык
-                  </ListItemText>
-                </ListItemButton>
-              </Link>
-              {/* <Link
-                    href={router.asPath}
-                    locale="ru"
-                    className={styles.navbar__link}
-                  >
-                    <ListItemButton
-                      sx={{
-                        minHeight: 48,
-                        justifyContent: open ? 'initial' : 'center',
-                        px: 2,
-                      }}
-                    >
-                      <ListItemIcon
-                        sx={{
-                          minWidth: 0,
-                          mr: open ? 3 : 'auto',
-                          justifyContent: 'center',
-                        }}
-                      >
-                        <Image
-                          src="/ru.png"
-                          alt="Eng"
-                          width={40}
-                          height={25}
-                          className={styles.flagRu}
-                        />
-                      </ListItemIcon>
-                      <ListItemText
-                        sx={{
-                          opacity: open ? 1 : 0,
-                          color:
-                            cookies[0].theme_preference === 'dark'
-                              ? purple.A700
-                              : grey[800],
-                        }}
-                      >
-                        {t('language')}
-                      </ListItemText>
-                    </ListItemButton>
-                  </Link> */}
             </ListItem>
             <ListItem disablePadding sx={{ display: 'block' }}>
               <ListItemButton
+                disabled={!auth.currentUser}
+                onClick={() => navigate('/rtk-query')}
                 sx={{
                   minHeight: 48,
                   justifyContent: open ? 'initial' : 'center',
@@ -260,15 +186,82 @@ export const Navbar: FC = () => {
                     justifyContent: 'center',
                   }}
                 >
-                  <DarkModeIcon />
+                  <PagesIcon />
                 </ListItemIcon>
                 <ListItemText
                   sx={{
                     opacity: open ? 1 : 0,
-                    color: grey[800],
+                    color: color,
                   }}
                 >
-                  Тёмная тема
+                  {t('posts')}
+                </ListItemText>
+              </ListItemButton>
+            </ListItem>
+          </List>
+          <Divider />
+          <List>
+            <ListItem disablePadding sx={{ display: 'block' }}>
+              <ListItemButton
+                onClick={() =>
+                  changeLanguage(i18n.language === 'ru' ? 'en' : 'ru')
+                }
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? 'initial' : 'center',
+                  px: 2,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : 'auto',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <img
+                    src={i18n.language === 'ru' ? ukImage : ruImage}
+                    width={40}
+                    height={25}
+                  />
+                </ListItemIcon>
+                <ListItemText
+                  sx={{
+                    opacity: open ? 1 : 0,
+                    color: color,
+                  }}
+                >
+                  {t('language')}
+                </ListItemText>
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding sx={{ display: 'block' }}>
+              <ListItemButton
+                onClick={() =>
+                  dispatch(themeReducer(darkTheme ? 'light' : 'dark'))
+                }
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? 'initial' : 'center',
+                  px: 2,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : 'auto',
+                    justifyContent: 'center',
+                  }}
+                >
+                  {darkTheme ? <LightModeIcon /> : <DarkModeIcon />}
+                </ListItemIcon>
+                <ListItemText
+                  sx={{
+                    opacity: open ? 1 : 0,
+                    color: color,
+                  }}
+                >
+                  {darkTheme ? `${t('lightTheme')}` : `${t('darkTheme')}`}
                 </ListItemText>
               </ListItemButton>
             </ListItem>
@@ -298,10 +291,10 @@ export const Navbar: FC = () => {
                   <ListItemText
                     sx={{
                       opacity: open ? 1 : 0,
-                      color: grey[800],
+                      color: color,
                     }}
                   >
-                    GitHub автора
+                    {t('git')}
                   </ListItemText>
                 </ListItemButton>
               </Link>
@@ -330,10 +323,10 @@ export const Navbar: FC = () => {
                 <ListItemText
                   sx={{
                     opacity: open ? 1 : 0,
-                    color: grey[800],
+                    color: color,
                   }}
                 >
-                  Скрыть меню
+                  {t('hideMenu')}
                 </ListItemText>
               </ListItemButton>
             </ListItem>

@@ -55,7 +55,7 @@ export const EmailConfirmModal: FC = () => {
       <DialogTitle
         sx={{ padding: '20px 0', alignSelf: 'center', fontSize: '24px' }}
       >
-        Подтвердите свой email
+        Подтвердите свой Email
       </DialogTitle>
       <DialogContent sx={{ padding: '0 20px', textAlign: 'center' }}>
         <Typography variant="h6">
@@ -90,7 +90,7 @@ export const EmailConfirmModal: FC = () => {
           variant="contained"
           color="success"
           size="large"
-          sx={{ fontSize: '20px' }}
+          sx={{ fontSize: '20px', color: 'white' }}
         >
           Подтвердить
         </CostumButton>

@@ -1,5 +1,6 @@
 import { FC, Fragment, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { getAuth, signOut } from 'firebase/auth'
 
 import {
@@ -10,6 +11,7 @@ import {
   Typography,
   Stack,
 } from '@mui/material'
+import { grey } from '@mui/material/colors'
 import Logout from '@mui/icons-material/Logout'
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts'
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle'
@@ -33,6 +35,9 @@ export const MenuUser: FC = () => {
   const currentUser = auth.currentUser
   const dispatch = useAppDispatch()
   const open = useAppSelector((store) => store.menu.open)
+  const darkTheme = useAppSelector((store) => store.theme.theme) === 'dark'
+  const color = darkTheme ? grey[100] : grey[800]
+  const { t } = useTranslation()
 
   const handleClose = () => {
     dispatch(openReducer(false))
@@ -85,18 +90,18 @@ export const MenuUser: FC = () => {
               <AvatarUser fontSize={'450%'} />
               <Typography
                 variant="h6"
-                color="grey"
                 sx={{
                   textAlign: 'center',
                   margin: '10px 0 10px 0',
+                  color: color,
                   lineHeight: 1.2,
                 }}
               >
                 {currentUser.displayName
                   ? currentUser.displayName
-                  : 'Анонимный пользователь'}
+                  : `${t('anonymousUser')}`}
               </Typography>
-              <Typography variant="body1" color="grey">
+              <Typography variant="body1" sx={{ color: color }}>
                 {currentUser.email}
               </Typography>
             </>
@@ -107,7 +112,7 @@ export const MenuUser: FC = () => {
               sx={{ width: '100%' }}
             >
               <MenuItem
-                sx={{ height: '50px', width: '100%' }}
+                sx={{ height: '50px', width: '100%', color: color }}
                 disabled={currentUser?.isAnonymous}
                 onClick={() => {
                   setOpenSettings(true), handleClose()
@@ -116,10 +121,10 @@ export const MenuUser: FC = () => {
                 <ListItemIcon>
                   <ManageAccountsIcon fontSize="medium" />
                 </ListItemIcon>
-                Настройки
+                {t('settings')}
               </MenuItem>
               <MenuItem
-                sx={{ height: '50px', width: '100%' }}
+                sx={{ height: '50px', width: '100%', color: color }}
                 onClick={() => {
                   navigate('/login')
                 }}
@@ -127,16 +132,16 @@ export const MenuUser: FC = () => {
                 <ListItemIcon>
                   <ChangeCircleIcon fontSize="medium" />
                 </ListItemIcon>
-                Сменить тип аккаунта
+                {t('changeAccountType')}
               </MenuItem>
               <MenuItem
-                sx={{ height: '50px', width: '100%' }}
+                sx={{ height: '50px', width: '100%', color: color }}
                 onClick={handleSignOut}
               >
                 <ListItemIcon>
                   <Logout fontSize="medium" />
                 </ListItemIcon>
-                Выйти из аккаунта
+                {t('logOut')}
               </MenuItem>
             </Stack>
           </Stack>

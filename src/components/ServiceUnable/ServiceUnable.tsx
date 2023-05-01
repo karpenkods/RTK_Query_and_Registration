@@ -1,4 +1,5 @@
 import { FC } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
 import { Box, Stack, useMediaQuery, useTheme } from '@mui/material'
@@ -9,6 +10,7 @@ import image2 from '../../assets/404_2.png'
 
 export const ServiceUnable: FC = () => {
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down(768))
@@ -40,7 +42,7 @@ export const ServiceUnable: FC = () => {
           onClick={() => navigate('/')}
           sx={{ fontSize: 20, width: 'fit-content', marginRight: '100px' }}
         >
-          На главную
+          {t('homePage')}
         </CostumButton>
       </Stack>
     </Box>

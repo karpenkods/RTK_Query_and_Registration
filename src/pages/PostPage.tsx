@@ -1,14 +1,20 @@
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+
 import { Layout, Post } from '../components'
 
 export function PostPage() {
+  const [number, setNumber] = useState(0)
+  const { t } = useTranslation()
+
   return (
     <Layout
-      container={true}
+      container
       withNavbar
-      title="Post"
-      description="Страница поста"
+      title={`${t('post')}${number === 0 ? '' : number}`}
+      description={t('post')}
     >
-      <Post />
+      <Post getNumber={setNumber} />
     </Layout>
   )
 }

@@ -1,4 +1,5 @@
 import { FC, useState, MouseEvent } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import {
   EmailAuthProvider,
@@ -39,6 +40,7 @@ export const SettingRemoveAccount: FC = () => {
   const focus = useFocus(showInput)
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   const formik = useFormik({
     initialValues: {
@@ -59,16 +61,16 @@ export const SettingRemoveAccount: FC = () => {
         .then(() => {
           deleteUser(user)
             .then(() => {
-              dispatch(pushSuccessNotification('Аккаунт удалён'))
+              dispatch(pushSuccessNotification(`${t('accountDeleted')}`))
               dispatch(refreshReducer(false))
               navigate('/')
             })
             .catch(() => {
-              dispatch(pushDangerNotification('Ошибка, попробуйте позднее'))
+              dispatch(pushDangerNotification(`${t('errorTryLater')}`))
             })
         })
         .catch(() => {
-          dispatch(pushDangerNotification('Текущий пароль введён неверно'))
+          dispatch(pushDangerNotification(`${t('passwordIsIncorrect')}`))
         })
     }
   }
@@ -87,16 +89,16 @@ export const SettingRemoveAccount: FC = () => {
           margin: '15px 0',
         }}
       >
-        Удаление аккаунта
+        {t('accountDeleting')}
       </Typography>
       <Typography variant="body1" color="error">
-        Регистрация(авторизация) с посмощью Email и пароля:
+        {t('logInUsingPassword')}
       </Typography>
       <Typography variant="body2" sx={{ marginBottom: '30px' }}>
-        Аккаунт будет удалён навсегда, его нельзя будет восстановить.
+        {t('accountRecovered')}
       </Typography>
       <Typography variant="body1" color="error" sx={{ marginBottom: '30px' }}>
-        Удалить аккаунты Google или GitHub с помощью этого сервиса нельзя.
+        {t('cannotDeleteAccounts')}
       </Typography>
 
       {!showInput && (
@@ -107,13 +109,13 @@ export const SettingRemoveAccount: FC = () => {
           startIcon={<PersonRemoveIcon sx={{ color: 'white' }} />}
           disabled={close}
         >
-          Удалить аккаунт
+          {t('deleteAccount')}
         </CostumButton>
       )}
       {showInput && (
         <Stack direction="column" gap={'30px'} sx={{ width: '100%' }}>
           <TextField
-            label="Введите текущий пароль"
+            label={t('currentPassword')}
             name="oldPassword"
             size="medium"
             fullWidth
@@ -154,7 +156,7 @@ export const SettingRemoveAccount: FC = () => {
               disabled={formik.isSubmitting}
               color="error"
             >
-              Отмена
+              {t('cancel')}
             </CostumButton>
             <CostumButton
               onClick={() => formik.handleSubmit()}
@@ -162,7 +164,7 @@ export const SettingRemoveAccount: FC = () => {
               color="primary"
               disabled={formik.isSubmitting || !formik.dirty}
             >
-              Удалить
+              {t('remove')}
             </CostumButton>
           </Stack>
         </Stack>
