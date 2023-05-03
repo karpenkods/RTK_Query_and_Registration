@@ -1,4 +1,4 @@
-import { FC, useState, MouseEvent } from 'react'
+import { FC, useState, MouseEvent, useEffect } from 'react'
 import {
   EmailAuthProvider,
   getAuth,
@@ -48,6 +48,7 @@ export const SettingEmailAndPassword: FC = () => {
   const focusEmail = useFocus(showInput)
   const focusPassword = useFocus(showPasswordInput)
   const darkTheme = useAppSelector((store) => store.theme.theme) === 'dark'
+  const refresh = useAppSelector((store) => store.menu.refresh)
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const { t } = useTranslation()
@@ -57,7 +58,7 @@ export const SettingEmailAndPassword: FC = () => {
       email: '',
       oldPassword: '',
     },
-    validationSchema: settingsEmailSchema,
+    validationSchema: settingsEmailSchema(t),
     onSubmit: async (values) => {
       handleChangeEmail(values)
     },
@@ -69,7 +70,7 @@ export const SettingEmailAndPassword: FC = () => {
       password: '',
       confirmPassword: '',
     },
-    validationSchema: settingsPasswordSchema,
+    validationSchema: settingsPasswordSchema(t),
     onSubmit: async (values) => {
       handleChangePassword(values)
     },
@@ -127,6 +128,16 @@ export const SettingEmailAndPassword: FC = () => {
     event.preventDefault()
     setShowPassword((show) => !show)
   }
+
+  useEffect(() => {
+    if (refresh === false) {
+      setShowInput(false)
+      setShowPasswordInput(false)
+      setShowPassword(false)
+      formikEmail.resetForm()
+      formikPassword.resetForm()
+    }
+  }, [formikEmail, formikPassword, refresh])
 
   return (
     <Stack direction="column" alignItems="center">

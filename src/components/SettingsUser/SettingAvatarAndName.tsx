@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { FC, Fragment, useState } from 'react'
+import { FC, Fragment, useEffect, useState } from 'react'
 import { getAuth, updateProfile } from 'firebase/auth'
 import { useTranslation } from 'react-i18next'
 import { useFormik } from 'formik'
@@ -17,6 +17,7 @@ import {
   pushSuccessNotification,
   settingsNameSchema,
   useAppDispatch,
+  useAppSelector,
   useFocus,
 } from '../../common'
 
@@ -29,6 +30,7 @@ export const SettingAvatarAndName: FC = () => {
 
   const user = getAuth().currentUser
   const avatar = costumAvatar(user?.displayName ? user.displayName : 'А П')
+  const refresh = useAppSelector((store) => store.menu.refresh)
   const focus = useFocus(showInput)
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
@@ -37,7 +39,7 @@ export const SettingAvatarAndName: FC = () => {
     initialValues: {
       name: '',
     },
-    validationSchema: settingsNameSchema,
+    validationSchema: settingsNameSchema(t),
     onSubmit: async () => {
       handleChangeName()
     },
@@ -90,6 +92,14 @@ export const SettingAvatarAndName: FC = () => {
       setModalOpen(true)
     }
   }
+
+  useEffect(() => {
+    if (refresh === false) {
+      setShowInput(false)
+      setShowDelete(false)
+      formik.resetForm()
+    }
+  }, [refresh])
 
   return (
     <Fragment>

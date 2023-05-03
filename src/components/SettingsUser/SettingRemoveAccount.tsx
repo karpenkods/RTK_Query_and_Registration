@@ -1,4 +1,4 @@
-import { FC, useState, MouseEvent } from 'react'
+import { FC, useState, MouseEvent, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -28,6 +28,7 @@ import {
   refreshReducer,
   settingsRemoveSchema,
   useAppDispatch,
+  useAppSelector,
   useFocus,
 } from '../../common'
 
@@ -41,12 +42,13 @@ export const SettingRemoveAccount: FC = () => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const { t } = useTranslation()
+  const refresh = useAppSelector((store) => store.menu.refresh)
 
   const formik = useFormik({
     initialValues: {
       oldPassword: '',
     },
-    validationSchema: settingsRemoveSchema,
+    validationSchema: settingsRemoveSchema(t),
     onSubmit: async () => {
       handleRemoveAccaunt()
     },
@@ -79,6 +81,14 @@ export const SettingRemoveAccount: FC = () => {
     event.preventDefault()
     setShowPassword((show) => !show)
   }
+
+  useEffect(() => {
+    if (refresh === false) {
+      setShowInput(false)
+      setShowPassword(false)
+      formik.resetForm()
+    }
+  }, [formik, refresh])
 
   return (
     <Stack direction="column" alignItems="center">

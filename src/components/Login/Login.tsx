@@ -1,5 +1,6 @@
 import { FC, useState, MouseEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useFormik } from 'formik'
 import {
   GithubAuthProvider,
@@ -32,6 +33,7 @@ import {
   ILoginValues,
   closeFunction,
   loginSchema,
+  openReducer,
   pushDangerNotification,
   pushInfoNotification,
   pushSuccessNotification,
@@ -55,6 +57,7 @@ export const Login: FC = () => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const focus = useAutoFocus()
+  const { t } = useTranslation()
 
   const providerGoogle = new GoogleAuthProvider()
   const providerGitHub = new GithubAuthProvider()
@@ -64,7 +67,7 @@ export const Login: FC = () => {
       email: '',
       password: '',
     },
-    validationSchema: loginSchema,
+    validationSchema: loginSchema(t),
     onSubmit: async (values) => {
       handleSubmit(values)
     },
@@ -73,6 +76,7 @@ export const Login: FC = () => {
   const goodAuth = () => {
     setSuccessAuth(true)
     dispatch(refreshReducer(false))
+    dispatch(openReducer(false))
     setTimeout(() => navigate('/'), 1000)
   }
 
@@ -81,12 +85,12 @@ export const Login: FC = () => {
     signInWithPopup(auth, providerGoogle)
       .then(() => {
         goodAuth()
-        dispatch(pushInfoNotification('Вы успешно вошли через Google'))
+        dispatch(pushInfoNotification(`${t('signedInGoogle')}`))
       })
       .catch(() => {
         setErrortGit(true)
         setDisabledGit(false)
-        dispatch(pushDangerNotification('Выберите другой способ входа'))
+        dispatch(pushDangerNotification(`${t('chooseSignInMethod')}`))
       })
   }
 
@@ -95,12 +99,12 @@ export const Login: FC = () => {
     signInWithPopup(auth, providerGitHub)
       .then(() => {
         goodAuth()
-        dispatch(pushInfoNotification('Вы успешно вошли через GitHub'))
+        dispatch(pushInfoNotification(`${t('signedInGitHub')}`))
       })
       .catch(() => {
         setErrortGit(true)
         setDisabledGit(false)
-        dispatch(pushDangerNotification('Выберите другой способ входа'))
+        dispatch(pushDangerNotification(`${t('chooseSignInMethod')}`))
       })
   }
 
@@ -109,12 +113,12 @@ export const Login: FC = () => {
     signInWithEmailAndPassword(auth, values.email, values.password)
       .then(() => {
         goodAuth()
-        dispatch(pushSuccessNotification('Вход выполнен'))
+        dispatch(pushSuccessNotification(`${t('signedIn')}`))
       })
       .catch(() => {
         setDisabledGit(false)
         setErrorAuth(true)
-        dispatch(pushDangerNotification('Неверный email или пароль'))
+        dispatch(pushDangerNotification(`${t('invalidEmail')}`))
       })
   }
 
@@ -123,17 +127,18 @@ export const Login: FC = () => {
     signInAnonymously(auth)
       .then(() => {
         goodAuth()
-        dispatch(pushSuccessNotification('Вы вошли как анонимный пользователь'))
+        dispatch(pushSuccessNotification(`${t('loggedAnonymousUser')}`))
       })
       .catch(() => {
         setDisabledGit(false)
         setErrortGit(true)
-        dispatch(pushDangerNotification('Ошибка, проверьте подключение к сети'))
+        dispatch(pushDangerNotification(`${t('checkNetworkConnection')}`))
       })
   }
 
   const handleClose = () => {
     setOpen(false)
+    dispatch(openReducer(false))
     navigate('/')
   }
 
@@ -150,13 +155,13 @@ export const Login: FC = () => {
           variant="h6"
         >
           {successAuth ? (
-            <Typography color="green">Вход выполнен</Typography>
+            <Typography color="green">{t('signedIn')}</Typography>
           ) : errorAuth ? (
-            <Typography color="error">Неверный email или пароль</Typography>
+            <Typography color="error">{t('invalidEmail')}</Typography>
           ) : errorGit ? (
-            <Typography color="error">Выберите другой способ входа</Typography>
+            <Typography color="error">{t('chooseSignInMethod')}</Typography>
           ) : (
-            'Авторизация'
+            `${t('signIn')}`
           )}
         </DialogTitle>
         <DialogContent
@@ -188,7 +193,7 @@ export const Login: FC = () => {
               }
             />
             <TextField
-              label="Пароль"
+              label={t('password')}
               name="password"
               type={showPassword ? 'text' : 'password'}
               value={formik.values.password}
@@ -220,7 +225,7 @@ export const Login: FC = () => {
               marginBottom: '25px',
             }}
           >
-            <Typography variant="h6">Войти с помощью:</Typography>
+            <Typography variant="h6">{t('loginWith')}</Typography>
             <IconButton
               onClick={() => {
                 handleSubmitGoogle()
@@ -241,7 +246,7 @@ export const Login: FC = () => {
               <GitHubIcon style={{ width: '30px', height: '30px' }} />
             </IconButton>
           </Stack>
-          <Tooltip title="Некоторые функции ограничены" placement="right">
+          <Tooltip title={t('featuresLimited')} placement="right">
             <CostumButton
               variant="contained"
               color="warning"
@@ -255,7 +260,7 @@ export const Login: FC = () => {
                 handleSubmitAnonymous()
               }}
             >
-              Войти как анонимный пользователь
+              {t('loginAnonymous')}
             </CostumButton>
           </Tooltip>
         </DialogContent>
@@ -283,7 +288,7 @@ export const Login: FC = () => {
               color="error"
               disabled={disabledGit || formik.isSubmitting}
             >
-              Отмена
+              {t('cancel')}
             </CostumButton>
             <CostumButton
               variant="contained"
@@ -291,18 +296,18 @@ export const Login: FC = () => {
               disabled={formik.isSubmitting || !formik.dirty || disabledGit}
               onClick={() => formik.handleSubmit()}
             >
-              Войти
+              {t('signIn')}
             </CostumButton>
           </Stack>
           <Stack direction="row" alignItems="center" alignSelf="flex-start">
-            <Typography variant="body1">Ещё нет аккаунта?</Typography>
+            <Typography variant="body1">{t('notAccount')}</Typography>
             <CostumButton
               variant="text"
               onClick={() => navigate('/registration')}
               disabled={disabledGit || formik.isSubmitting}
               sx={{ fontSize: '16px' }}
             >
-              Регистрация
+              {t('logIn')}
             </CostumButton>
           </Stack>
           <CostumButton
@@ -323,7 +328,7 @@ export const Login: FC = () => {
               setOpenNewPassword(true), setOpen(false)
             }}
           >
-            Забыли пароль?
+            {t('forgotPassword')}
           </CostumButton>
         </DialogActions>
       </Dialog>

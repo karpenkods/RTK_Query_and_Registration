@@ -1,5 +1,6 @@
 import { FC, forwardRef, ReactElement, Ref } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { deleteUser, getAuth } from 'firebase/auth'
 
 import {
@@ -34,6 +35,7 @@ export const EmailConfirmModal: FC = () => {
   const currentUser = auth.currentUser
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   const handleDeleteUser = () => {
     if (currentUser) {
@@ -41,10 +43,10 @@ export const EmailConfirmModal: FC = () => {
         .then(() => {
           dispatch(refreshReducer(false))
           navigate('/')
-          dispatch(pushInfoNotification('Пользователь удалён'))
+          dispatch(pushInfoNotification(`${t('userDeleted')}`))
         })
         .catch(() => {
-          dispatch(pushDangerNotification('Ошибка'))
+          dispatch(pushDangerNotification(`${t('error')}`))
           return
         })
     }
@@ -55,14 +57,13 @@ export const EmailConfirmModal: FC = () => {
       <DialogTitle
         sx={{ padding: '20px 0', alignSelf: 'center', fontSize: '24px' }}
       >
-        Подтвердите свой Email
+        {t('confirmEmail')}
       </DialogTitle>
       <DialogContent sx={{ padding: '0 20px', textAlign: 'center' }}>
         <Typography variant="h6">
-          На почту{' '}
+          {t('confirmationSent_1')}{' '}
           <span style={{ color: 'green' }}>{`${currentUser?.email}`}</span>{' '}
-          выслано подтверждение. Пожалуйста, перейдите по ссылке в письме. Иначе
-          пользователь будет удалён.
+          {t('confirmationSent_2')}
         </Typography>
       </DialogContent>
       <DialogActions
@@ -80,7 +81,7 @@ export const EmailConfirmModal: FC = () => {
           size="large"
           sx={{ fontSize: '20px' }}
         >
-          Не хочу!
+          {t('notWant')}
         </CostumButton>
         <CostumButton
           onClick={() => {
@@ -92,7 +93,7 @@ export const EmailConfirmModal: FC = () => {
           size="large"
           sx={{ fontSize: '20px', color: 'white' }}
         >
-          Подтвердить
+          {t('confirm')}
         </CostumButton>
       </DialogActions>
     </Dialog>

@@ -1,5 +1,6 @@
 import { FC, useState, MouseEvent } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useFormik } from 'formik'
 import {
   getAuth,
@@ -28,6 +29,7 @@ import DoneAllIcon from '@mui/icons-material/DoneAll'
 import {
   CostumButton,
   IRegistrationValues,
+  openReducer,
   pushDangerNotification,
   pushSuccessNotification,
   refreshReducer,
@@ -47,6 +49,7 @@ export const Registration: FC = () => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const focus = useAutoFocus()
+  const { t } = useTranslation()
 
   const formik = useFormik({
     initialValues: {
@@ -55,7 +58,7 @@ export const Registration: FC = () => {
       password: '',
       confirmPassword: '',
     },
-    validationSchema: registrationSchema,
+    validationSchema: registrationSchema(t),
     onSubmit: async (values) => {
       handleSubmit(values)
     },
@@ -70,17 +73,19 @@ export const Registration: FC = () => {
         sendEmailVerification(user)
         setSuccessAuth(true)
         dispatch(refreshReducer(false))
+        dispatch(openReducer(false))
         setTimeout(() => navigate('/'), 1000)
-        dispatch(pushSuccessNotification('Вы успешно зарегистрировались'))
+        dispatch(pushSuccessNotification(`${t('successfullyLoggedIn')}`))
       })
       .catch(() => {
         setErrorAuth(true)
-        dispatch(pushDangerNotification('Такой email уже существует'))
+        dispatch(pushDangerNotification(`${t('emailExists')}`))
       })
   }
 
   const handleClose = () => {
     setOpen(false)
+    dispatch(openReducer(false))
     navigate('/')
   }
 
@@ -96,11 +101,11 @@ export const Registration: FC = () => {
         variant="h6"
       >
         {successAuth ? (
-          <Typography color="green">Вы успешно зарегистрировались</Typography>
+          <Typography color="green">{t('successfullyLoggedIn')}</Typography>
         ) : errorAuth ? (
-          <Typography color="error">Такой email уже существует</Typography>
+          <Typography color="error">{t('emailExists')}</Typography>
         ) : (
-          'Новый аккаунт'
+          `${t('newAccount')}`
         )}
       </DialogTitle>
       <DialogContent
@@ -114,7 +119,7 @@ export const Registration: FC = () => {
       >
         <Stack direction="column" gap={'15px'} sx={{ marginBottom: '10px' }}>
           <TextField
-            label="Ваше имя"
+            label={t('yourName')}
             type="text"
             name="name"
             fullWidth
@@ -149,7 +154,7 @@ export const Registration: FC = () => {
             }
           />
           <TextField
-            label="Пароль"
+            label={t('password')}
             type={showPassword ? 'text' : 'password'}
             name="password"
             fullWidth
@@ -174,7 +179,7 @@ export const Registration: FC = () => {
             }
           />
           <TextField
-            label="Повторите пароль"
+            label={t('repeatPassword')}
             name="confirmPassword"
             type={showPassword ? 'text' : 'password'}
             fullWidth
@@ -211,7 +216,7 @@ export const Registration: FC = () => {
                 }
               />
             }
-            label="Я согласен(на) с "
+            label={t('iAgree')}
           />
           <CostumButton sx={{ fontSize: '16px', padding: '0 0 0 5px' }}>
             <Link
@@ -220,7 +225,7 @@ export const Registration: FC = () => {
               rel="noopener noreferrer"
               to="https://apps.who.int/iris/bitstream/handle/10665/260442/WHO-RHR-17.03-rus.pdf;jsessionid=9726A654112AA0D0BDA8F83C2EEE8DB1?sequence=1"
             >
-              Правилами
+              {t('rules')}
             </Link>
           </CostumButton>
         </Stack>
@@ -249,7 +254,7 @@ export const Registration: FC = () => {
             color="error"
             disabled={formik.isSubmitting}
           >
-            Отмена
+            {t('cancel')}
           </CostumButton>
           <CostumButton
             variant="contained"
@@ -257,18 +262,18 @@ export const Registration: FC = () => {
             disabled={formik.isSubmitting || !formik.dirty || !check}
             onClick={() => formik.handleSubmit()}
           >
-            Зарегистрироваться
+            {t('logIn')}
           </CostumButton>
         </Stack>
         <Stack direction="row" alignItems="center" alignSelf="flex-start">
-          <Typography variant="body1">Уже есть аккаунт?</Typography>
+          <Typography variant="body1">{t('alreadyAccount')}</Typography>
           <CostumButton
             variant="text"
             onClick={() => navigate('/login')}
             disabled={formik.isSubmitting}
             sx={{ fontSize: '16px' }}
           >
-            Войти
+            {t('signIn')}
           </CostumButton>
         </Stack>
       </DialogActions>

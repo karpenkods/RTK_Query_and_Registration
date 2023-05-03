@@ -1,58 +1,98 @@
+import { TFunction } from 'i18next'
 import * as Yup from 'yup'
 
 const passwordRules = /^[0-9a-zA-Z]+$/
 
-const name = Yup.string()
-  .required('Обязательное поле')
-  .min(2, 'Слишком короткое имя')
-  .max(200, 'Слишком длинное имя')
-
-const email = Yup.string()
-  .email('Введите корректный Email')
-  .required('Обязательное поле')
-
-const message = Yup.string()
-  .required('Обязательное поле')
-  .min(3, 'Слишком короткое сообщение')
-  .max(200, 'Слишком длинное сообщение')
-
-const oldPassword = Yup.string()
-  .required('Обязательное поле')
-  .min(6, 'Минимум 6 символов')
-  .matches(passwordRules, {
-    message: 'Только латинские буквы и(или) цифры',
+export const settingsNameSchema = (t: TFunction<'translation'>) =>
+  Yup.object().shape({
+    name: Yup.string()
+      .required(`${t('required')}`)
+      .min(2, `${t('nameShort')}`)
+      .max(200, `${t('nameLong')}`),
   })
 
-const password = Yup.string()
-  .required('Обязательное поле')
-  .min(6, 'Минимум 6 символов')
-  .matches(passwordRules, {
-    message: 'Только латинские буквы и(или) цифры',
+export const settingsRemoveSchema = (t: TFunction<'translation'>) =>
+  Yup.object().shape({
+    oldPassword: Yup.string()
+      .required(`${t('required')}`)
+      .min(6, `${t('minimumCharacters')}`)
+      .matches(passwordRules, {
+        message: `${t('lettersOnly')}`,
+      }),
   })
 
-const confirmPassword = Yup.string()
-  .oneOf([Yup.ref('password')], 'Пароли не совпадают')
-  .required('Обязательное поле')
+export const settingsEmailSchema = (t: TFunction<'translation'>) =>
+  Yup.object().shape({
+    email: Yup.string()
+      .email(`${t('validEmail')}`)
+      .required(`${t('required')}`),
+    oldPassword: Yup.string()
+      .required(`${t('required')}`)
+      .min(6, `${t('minimumCharacters')}`)
+      .matches(passwordRules, {
+        message: `${t('lettersOnly')}`,
+      }),
+  })
 
-export const settingsNameSchema = Yup.object().shape({ name })
+export const loginSchema = (t: TFunction<'translation'>) =>
+  Yup.object().shape({
+    email: Yup.string()
+      .email(`${t('validEmail')}`)
+      .required(`${t('required')}`),
+    password: Yup.string()
+      .required(`${t('required')}`)
+      .min(6, `${t('minimumCharacters')}`)
+      .matches(passwordRules, {
+        message: `${t('lettersOnly')}`,
+      }),
+  })
 
-export const settingsRemoveSchema = Yup.object().shape({ oldPassword })
+export const newPasswordSchema = (t: TFunction<'translation'>) =>
+  Yup.object().shape({
+    email: Yup.string()
+      .email(`${t('validEmail')}`)
+      .required(`${t('required')}`),
+    message: Yup.string()
+      .required(`${t('required')}`)
+      .min(3, `${t('messageShort')}`)
+      .max(200, `${t('messageLong')}`),
+  })
 
-export const settingsEmailSchema = Yup.object().shape({ email, oldPassword })
+export const registrationSchema = (t: TFunction<'translation'>) =>
+  Yup.object().shape({
+    name: Yup.string()
+      .required(`${t('required')}`)
+      .min(2, `${t('nameShort')}`)
+      .max(200, `${t('nameLong')}`),
+    email: Yup.string()
+      .email(`${t('validEmail')}`)
+      .required(`${t('required')}`),
+    password: Yup.string()
+      .required(`${t('required')}`)
+      .min(6, `${t('minimumCharacters')}`)
+      .matches(passwordRules, {
+        message: `${t('lettersOnly')}`,
+      }),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref('password')], `${t('passwordMismatch')}`)
+      .required(`${t('required')}`),
+  })
 
-export const loginSchema = Yup.object().shape({ email, password })
-
-export const newPasswordSchema = Yup.object().shape({ email, message })
-
-export const registrationSchema = Yup.object().shape({
-  name,
-  email,
-  password,
-  confirmPassword,
-})
-
-export const settingsPasswordSchema = Yup.object().shape({
-  oldPassword,
-  password,
-  confirmPassword,
-})
+export const settingsPasswordSchema = (t: TFunction<'translation'>) =>
+  Yup.object().shape({
+    oldPassword: Yup.string()
+      .required(`${t('required')}`)
+      .min(6, `${t('minimumCharacters')}`)
+      .matches(passwordRules, {
+        message: `${t('lettersOnly')}`,
+      }),
+    password: Yup.string()
+      .required(`${t('required')}`)
+      .min(6, `${t('minimumCharacters')}`)
+      .matches(passwordRules, {
+        message: `${t('lettersOnly')}`,
+      }),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref('password')], `${t('passwordMismatch')}`)
+      .required(`${t('required')}`),
+  })

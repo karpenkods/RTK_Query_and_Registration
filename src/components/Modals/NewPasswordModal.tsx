@@ -1,5 +1,6 @@
 import { FC, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { getAuth, signInAnonymously } from 'firebase/auth'
 import { useFormik } from 'formik'
 import { send } from 'emailjs-com'
@@ -41,13 +42,14 @@ export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
   const focus = useFocus(showContent)
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
+  const { t } = useTranslation()
 
   const formik = useFormik({
     initialValues: {
       email: auth.currentUser?.email ?? '',
-      message: 'Сбросить пароль в приложении Queries',
+      message: `${t('resetPassword')}`,
     },
-    validationSchema: newPasswordSchema,
+    validationSchema: newPasswordSchema(t),
     onSubmit: async (values: INewPasswordValues) => {
       onSendEmail(values)
     },
@@ -63,11 +65,11 @@ export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
     signInAnonymously(auth)
       .then(() => {
         goodAuth()
-        dispatch(pushSuccessNotification('Вы вошли как анонимный пользователь'))
+        dispatch(pushSuccessNotification(`${t('loggedAnonymousUser')}`))
       })
       .catch(() => {
         setDisabledButton(false)
-        dispatch(pushDangerNotification('Ошибка, проверьте подключение к сети'))
+        dispatch(pushDangerNotification(`${t('checkNetworkConnection')}`))
       })
   }
 
@@ -85,17 +87,13 @@ export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
         .then(() => {
           onOpen(false)
           goodAuth()
-          dispatch(
-            pushInfoNotification(
-              'Сообщение отправлено. На Вашу почту придёт письмо с инструкцией по смене пароля',
-            ),
-          )
+          dispatch(pushInfoNotification(`${t('messageSent')}`))
         })
         .catch(() => {
-          dispatch(pushDangerNotification('Ошибка, попробуйте позднее'))
+          dispatch(pushDangerNotification(`${t('errorTryLater')}`))
         })
     } else {
-      dispatch(pushDangerNotification('Введите свой Email'))
+      dispatch(pushDangerNotification(`${t('enterEmail')}`))
     }
   }
 
@@ -116,7 +114,7 @@ export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
         <CloseIcon style={{ width: '30px', height: '30px' }} />
       </IconButton>
       <DialogTitle sx={{ padding: '0 24px 0 24px', alignSelf: 'center' }}>
-        Сброс пароля
+        {t('passwordReset')}
       </DialogTitle>
       <DialogContent
         sx={{
@@ -130,15 +128,12 @@ export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
         }}
       >
         <Typography variant="body1" sx={{ marginBottom: '20px' }}>
-          Если Вы не помните пароль, отправьте сообщение администратору. На Вашу
-          почту придёт письмо с инструкцией по смене пароля. Вы можете временно
-          войти в приложение как анонимный пользователь (некоторые функции будут
-          ограничены) или зарегистрироваться.
+          {t('instructionsToChangePassword')}
         </Typography>
         {showContent && (
           <Stack direction="column" gap={'15px'} sx={{ marginTop: '10px' }}>
             <TextField
-              label="Почта"
+              label="Email"
               type="email"
               name="email"
               fullWidth
@@ -156,12 +151,12 @@ export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
                 formik.errors.email && formik.touched.email
                   ? formik.errors.email
                   : formik.values.email !== auth.currentUser?.email
-                  ? 'Введите свой Email'
+                  ? `${t('enterEmail')}`
                   : ' '
               }
             />
             <TextField
-              label="Сообщение администратору"
+              label={`${t('messageToAdministrator')}`}
               type="text"
               name="message"
               fullWidth
@@ -188,7 +183,7 @@ export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
                 variant="contained"
                 color="error"
               >
-                Не хочу
+                {t('notWant')}
               </CostumButton>
               <CostumButton
                 variant="contained"
@@ -196,7 +191,7 @@ export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
                 disabled={formik.isSubmitting}
                 onClick={() => formik.handleSubmit()}
               >
-                Отправить
+                {t('send')}
               </CostumButton>
             </Stack>
           </Stack>
@@ -207,6 +202,9 @@ export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
           display: 'flex',
           flexDirection: 'column',
           padding: '20px 20px 10px 20px',
+          '&.MuiDialogActions-root>:not(:first-of-type)': {
+            marginLeft: 0,
+          },
         }}
       >
         <Stack
@@ -221,7 +219,7 @@ export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
             color="info"
             sx={{ color: 'white' }}
           >
-            Регистрация
+            {t('logIn')}
           </CostumButton>
           <CostumButton
             variant="contained"
@@ -231,7 +229,7 @@ export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
               setShowContent(true)
             }}
           >
-            Сообщение администратору
+            {t('messageToAdministrator')}
           </CostumButton>
         </Stack>
         <Stack
@@ -245,7 +243,7 @@ export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
             variant="contained"
             color="error"
           >
-            Назад
+            {t('back')}
           </CostumButton>
           <CostumButton
             variant="contained"
@@ -253,7 +251,7 @@ export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
             disabled={showContent || diasbledButton}
             onClick={handleSubmitAnonymous}
           >
-            Войти как анонимный пользователь
+            {t('loginAnonymous')}
           </CostumButton>
         </Stack>
       </DialogActions>
