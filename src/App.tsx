@@ -5,7 +5,7 @@ import {
   HomePage,
   LoginPage,
   PostPage,
-  RTKPage,
+  PostsPage,
   RegistrationPage,
   ServiceUnablePage,
 } from './pages'
@@ -43,7 +43,7 @@ function App() {
         <CssBaseline />
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="rtk-query" element={<RTKPage />} />
+          <Route path="posts" element={<PostsPage />} />
           <Route path="post/:id" element={<PostPage />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="registration" element={<RegistrationPage />} />

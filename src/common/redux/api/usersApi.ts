@@ -6,18 +6,24 @@ export const usersApi = createApi({
   reducerPath: 'usersApi',
   tagTypes: ['Users'],
   baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:5000',
+    baseUrl: 'https://dummyapi.io/data/v1/',
+    headers: { 'app-id': '6455b2b4bf5df73924396aeb' },
   }),
 
   endpoints: (build) => ({
-    getUsers: build.query<IUser[], string>({
-      query: () => ({ url: '/users' }),
+    getUsers: build.query<IUser[], number>({
+      query: (debounceLimit) => ({
+        url: '/user',
+        params: {
+          limit: debounceLimit,
+        },
+      }),
       providesTags: ['Users'],
     }),
 
     createUsers: build.mutation<string, IUser>({
       query: (body) => ({
-        url: '/users',
+        url: '/user',
         method: 'POST',
         body,
       }),

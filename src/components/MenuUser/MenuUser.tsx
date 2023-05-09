@@ -46,13 +46,13 @@ export const MenuUser: FC = () => {
   const handleSignOut = () => {
     signOut(auth)
       .then(() => {
-        dispatch(pushInfoNotification('Вы вышли из аккаунта'))
+        dispatch(pushInfoNotification(`${t('loggedOut')}`))
         dispatch(openReducer(false))
         dispatch(refreshReducer(false))
         navigate('/')
       })
       .catch(() => {
-        dispatch(pushDangerNotification('Ошибка сети, попробуйте позднее'))
+        dispatch(pushDangerNotification(`${t('errorTryLater')}`))
       })
   }
 
@@ -74,7 +74,7 @@ export const MenuUser: FC = () => {
           },
         }}
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-        anchorOrigin={{ horizontal: 'right', vertical: 66 }}
+        anchorOrigin={{ horizontal: 'right', vertical: 68 }}
       >
         {currentUser && (
           <Stack

@@ -55,16 +55,12 @@ export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
     },
   })
 
-  const goodAuth = () => {
-    dispatch(refreshReducer(false))
-    setTimeout(() => navigate('/'), 1000)
-  }
-
   const handleSubmitAnonymous = () => {
     setDisabledButton(true)
     signInAnonymously(auth)
       .then(() => {
-        goodAuth()
+        dispatch(refreshReducer(false))
+        setTimeout(() => navigate('/login'), 1000)
         dispatch(pushSuccessNotification(`${t('loggedAnonymousUser')}`))
       })
       .catch(() => {
@@ -86,7 +82,8 @@ export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
       )
         .then(() => {
           onOpen(false)
-          goodAuth()
+          dispatch(refreshReducer(false))
+          setTimeout(() => navigate('/'), 1000)
           dispatch(pushInfoNotification(`${t('messageSent')}`))
         })
         .catch(() => {

@@ -1,21 +1,33 @@
-import { IUser } from './user'
-
+export interface IPosts {
+  data?: IPost[]
+  limit?: number
+  page?: number
+  total?: number
+}
 export interface IPost {
-  userId?: number
-  id?: number
-  title?: string
-  body?: string
+  id?: string
+  image?: string
+  likes?: number
+  tags?: string[]
+  text?: string
+  publishDate?: string
+  owner?: OwnerPost
 }
 
-export interface IPostsProps {
-  isLoading: boolean
-  posts?: IPost[]
-  users?: IUser[]
-  errorPosts?: boolean
-  errorUsers?: boolean
+interface OwnerPost {
+  id: string
+  title: string
+  firstName: string
+  lastName: string
+  picture: string
 }
+
 export interface IPostProps {
-  getNumber: (value: number) => void
+  post?: IPost
+  getNumber?: (value: number) => void
+  onClickChip?: (value: string) => void
+  onShow?: (value: boolean) => void
+  searchText?: string
 }
 
 export interface IPostCardProps {

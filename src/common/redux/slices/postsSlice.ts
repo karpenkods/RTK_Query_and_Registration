@@ -6,7 +6,7 @@ const initialState: IPostsState = {
   createPost: false,
   deletePost: false,
   postId: 0,
-  limit: 100,
+  limit: 12,
 }
 
 const postsSlice = createSlice({

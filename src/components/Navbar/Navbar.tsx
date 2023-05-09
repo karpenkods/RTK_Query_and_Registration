@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { useTranslation } from 'react-i18next'
 
@@ -51,6 +51,7 @@ export const Navbar: FC = () => {
   const auth = getAuth()
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
+  const location = useLocation()
   const dispatch = useAppDispatch()
   const darkTheme = useAppSelector((store) => store.theme.theme) === 'dark'
   const color = darkTheme ? grey[100] : grey[800]
@@ -83,15 +84,43 @@ export const Navbar: FC = () => {
             alignItems: 'center',
           }}
         >
+          <Typography
+            variant="h3"
+            sx={{ fontFamily: 'marckScript !important', cursor: 'pointer' }}
+            onClick={() => navigate('/')}
+          >
+            QUERIES
+          </Typography>
+          <Typography
+            variant="h2"
+            color="tomato"
+            sx={{ alignSelf: 'center', fontFamily: 'marckScript !important' }}
+          >
+            {location.pathname.includes('posts')
+              ? 'Посты'
+              : location.pathname.includes('post')
+              ? 'Пост_'
+              : 'Карпенко Д.С.'}
+          </Typography>
           <Stack
             direction="row"
             justifyContent="space-between"
             alignItems="center"
           >
+            {!showAvatar ? (
+              <Skeleton
+                animation="wave"
+                variant="circular"
+                width={55}
+                height={55}
+              />
+            ) : (
+              <AvatarUser fontSize={'150%'} />
+            )}
             <IconButton
               onClick={handleDrawerShow}
               sx={{
-                margin: '8px 20px 8px 0px',
+                margin: '8px 0px 8px 15px',
                 ...(open && { display: 'none' }),
               }}
             >
@@ -101,32 +130,16 @@ export const Navbar: FC = () => {
                 <MenuIcon style={{ width: '30px', height: '30px' }} />
               )}
             </IconButton>
-            <Typography
-              variant="h3"
-              sx={{ fontFamily: 'marckScript !important' }}
-            >
-              QUERIES
-            </Typography>
+            <MenuUser />
           </Stack>
-          {!showAvatar ? (
-            <Skeleton
-              animation="wave"
-              variant="circular"
-              width={55}
-              height={55}
-            />
-          ) : (
-            <AvatarUser fontSize={'150%'} />
-          )}
-          <MenuUser />
         </Toolbar>
       </AppBar>
       {(show || open) && (
-        <Drawer variant="permanent" open={open}>
+        <Drawer variant="permanent" anchor="right" open={open}>
           <DrawerHeader>
             <CostumButton
               style={{
-                marginTop: 15,
+                margin: '10px 0 0 -6px',
                 color: color,
                 fontSize: 18,
               }}
@@ -172,7 +185,7 @@ export const Navbar: FC = () => {
             <ListItem disablePadding sx={{ display: 'block' }}>
               <ListItemButton
                 disabled={!auth.currentUser}
-                onClick={() => navigate('/rtk-query')}
+                onClick={() => navigate('/posts')}
                 sx={{
                   minHeight: 48,
                   justifyContent: open ? 'initial' : 'center',
@@ -318,7 +331,7 @@ export const Navbar: FC = () => {
                     justifyContent: 'center',
                   }}
                 >
-                  {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+                  {open ? <ChevronRightIcon /> : <ChevronLeftIcon />}
                 </ListItemIcon>
                 <ListItemText
                   sx={{

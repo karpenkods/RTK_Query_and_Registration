@@ -35,6 +35,7 @@ import {
   refreshReducer,
   registrationSchema,
   useAppDispatch,
+  useAppSelector,
   useAutoFocus,
 } from '../../common'
 
@@ -50,6 +51,7 @@ export const Registration: FC = () => {
   const navigate = useNavigate()
   const focus = useAutoFocus()
   const { t } = useTranslation()
+  const pathName = useAppSelector((store) => store.menu.pathName)
 
   const formik = useFormik({
     initialValues: {
@@ -70,7 +72,10 @@ export const Registration: FC = () => {
         updateProfile(user, {
           displayName: values.name,
         })
-        sendEmailVerification(user)
+        sendEmailVerification(user, {
+          handleCodeInApp: true,
+          url: 'http://localhost:3000/',
+        })
         setSuccessAuth(true)
         dispatch(refreshReducer(false))
         dispatch(openReducer(false))
@@ -86,7 +91,7 @@ export const Registration: FC = () => {
   const handleClose = () => {
     setOpen(false)
     dispatch(openReducer(false))
-    navigate('/')
+    navigate(pathName)
   }
 
   const handleClickShowPassword = (event: MouseEvent<HTMLButtonElement>) => {

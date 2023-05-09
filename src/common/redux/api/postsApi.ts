@@ -1,29 +1,59 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
-import { IPost } from '../../models'
+import { IPost, IPosts } from '../../models'
 
 export const postsApi = createApi({
   reducerPath: 'postsApi',
   tagTypes: ['Posts', 'Post'],
   baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:5000',
+    baseUrl: 'https://dummyapi.io/data/v1/',
+    headers: { 'app-id': '6455b2b4bf5df73924396aeb' },
   }),
 
   endpoints: (build) => ({
-    getPosts: build.query<IPost[], number>({
-      query: (debounceLimit) => ({
-        url: '/posts',
+    getPosts: build.query<
+      IPosts,
+      { page: number; debounceLimitNumber: number }
+    >({
+      query: ({ page, debounceLimitNumber }) => ({
+        url: '/post',
         params: {
-          _limit: debounceLimit,
+          page: page,
+          limit: debounceLimitNumber,
+        },
+      }),
+      providesTags: ['Posts'],
+    }),
+
+    getPostsTags: build.query<
+      IPosts,
+      { tagId: string; page: number; debounceLimitNumber: number }
+    >({
+      query: ({ tagId, page, debounceLimitNumber }) => ({
+        url: `/tag/${tagId}/post`,
+        params: {
+          page: page,
+          limit: debounceLimitNumber,
         },
       }),
       providesTags: ['Posts'],
     }),
 
     getPost: build.query<IPost, number>({
-      query: (id) => ({ url: `/posts/${id}` }),
+      query: (id) => ({ url: `/posts/:${id}` }),
       providesTags: ['Post'],
     }),
+
+    updatePost: build.mutation<IPost, IPost>({
+      query: ({ id, ...body }) => ({
+        url: `/post/${id}`,
+        method: 'PUT',
+        body,
+      }),
+      invalidatesTags: () => ['Posts'],
+    }),
+
+    // ____________________________________________________________
 
     createPost: build.mutation<IPost, IPost>({
       query: (body) => ({
@@ -41,22 +71,14 @@ export const postsApi = createApi({
       }),
       invalidatesTags: () => ['Posts'],
     }),
-
-    putPost: build.mutation<IPost, IPost>({
-      query: ({ id, ...body }) => ({
-        url: `/posts/${id}`,
-        method: 'PUT',
-        body,
-      }),
-      invalidatesTags: () => ['Post'],
-    }),
   }),
 })
 
 export const {
   useGetPostsQuery,
+  useLazyGetPostsTagsQuery,
   useGetPostQuery,
+  useUpdatePostMutation,
   useCreatePostMutation,
   useDeletePostMutation,
-  usePutPostMutation,
 } = postsApi

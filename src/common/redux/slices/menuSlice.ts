@@ -4,6 +4,7 @@ import { IMenuState } from '../../models/redux'
 const initialState: IMenuState = {
   open: false,
   refresh: false,
+  pathName: '',
 }
 
 const menuSlice = createSlice({
@@ -16,9 +17,13 @@ const menuSlice = createSlice({
     refreshReducer(state, action) {
       state.refresh = action.payload
     },
+    pathNameReducer(state, action) {
+      state.pathName = action.payload
+    },
   },
 })
 
-export const { openReducer, refreshReducer } = menuSlice.actions
+export const { openReducer, refreshReducer, pathNameReducer } =
+  menuSlice.actions
 
 export default menuSlice.reducer

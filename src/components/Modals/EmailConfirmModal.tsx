@@ -1,5 +1,4 @@
-import { FC, forwardRef, ReactElement, Ref } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { FC, forwardRef, ReactElement, Ref, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { deleteUser, getAuth } from 'firebase/auth'
 
@@ -17,7 +16,6 @@ import {
   CostumButton,
   pushDangerNotification,
   pushInfoNotification,
-  refreshReducer,
   useAppDispatch,
 } from '../../common'
 
@@ -31,18 +29,16 @@ const Transition = forwardRef(function Transition(
 })
 
 export const EmailConfirmModal: FC = () => {
+  const [openModal, setOpenModal] = useState(true)
   const auth = getAuth()
   const currentUser = auth.currentUser
   const dispatch = useAppDispatch()
-  const navigate = useNavigate()
   const { t } = useTranslation()
 
   const handleDeleteUser = () => {
     if (currentUser) {
       deleteUser(currentUser)
         .then(() => {
-          dispatch(refreshReducer(false))
-          navigate('/')
           dispatch(pushInfoNotification(`${t('userDeleted')}`))
         })
         .catch(() => {
@@ -52,8 +48,15 @@ export const EmailConfirmModal: FC = () => {
     }
   }
 
+  const handleConfirmUser = () => {
+    if (currentUser?.emailVerified) {
+      dispatch(pushInfoNotification(`${t('confirmUser')}`))
+      setOpenModal(false)
+    } else dispatch(pushDangerNotification(`${t('confirmNotUser')}`))
+  }
+
   return (
-    <Dialog open={true} TransitionComponent={Transition} keepMounted>
+    <Dialog open={openModal} TransitionComponent={Transition} keepMounted>
       <DialogTitle
         sx={{ padding: '20px 0', alignSelf: 'center', fontSize: '24px' }}
       >
@@ -84,10 +87,7 @@ export const EmailConfirmModal: FC = () => {
           {t('notWant')}
         </CostumButton>
         <CostumButton
-          onClick={() => {
-            dispatch(refreshReducer(false))
-            navigate('/')
-          }}
+          onClick={handleConfirmUser}
           variant="contained"
           color="success"
           size="large"

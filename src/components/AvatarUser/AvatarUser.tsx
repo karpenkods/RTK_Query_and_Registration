@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { getAuth } from 'firebase/auth'
 
 import { Avatar, IconButton } from '@mui/material'
@@ -12,6 +12,7 @@ import {
   IAvatarProps,
   openReducer,
   refreshReducer,
+  pathNameReducer,
 } from '../../common'
 
 export const AvatarUser: FC<IAvatarProps> = ({ fontSize }) => {
@@ -21,11 +22,13 @@ export const AvatarUser: FC<IAvatarProps> = ({ fontSize }) => {
     user?.displayName ? user.displayName : `${t('anonymousUserAvatar')}`,
   )
   const navigate = useNavigate()
+  const loaction = useLocation()
   const dispatch = useAppDispatch()
 
   const handleClick = () => {
     dispatch(openReducer(true))
     dispatch(refreshReducer(true))
+    dispatch(pathNameReducer(loaction.pathname))
   }
 
   return user ? (
@@ -56,7 +59,9 @@ export const AvatarUser: FC<IAvatarProps> = ({ fontSize }) => {
     <CostumButton
       variant="contained"
       color="error"
-      onClick={() => navigate('/login')}
+      onClick={() => {
+        navigate('/login'), dispatch(pathNameReducer('/'))
+      }}
     >
       {t('signIn')}
     </CostumButton>

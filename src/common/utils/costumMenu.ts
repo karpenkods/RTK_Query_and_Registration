@@ -6,7 +6,7 @@ const drawerWidth = 250
 
 const openedMixin = (theme: Theme): CSSObject => ({
   width: drawerWidth,
-  borderEndEndRadius: 10,
+  borderEndStartRadius: 10,
   height: 'fit-content',
   transition: theme.transitions.create('width', {
     easing: theme.transitions.easing.sharp,
@@ -21,7 +21,7 @@ const closedMixin = (theme: Theme): CSSObject => ({
     duration: theme.transitions.duration.leavingScreen,
   }),
   overflowX: 'hidden',
-  borderEndEndRadius: 10,
+  borderEndStartRadius: 10,
   width: `calc(${theme.spacing(7)} + 1px)`,
   height: 'fit-content',
   [theme.breakpoints.up('sm')]: {
@@ -51,7 +51,7 @@ export const AppBar = styled(MuiAppBar, {
     duration: theme.transitions.duration.leavingScreen,
   }),
   ...(open && {
-    marginLeft: drawerWidth,
+    marginRight: drawerWidth,
     width: `calc(100% - ${drawerWidth}px)`,
     height: 'fit-content',
     transition: theme.transitions.create(['width', 'margin'], {

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { Layout, Post } from '../components'
+import { Layout, PostCard } from '../components'
 
 export function PostPage() {
   const [number, setNumber] = useState(0)
@@ -14,7 +14,7 @@ export function PostPage() {
       title={`${t('post')}${number === 0 ? '' : number}`}
       description={t('post')}
     >
-      <Post getNumber={setNumber} />
+      <PostCard getNumber={setNumber} />
     </Layout>
   )
 }

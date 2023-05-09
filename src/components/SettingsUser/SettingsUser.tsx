@@ -25,6 +25,7 @@ import {
   IPropsSettings,
   refreshReducer,
   useAppDispatch,
+  useAppSelector,
 } from '../../common'
 
 const Transition = forwardRef(function Transition(
@@ -45,6 +46,7 @@ export const SettingsUser: FC<IPropsSettings> = ({
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
+  const pathName = useAppSelector((store) => store.menu.pathName)
 
   const handleMenuItemClick = (index: number) => {
     setSelectedIndex(index)
@@ -102,7 +104,9 @@ export const SettingsUser: FC<IPropsSettings> = ({
         />
         <div style={{ width: '60vw', height: '60vh', padding: '20px' }}>
           {selectedIndex === 0 && <SettingAvatarAndName />}
-          {selectedIndex === 1 && <SettingEmailAndPassword />}
+          {selectedIndex === 1 && (
+            <SettingEmailAndPassword onChange={onChange} />
+          )}
           {selectedIndex === 2 && <SettingRemoveAccount />}
         </div>
       </DialogContent>
@@ -113,7 +117,7 @@ export const SettingsUser: FC<IPropsSettings> = ({
       >
         <CostumButton
           onClick={() => {
-            handleClose(), navigate('/'), dispatch(refreshReducer(false))
+            handleClose(), navigate(pathName), dispatch(refreshReducer(false))
           }}
           variant="contained"
           color="error"

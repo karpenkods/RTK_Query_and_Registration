@@ -25,7 +25,11 @@ export interface ISnackbar {
 export interface IMenuState {
   open: boolean
   refresh: boolean
+  pathName: string
 }
 export interface IThemeState {
   theme: string
+}
+export interface ILikeState {
+  like: string[]
 }

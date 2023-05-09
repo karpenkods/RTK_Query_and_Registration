@@ -8,7 +8,6 @@ import {
   updatePassword,
 } from 'firebase/auth'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
 import { useFormik } from 'formik'
 
 import {
@@ -27,6 +26,7 @@ import {
   CostumButton,
   IChangeEmailValues,
   IChangePasswordValues,
+  IPropsChangeEmail,
   closeFunction,
   pushDangerNotification,
   pushSuccessNotification,
@@ -38,7 +38,9 @@ import {
   useFocus,
 } from '../../common'
 
-export const SettingEmailAndPassword: FC = () => {
+export const SettingEmailAndPassword: FC<IPropsChangeEmail> = ({
+  onChange,
+}) => {
   const [showInput, setShowInput] = useState(false)
   const [showPasswordInput, setShowPasswordInput] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
@@ -50,7 +52,6 @@ export const SettingEmailAndPassword: FC = () => {
   const darkTheme = useAppSelector((store) => store.theme.theme) === 'dark'
   const refresh = useAppSelector((store) => store.menu.refresh)
   const dispatch = useAppDispatch()
-  const navigate = useNavigate()
   const { t } = useTranslation()
 
   const formikEmail = useFormik({
@@ -83,12 +84,15 @@ export const SettingEmailAndPassword: FC = () => {
         EmailAuthProvider.credential(user.email, values.oldPassword),
       )
         .then(() => {
-          updateEmail(user, values.oldPassword)
+          updateEmail(user, values.email)
             .then(() => {
               dispatch(pushSuccessNotification(`${t('emailChanged')}`))
-              sendEmailVerification(user)
+              onChange(false)
+              sendEmailVerification(user, {
+                handleCodeInApp: true,
+                url: 'http://localhost:3000/',
+              })
               dispatch(refreshReducer(false))
-              navigate('/')
             })
             .catch(() => {
               dispatch(pushDangerNotification(`${t('errorTryLater')}`))

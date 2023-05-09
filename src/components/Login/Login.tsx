@@ -39,6 +39,7 @@ import {
   pushSuccessNotification,
   refreshReducer,
   useAppDispatch,
+  useAppSelector,
   useAutoFocus,
 } from '../../common'
 import { NewPasswordModal } from '../Modals'
@@ -58,6 +59,7 @@ export const Login: FC = () => {
   const navigate = useNavigate()
   const focus = useAutoFocus()
   const { t } = useTranslation()
+  const pathName = useAppSelector((store) => store.menu.pathName)
 
   const providerGoogle = new GoogleAuthProvider()
   const providerGitHub = new GithubAuthProvider()
@@ -77,7 +79,7 @@ export const Login: FC = () => {
     setSuccessAuth(true)
     dispatch(refreshReducer(false))
     dispatch(openReducer(false))
-    setTimeout(() => navigate('/'), 1000)
+    setTimeout(() => navigate(pathName), 1000)
   }
 
   const handleSubmitGoogle = () => {
@@ -139,7 +141,7 @@ export const Login: FC = () => {
   const handleClose = () => {
     setOpen(false)
     dispatch(openReducer(false))
-    navigate('/')
+    navigate(pathName)
   }
 
   const handleClickShowPassword = (event: MouseEvent<HTMLButtonElement>) => {

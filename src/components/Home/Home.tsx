@@ -1,22 +1,17 @@
 import { FC, Fragment, useEffect, useState } from 'react'
 import { User, getAuth, onAuthStateChanged } from 'firebase/auth'
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
 
-import { CircularProgress, Stack, Typography } from '@mui/material'
+import { CircularProgress, Link, Stack, Typography } from '@mui/material'
 
-import { closeFunction, useAppSelector } from '../../common'
+import {
+  closeFunction,
+  pathNameReducer,
+  useAppDispatch,
+  useAppSelector,
+} from '../../common'
 import { EmailConfirmModal } from '../Modals'
-
-const linkStyle = {
-  fontSize: '24px',
-  textDecoration: 'none',
-  color: 'blue',
-  transition: '0.3s',
-  '&:hover': {
-    color: 'tomato',
-  },
-}
+import { useNavigate } from 'react-router-dom'
 
 export const Home: FC = () => {
   const [user, setUser] = useState<User | null>(null)
@@ -24,6 +19,8 @@ export const Home: FC = () => {
 
   const close = closeFunction(user ?? null)
   const auth = getAuth()
+  const navigate = useNavigate()
+  const dispatch = useAppDispatch()
   const refresh = useAppSelector((store) => store.menu.refresh)
   const { t } = useTranslation()
 
@@ -37,7 +34,16 @@ export const Home: FC = () => {
   return (
     <Fragment>
       <Stack direction="column" alignItems="center">
-        <Typography variant="h3" color="tomato" sx={{ marginBottom: '30px' }}>
+        <Typography
+          variant="h3"
+          color="tomato"
+          sx={{
+            marginBottom: '30px',
+            fontFamily: 'marckScript !important',
+            fontSize: '72px',
+            fontWeight: 500,
+          }}
+        >
           {t('titleHome')}
         </Typography>
         {loading ? (
@@ -47,35 +53,34 @@ export const Home: FC = () => {
           />
         ) : user ? (
           <Fragment>
-            <Typography
-              variant="h6"
-              color="blueviolet"
-              sx={{ margin: '0 20px' }}
-            >
+            <Typography variant="h5" sx={{ margin: '0 20px 20px 20px' }}>
               {t('welcome')}{' '}
-              <span style={{ color: 'green' }}>
+              <span style={{ color: 'tomato', fontSize: '24px' }}>
                 {user.displayName
                   ? `${user?.displayName}`
                   : `${t('anonymousUser')}`}
               </span>
             </Typography>
-            <Typography variant="h6" color="primary">
-              {t('descriptionHome_1')}
-            </Typography>
-            <Typography variant="h6" color="primary">
-              {t('descriptionHome_2')}
-            </Typography>
+            <Typography variant="h5">{t('descriptionHome_1')}</Typography>
+            <Typography variant="h5">{t('descriptionHome_2')}</Typography>
+            <Link
+              href={'/posts'}
+              underline="hover"
+              sx={{
+                marginTop: '20px',
+                color: 'tomato',
+                fontSize: '22px',
+              }}
+            >
+              {t('buttonPosts')}
+            </Link>
             {!user?.emailVerified && !close && !user.isAnonymous && (
               <EmailConfirmModal />
             )}
           </Fragment>
         ) : (
           <Fragment>
-            <Typography
-              variant="h6"
-              color="blueviolet"
-              sx={{ margin: '0 20px' }}
-            >
+            <Typography variant="h5" sx={{ margin: '0 20px' }}>
               {t('descriptionHomeNotAuth_1')}
             </Typography>
             <Stack
@@ -85,13 +90,27 @@ export const Home: FC = () => {
               gap={'20px'}
               sx={{ width: '100%', marginTop: '10px' }}
             >
-              <Link to={'/login'} style={linkStyle}>
+              <Link
+                component="button"
+                onClick={() => {
+                  navigate('/login'), dispatch(pathNameReducer('/'))
+                }}
+                underline="hover"
+                sx={{ fontSize: '24px', color: 'tomato' }}
+              >
                 {t('descriptionHomeNotAuth_2')}
               </Link>
-              <Typography variant="h6" color="blueviolet">
+              <Typography variant="h5">
                 {t('descriptionHomeNotAuth_3')}
               </Typography>
-              <Link to={'/registration'} style={linkStyle}>
+              <Link
+                component="button"
+                onClick={() => {
+                  navigate('/registration'), dispatch(pathNameReducer('/'))
+                }}
+                underline="hover"
+                sx={{ fontSize: '24px', color: 'tomato' }}
+              >
                 {t('descriptionHomeNotAuth_4')}
               </Link>
             </Stack>

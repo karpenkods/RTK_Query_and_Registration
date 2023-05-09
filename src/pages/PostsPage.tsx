@@ -1,13 +1,13 @@
 import { useTranslation } from 'react-i18next'
 
-import { Layout, RTK } from '../components'
+import { Layout, Posts } from '../components'
 
-export function RTKPage() {
+export function PostsPage() {
   const { t } = useTranslation()
 
   return (
     <Layout container withNavbar title={t('posts')} description={t('posts')}>
-      <RTK />
+      <Posts />
     </Layout>
   )
 }
