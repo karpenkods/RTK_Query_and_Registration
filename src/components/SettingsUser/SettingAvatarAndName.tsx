@@ -13,6 +13,7 @@ import { CropperModal } from '../Modals/CropperModal'
 import {
   CostumButton,
   costumAvatar,
+  openCropperReducer,
   pushDangerNotification,
   pushSuccessNotification,
   settingsNameSchema,
@@ -23,7 +24,6 @@ import {
 
 export const SettingAvatarAndName: FC = () => {
   const [showInput, setShowInput] = useState(false)
-  const [modalOpen, setModalOpen] = useState(false)
   const [disabled, setDisabled] = useState(false)
   const [showDelete, setShowDelete] = useState(false)
   const [src, setSrc] = useState<string | null>(null)
@@ -89,7 +89,7 @@ export const SettingAvatarAndName: FC = () => {
   const handleImageUpload = (e: any) => {
     if (e.target.files.length !== 0) {
       setSrc(URL.createObjectURL(e.target.files[0]))
-      setModalOpen(true)
+      dispatch(openCropperReducer(true))
     }
   }
 
@@ -123,10 +123,7 @@ export const SettingAvatarAndName: FC = () => {
             }}
           />
         )}
-        <Typography
-          variant="h5"
-          sx={{ margin: '20px 0 30px 0', textAlign: 'center' }}
-        >
+        <Typography variant="h5" margin="20px 0 30px 0" textAlign="center">
           {user?.displayName}
         </Typography>
         {showInput && (
@@ -153,7 +150,8 @@ export const SettingAvatarAndName: FC = () => {
             <Stack
               direction="row"
               justifyContent="space-between"
-              sx={{ width: '100%', marginBottom: '20px' }}
+              width="100%"
+              mb="20px"
             >
               <CostumButton
                 onClick={() => {
@@ -179,7 +177,8 @@ export const SettingAvatarAndName: FC = () => {
         <Stack
           direction="row"
           justifyContent="space-between"
-          sx={{ width: '100%', marginBottom: '25px' }}
+          width="100%"
+          mb="25px"
         >
           <Button
             variant="contained"
@@ -213,27 +212,21 @@ export const SettingAvatarAndName: FC = () => {
             {t('changeName')}
           </CostumButton>
         </Stack>
-        {!modalOpen && (
-          <CostumButton
-            variant="contained"
-            startIcon={<RemoveCircleOutlineIcon sx={{ color: 'white' }} />}
-            disabled={
-              showInput || !user?.photoURL?.length || disabled || showDelete
-            }
-            onClick={() => setShowDelete(true)}
-            color="error"
-            sx={{ alignSelf: 'flex-start', marginBottom: '30px' }}
-          >
-            {t('removeAvatar')}
-          </CostumButton>
-        )}
+        <CostumButton
+          variant="contained"
+          startIcon={<RemoveCircleOutlineIcon sx={{ color: 'white' }} />}
+          disabled={
+            showInput || !user?.photoURL?.length || disabled || showDelete
+          }
+          onClick={() => setShowDelete(true)}
+          color="error"
+          sx={{ alignSelf: 'flex-start', marginBottom: '30px' }}
+        >
+          {t('removeAvatar')}
+        </CostumButton>
         {showDelete && (
           <Fragment>
-            <Stack
-              direction="column"
-              alignItems="center"
-              sx={{ marginBottom: '20px' }}
-            >
+            <Stack direction="column" alignItems="center" mb="20px">
               <Typography variant="h5" color="error">
                 {t('areYouSure')}
               </Typography>
@@ -241,11 +234,7 @@ export const SettingAvatarAndName: FC = () => {
                 {t('actionIsIrreversible')}
               </Typography>
             </Stack>
-            <Stack
-              direction="row"
-              justifyContent="space-evenly"
-              sx={{ width: '100%' }}
-            >
+            <Stack direction="row" justifyContent="space-evenly" width="100%">
               <CostumButton
                 onClick={() => setShowDelete(false)}
                 variant="contained"
@@ -266,11 +255,7 @@ export const SettingAvatarAndName: FC = () => {
           </Fragment>
         )}
       </Stack>
-      <CropperModal
-        src={src}
-        modalOpen={modalOpen}
-        setModalOpen={setModalOpen}
-      />
+      <CropperModal src={src} />
     </Fragment>
   )
 }

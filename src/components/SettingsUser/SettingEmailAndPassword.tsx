@@ -26,7 +26,6 @@ import {
   CostumButton,
   IChangeEmailValues,
   IChangePasswordValues,
-  IPropsChangeEmail,
   closeFunction,
   pushDangerNotification,
   pushSuccessNotification,
@@ -38,9 +37,7 @@ import {
   useFocus,
 } from '../../common'
 
-export const SettingEmailAndPassword: FC<IPropsChangeEmail> = ({
-  onChange,
-}) => {
+export const SettingEmailAndPassword: FC = () => {
   const [showInput, setShowInput] = useState(false)
   const [showPasswordInput, setShowPasswordInput] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
@@ -87,7 +84,6 @@ export const SettingEmailAndPassword: FC<IPropsChangeEmail> = ({
           updateEmail(user, values.email)
             .then(() => {
               dispatch(pushSuccessNotification(`${t('emailChanged')}`))
-              onChange(false)
               sendEmailVerification(user, {
                 handleCodeInApp: true,
                 url: 'http://localhost:3000/',
@@ -156,15 +152,10 @@ export const SettingEmailAndPassword: FC<IPropsChangeEmail> = ({
       >
         {t('currentEmail')}
       </Typography>
-      <Typography variant="h6" sx={{ marginBottom: '30px' }}>
+      <Typography variant="h6" mb="30px">
         {user?.email}
       </Typography>
-      <Stack
-        direction="column"
-        alignItems="flex-end"
-        gap="30px"
-        sx={{ width: '100%' }}
-      >
+      <Stack direction="column" alignItems="flex-end" gap="30px" width="100%">
         {!showInput && (
           <CostumButton
             onClick={() => setShowInput(true)}
@@ -201,7 +192,7 @@ export const SettingEmailAndPassword: FC<IPropsChangeEmail> = ({
         )}
       </Stack>
       {showInput && (
-        <Stack direction="column" gap={'20px'} sx={{ width: '100%' }}>
+        <Stack direction="column" gap="20px" width="100%">
           <TextField
             name="email"
             size="medium"
@@ -249,11 +240,7 @@ export const SettingEmailAndPassword: FC<IPropsChangeEmail> = ({
               ),
             }}
           />
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            sx={{ width: '100%' }}
-          >
+          <Stack direction="row" justifyContent="space-between" width="100%">
             <CostumButton
               onClick={() => {
                 setShowInput(false),
@@ -278,11 +265,7 @@ export const SettingEmailAndPassword: FC<IPropsChangeEmail> = ({
         </Stack>
       )}
       {showPasswordInput && (
-        <Stack
-          direction="column"
-          gap={'15px'}
-          sx={{ width: '100%', marginTop: '30px' }}
-        >
+        <Stack direction="column" gap={'15px'} width="100%" mt="30px">
           <TextField
             label={t('currentPassword')}
             name="oldPassword"
@@ -354,11 +337,7 @@ export const SettingEmailAndPassword: FC<IPropsChangeEmail> = ({
                 : ' '
             }
           />
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            sx={{ width: '100%' }}
-          >
+          <Stack direction="row" justifyContent="space-between" width="100%">
             <CostumButton
               onClick={() => {
                 setShowPasswordInput(false),
@@ -385,7 +364,7 @@ export const SettingEmailAndPassword: FC<IPropsChangeEmail> = ({
         </Stack>
       )}
       {close && (
-        <Typography variant="h6" color="primary" sx={{ marginTop: '50px' }}>
+        <Typography variant="h6" color="primary" mt="50px">
           {t('passwordForbidden')}
         </Typography>
       )}

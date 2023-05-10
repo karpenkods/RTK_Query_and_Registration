@@ -8,14 +8,6 @@ export interface IPropsModal {
   onOpen: (value: boolean) => void
 }
 
-export interface IPropsNewPasswordModal {
-  openNewPassword: boolean
-  onOpen: (value: boolean) => void
-  onOpenLoginModal: (value: boolean) => void
-}
-
 export interface IPropsCropperModal {
   src: string | null
-  modalOpen: boolean
-  setModalOpen: (e: boolean) => void
 }

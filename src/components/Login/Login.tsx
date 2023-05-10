@@ -33,7 +33,9 @@ import {
   ILoginValues,
   closeFunction,
   loginSchema,
-  openReducer,
+  openLoginReducer,
+  openNewPasswordReducer,
+  openRegistrationReducer,
   pushDangerNotification,
   pushInfoNotification,
   pushSuccessNotification,
@@ -45,13 +47,11 @@ import {
 import { NewPasswordModal } from '../Modals'
 
 export const Login: FC = () => {
-  const [open, setOpen] = useState(true)
   const [showPassword, setShowPassword] = useState(false)
   const [successAuth, setSuccessAuth] = useState(false)
   const [errorAuth, setErrorAuth] = useState(false)
   const [errorGit, setErrortGit] = useState(false)
   const [disabledGit, setDisabledGit] = useState(false)
-  const [openNewPassword, setOpenNewPassword] = useState(false)
 
   const auth = getAuth()
   const close = closeFunction(auth.currentUser)
@@ -60,6 +60,7 @@ export const Login: FC = () => {
   const focus = useAutoFocus()
   const { t } = useTranslation()
   const pathName = useAppSelector((store) => store.menu.pathName)
+  const openLogin = useAppSelector((store) => store.menu.openLogin)
 
   const providerGoogle = new GoogleAuthProvider()
   const providerGitHub = new GithubAuthProvider()
@@ -78,7 +79,6 @@ export const Login: FC = () => {
   const goodAuth = () => {
     setSuccessAuth(true)
     dispatch(refreshReducer(false))
-    dispatch(openReducer(false))
     setTimeout(() => navigate(pathName), 1000)
   }
 
@@ -139,8 +139,7 @@ export const Login: FC = () => {
   }
 
   const handleClose = () => {
-    setOpen(false)
-    dispatch(openReducer(false))
+    dispatch(openLoginReducer(false))
     navigate(pathName)
   }
 
@@ -151,9 +150,14 @@ export const Login: FC = () => {
 
   return (
     <>
-      <Dialog open={open} keepMounted>
+      <Dialog open={openLogin} keepMounted>
         <DialogTitle
-          sx={{ padding: '20px 24px 0 24px', textAlign: 'center' }}
+          sx={{
+            '&.MuiDialogTitle-root': {
+              padding: '20px 24px 0 24px',
+            },
+          }}
+          textAlign="center"
           variant="h6"
         >
           {successAuth ? (
@@ -169,13 +173,13 @@ export const Login: FC = () => {
         <DialogContent
           sx={{
             width: '450px',
-            padding: '20px 20px 0 20px',
+            padding: '0 20px',
             '&.MuiDialogContent-root': {
               paddingTop: '20px',
             },
           }}
         >
-          <Stack direction="column" gap={'15px'} sx={{ marginBottom: '15px' }}>
+          <Stack direction="column" gap="15px" mb="15px">
             <TextField
               label="Email"
               type="email"
@@ -220,13 +224,7 @@ export const Login: FC = () => {
               }
             />
           </Stack>
-          <Stack
-            direction="row"
-            alignItems="center"
-            sx={{
-              marginBottom: '25px',
-            }}
-          >
+          <Stack direction="row" alignItems="center" mb="25px">
             <Typography variant="h6">{t('loginWith')}</Typography>
             <IconButton
               onClick={() => {
@@ -234,9 +232,9 @@ export const Login: FC = () => {
               }}
               disabled={disabledGit || formik.isSubmitting}
               color="info"
-              style={{ margin: '0 7px 0 10px' }}
+              sx={{ margin: '0 7px' }}
             >
-              <GoogleIcon style={{ width: '30px', height: '30px' }} />
+              <GoogleIcon sx={{ width: '30px', height: '30px' }} />
             </IconButton>
             <IconButton
               onClick={() => {
@@ -245,7 +243,7 @@ export const Login: FC = () => {
               disabled={disabledGit || formik.isSubmitting}
               color="inherit"
             >
-              <GitHubIcon style={{ width: '30px', height: '30px' }} />
+              <GitHubIcon sx={{ width: '30px', height: '30px' }} />
             </IconButton>
           </Stack>
           <Tooltip title={t('featuresLimited')} placement="right">
@@ -279,10 +277,8 @@ export const Login: FC = () => {
           <Stack
             direction="row"
             justifyContent="space-between"
-            sx={{
-              width: '100%',
-              marginBottom: '25px',
-            }}
+            width="100%"
+            mb="25px"
           >
             <CostumButton
               onClick={handleClose}
@@ -305,7 +301,10 @@ export const Login: FC = () => {
             <Typography variant="body1">{t('notAccount')}</Typography>
             <CostumButton
               variant="text"
-              onClick={() => navigate('/registration')}
+              onClick={() => {
+                navigate('/registration'),
+                  dispatch(openRegistrationReducer(true))
+              }}
               disabled={disabledGit || formik.isSubmitting}
               sx={{ fontSize: '16px' }}
             >
@@ -327,18 +326,15 @@ export const Login: FC = () => {
               alignSelf: 'flex-start',
             }}
             onClick={() => {
-              setOpenNewPassword(true), setOpen(false)
+              dispatch(openNewPasswordReducer(true)),
+                dispatch(openLoginReducer(false))
             }}
           >
             {t('forgotPassword')}
           </CostumButton>
         </DialogActions>
       </Dialog>
-      <NewPasswordModal
-        openNewPassword={openNewPassword}
-        onOpen={setOpenNewPassword}
-        onOpenLoginModal={setOpen}
-      />
+      <NewPasswordModal />
     </>
   )
 }

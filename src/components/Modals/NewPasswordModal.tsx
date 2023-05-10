@@ -20,21 +20,19 @@ import CloseIcon from '@mui/icons-material/Close'
 import {
   CostumButton,
   INewPasswordValues,
-  IPropsNewPasswordModal,
   newPasswordSchema,
+  openLoginReducer,
+  openNewPasswordReducer,
   pushDangerNotification,
   pushInfoNotification,
   pushSuccessNotification,
   refreshReducer,
   useAppDispatch,
+  useAppSelector,
   useFocus,
 } from '../../common'
 
-export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
-  openNewPassword,
-  onOpen,
-  onOpenLoginModal,
-}) => {
+export const NewPasswordModal: FC = () => {
   const [showContent, setShowContent] = useState(false)
   const [diasbledButton, setDisabledButton] = useState(false)
 
@@ -43,6 +41,7 @@ export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
+  const openNewPassword = useAppSelector((store) => store.menu.openNewPassword)
 
   const formik = useFormik({
     initialValues: {
@@ -81,7 +80,7 @@ export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
         process.env.REACT_APP_USER_ID,
       )
         .then(() => {
-          onOpen(false)
+          dispatch(openNewPasswordReducer(false))
           dispatch(refreshReducer(false))
           setTimeout(() => navigate('/'), 1000)
           dispatch(pushInfoNotification(`${t('messageSent')}`))
@@ -95,8 +94,8 @@ export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
   }
 
   const handleClose = () => {
-    onOpen(false)
-    onOpenLoginModal(true)
+    dispatch(openNewPasswordReducer(false))
+    dispatch(openLoginReducer(true))
     setShowContent(false)
     formik.resetForm()
   }
@@ -110,7 +109,7 @@ export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
       >
         <CloseIcon style={{ width: '30px', height: '30px' }} />
       </IconButton>
-      <DialogTitle sx={{ padding: '0 24px 0 24px', alignSelf: 'center' }}>
+      <DialogTitle padding="0 24px 0 24px" alignSelf="center">
         {t('passwordReset')}
       </DialogTitle>
       <DialogContent
@@ -128,7 +127,7 @@ export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
           {t('instructionsToChangePassword')}
         </Typography>
         {showContent && (
-          <Stack direction="column" gap={'15px'} sx={{ marginTop: '10px' }}>
+          <Stack direction="column" gap="15px" mt="10px">
             <TextField
               label="Email"
               type="email"
@@ -207,7 +206,8 @@ export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
         <Stack
           direction="row"
           justifyContent="space-between"
-          sx={{ width: '100%', marginBottom: '20px' }}
+          width="100%"
+          mb="20px"
         >
           <CostumButton
             onClick={() => navigate('/registration')}
@@ -232,7 +232,8 @@ export const NewPasswordModal: FC<IPropsNewPasswordModal> = ({
         <Stack
           direction="row"
           justifyContent="space-between"
-          sx={{ width: '100%', margin: '0 0 10px 0' }}
+          width="100%"
+          margin="0 0 10px 0"
         >
           <CostumButton
             onClick={handleClose}

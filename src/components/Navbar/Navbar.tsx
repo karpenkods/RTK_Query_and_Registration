@@ -1,5 +1,5 @@
-import { FC, useEffect, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { FC, Fragment, useEffect, useState } from 'react'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { useTranslation } from 'react-i18next'
 
@@ -28,10 +28,9 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import PagesIcon from '@mui/icons-material/Pages'
 import { grey } from '@mui/material/colors'
 
-import { MenuUser } from '../MenuUser/MenuUser'
-import { AvatarUser } from '../AvatarUser/AvatarUser'
 import ukImage from '../../assets/uk.png'
 import ruImage from '../../assets/ru.png'
+import '../../assets/fonts/fonts.scss'
 import {
   AppBar,
   CostumButton,
@@ -41,12 +40,14 @@ import {
   useAppDispatch,
   useAppSelector,
 } from '../../common'
-import '../../assets/fonts/fonts.scss'
+import { AvatarUser } from '../AvatarUser/AvatarUser'
+import { MenuUser } from '../MenuUser'
 
 export const Navbar: FC = () => {
   const [open, setOpen] = useState(false)
   const [show, setShow] = useState(false)
   const [showAvatar, setShowAvatar] = useState(false)
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
   const auth = getAuth()
   const { t, i18n } = useTranslation()
@@ -86,7 +87,8 @@ export const Navbar: FC = () => {
         >
           <Typography
             variant="h3"
-            sx={{ fontFamily: 'marckScript !important', cursor: 'pointer' }}
+            fontFamily="marckScript !important"
+            sx={{ cursor: 'pointer' }}
             onClick={() => navigate('/')}
           >
             QUERIES
@@ -94,7 +96,8 @@ export const Navbar: FC = () => {
           <Typography
             variant="h2"
             color="tomato"
-            sx={{ alignSelf: 'center', fontFamily: 'marckScript !important' }}
+            alignSelf="center"
+            fontFamily="marckScript !important"
           >
             {location.pathname.includes('posts')
               ? 'Посты'
@@ -115,7 +118,10 @@ export const Navbar: FC = () => {
                 height={55}
               />
             ) : (
-              <AvatarUser fontSize={'150%'} />
+              <Fragment>
+                <AvatarUser fontSize={'150%'} changeAnchorEl={setAnchorEl} />
+                <MenuUser anchorEl={anchorEl} changeAnchorEl={setAnchorEl} />
+              </Fragment>
             )}
             <IconButton
               onClick={handleDrawerShow}
@@ -125,12 +131,11 @@ export const Navbar: FC = () => {
               }}
             >
               {show ? (
-                <CloseIcon style={{ width: '30px', height: '30px' }} />
+                <CloseIcon sx={{ width: '30px', height: '30px' }} />
               ) : (
-                <MenuIcon style={{ width: '30px', height: '30px' }} />
+                <MenuIcon sx={{ width: '30px', height: '30px' }} />
               )}
             </IconButton>
-            <MenuUser />
           </Stack>
         </Toolbar>
       </AppBar>
@@ -138,7 +143,7 @@ export const Navbar: FC = () => {
         <Drawer variant="permanent" anchor="right" open={open}>
           <DrawerHeader>
             <CostumButton
-              style={{
+              sx={{
                 margin: '10px 0 0 -6px',
                 color: color,
                 fontSize: 18,
@@ -148,39 +153,52 @@ export const Navbar: FC = () => {
                 handleDrawerShow()
               }}
             >
-              <CloseIcon style={{ marginRight: 10 }} />
+              <CloseIcon sx={{ marginRight: '10px' }} />
               {t('close')}
             </CostumButton>
           </DrawerHeader>
           <List>
             <ListItem disablePadding sx={{ display: 'block' }}>
-              <Link href="/" sx={{ textDecoration: 'none' }}>
-                <ListItemButton
+              <ListItemButton
+                onClick={() => navigate('/')}
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? 'initial' : 'center',
+                  px: 2,
+                }}
+              >
+                <ListItemIcon
                   sx={{
-                    minHeight: 48,
-                    justifyContent: open ? 'initial' : 'center',
-                    px: 2,
+                    minWidth: 0,
+                    mr: open ? 3 : 'auto',
+                    justifyContent: 'center',
                   }}
                 >
-                  <ListItemIcon
+                  <HomeIcon
                     sx={{
-                      minWidth: 0,
-                      mr: open ? 3 : 'auto',
-                      justifyContent: 'center',
+                      color: location.pathname === '/' ? '#1976d2' : 'inherit',
                     }}
-                  >
-                    <HomeIcon />
-                  </ListItemIcon>
-                  <ListItemText
-                    sx={{
-                      opacity: open ? 1 : 0,
-                      color: color,
+                  />
+                </ListItemIcon>
+                <ListItemText
+                  sx={{
+                    opacity: open ? 1 : 0,
+                    color: color,
+                  }}
+                >
+                  <NavLink
+                    to="/"
+                    style={({ isActive }) => {
+                      return {
+                        textDecoration: 'none',
+                        color: isActive ? '#1976d2' : 'inherit',
+                      }
                     }}
                   >
                     {t('homePage')}
-                  </ListItemText>
-                </ListItemButton>
-              </Link>
+                  </NavLink>
+                </ListItemText>
+              </ListItemButton>
             </ListItem>
             <ListItem disablePadding sx={{ display: 'block' }}>
               <ListItemButton
@@ -199,7 +217,12 @@ export const Navbar: FC = () => {
                     justifyContent: 'center',
                   }}
                 >
-                  <PagesIcon />
+                  <PagesIcon
+                    sx={{
+                      color:
+                        location.pathname === '/posts' ? '#1976d2' : 'inherit',
+                    }}
+                  />
                 </ListItemIcon>
                 <ListItemText
                   sx={{
@@ -207,7 +230,17 @@ export const Navbar: FC = () => {
                     color: color,
                   }}
                 >
-                  {t('posts')}
+                  <NavLink
+                    to="/posts"
+                    style={({ isActive }) => {
+                      return {
+                        textDecoration: 'none',
+                        color: isActive ? '#1976d2' : 'inherit',
+                      }
+                    }}
+                  >
+                    {t('posts')}
+                  </NavLink>
                 </ListItemText>
               </ListItemButton>
             </ListItem>

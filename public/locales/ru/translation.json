@@ -11,7 +11,7 @@
   "welcome": "Добро пожаловать,",
   "titleHome": "Библиотека Redux - toolkit",
   "descriptionHome_1": "Демонстрация возможностей библиотеки.",
-  "descriptionHome_2": "Хранилище, запросы на сервер, обработка данных, local storage",
+  "descriptionHome_2": "Хранилище, запросы на сервер, обработка данных, local storage.",
   "buttonPosts": "Страница с постами",
   "anonymousUser": "Анонимный пользователь",
   "loginAnonymous": "Войти как анонимный пользователь",

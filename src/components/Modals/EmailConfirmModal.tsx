@@ -57,9 +57,7 @@ export const EmailConfirmModal: FC = () => {
 
   return (
     <Dialog open={openModal} TransitionComponent={Transition} keepMounted>
-      <DialogTitle
-        sx={{ padding: '20px 0', alignSelf: 'center', fontSize: '24px' }}
-      >
+      <DialogTitle padding="20px 0" alignSelf="center" fontSize="24px">
         {t('confirmEmail')}
       </DialogTitle>
       <DialogContent sx={{ padding: '0 20px', textAlign: 'center' }}>
@@ -82,7 +80,7 @@ export const EmailConfirmModal: FC = () => {
           variant="contained"
           color="error"
           size="large"
-          sx={{ fontSize: '20px' }}
+          sx={{ fontSize: '20px', color: 'white' }}
         >
           {t('notWant')}
         </CostumButton>

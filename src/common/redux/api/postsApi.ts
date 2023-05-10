@@ -53,6 +53,14 @@ export const postsApi = createApi({
       invalidatesTags: () => ['Posts'],
     }),
 
+    removePost: build.mutation<IPost, string>({
+      query: (id) => ({
+        url: `/post/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: () => ['Posts'],
+    }),
+
     // ____________________________________________________________
 
     createPost: build.mutation<IPost, IPost>({
@@ -60,14 +68,6 @@ export const postsApi = createApi({
         url: '/posts',
         method: 'POST',
         body,
-      }),
-      invalidatesTags: () => ['Posts'],
-    }),
-
-    deletePost: build.mutation<IPost, number>({
-      query: (id) => ({
-        url: `/posts/${id}`,
-        method: 'DELETE',
       }),
       invalidatesTags: () => ['Posts'],
     }),
@@ -80,5 +80,5 @@ export const {
   useGetPostQuery,
   useUpdatePostMutation,
   useCreatePostMutation,
-  useDeletePostMutation,
+  useRemovePostMutation,
 } = postsApi

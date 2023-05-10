@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
 import {
+  Box,
   Dialog,
   DialogActions,
   DialogContent,
@@ -22,7 +23,7 @@ import { SettingEmailAndPassword } from './SettingEmailAndPassword'
 import { SettingRemoveAccount } from './SettingRemoveAccount'
 import {
   CostumButton,
-  IPropsSettings,
+  openSettingsUserReducer,
   refreshReducer,
   useAppDispatch,
   useAppSelector,
@@ -37,15 +38,13 @@ const Transition = forwardRef(function Transition(
   return <Slide direction="left" ref={ref} {...props} />
 })
 
-export const SettingsUser: FC<IPropsSettings> = ({
-  openSettings,
-  onChange,
-}) => {
+export const SettingsUser: FC = () => {
   const [selectedIndex, setSelectedIndex] = useState(0)
 
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
+  const openSettings = useAppSelector((store) => store.menu.openSettingsUser)
   const pathName = useAppSelector((store) => store.menu.pathName)
 
   const handleMenuItemClick = (index: number) => {
@@ -64,19 +63,13 @@ export const SettingsUser: FC<IPropsSettings> = ({
     },
   ]
 
-  const handleClose = () => {
-    onChange(false)
-  }
-
   return (
     <Dialog open={openSettings} TransitionComponent={Transition} keepMounted>
-      <DialogTitle
-        sx={{ padding: '20px 0', alignSelf: 'center', fontSize: '28px' }}
-      >
+      <DialogTitle padding="20px 0" alignSelf="center" fontSize="28px">
         {t('accountSettings')}
       </DialogTitle>
       <DialogContent sx={{ display: 'flex', padding: 0 }}>
-        <div style={{ marginTop: '20px' }}>
+        <Box mt="20px">
           {items.map((item, index) => (
             <MenuItem
               key={index}
@@ -95,20 +88,18 @@ export const SettingsUser: FC<IPropsSettings> = ({
               <ListItemIcon>{item.icon}</ListItemIcon>
             </MenuItem>
           ))}
-        </div>
+        </Box>
         <Divider
           orientation="vertical"
           variant="middle"
           flexItem
           sx={{ margin: '0 0 0 15px' }}
         />
-        <div style={{ width: '60vw', height: '60vh', padding: '20px' }}>
+        <Box width="60vw" height="60vh" padding="20px">
           {selectedIndex === 0 && <SettingAvatarAndName />}
-          {selectedIndex === 1 && (
-            <SettingEmailAndPassword onChange={onChange} />
-          )}
+          {selectedIndex === 1 && <SettingEmailAndPassword />}
           {selectedIndex === 2 && <SettingRemoveAccount />}
-        </div>
+        </Box>
       </DialogContent>
       <DialogActions
         sx={{
@@ -117,7 +108,9 @@ export const SettingsUser: FC<IPropsSettings> = ({
       >
         <CostumButton
           onClick={() => {
-            handleClose(), navigate(pathName), dispatch(refreshReducer(false))
+            dispatch(openSettingsUserReducer(false)),
+              navigate(pathName),
+              dispatch(refreshReducer(false))
           }}
           variant="contained"
           color="error"

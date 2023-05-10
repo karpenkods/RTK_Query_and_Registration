@@ -92,22 +92,16 @@ export const SettingRemoveAccount: FC = () => {
 
   return (
     <Stack direction="column" alignItems="center">
-      <Typography
-        variant="h5"
-        color="primary"
-        sx={{
-          margin: '15px 0',
-        }}
-      >
+      <Typography variant="h5" color="primary" margin="15px 0">
         {t('accountDeleting')}
       </Typography>
       <Typography variant="body1" color="error">
         {t('logInUsingPassword')}
       </Typography>
-      <Typography variant="body2" sx={{ marginBottom: '30px' }}>
+      <Typography variant="body2" mb="30px">
         {t('accountRecovered')}
       </Typography>
-      <Typography variant="body1" color="error" sx={{ marginBottom: '30px' }}>
+      <Typography variant="body1" color="error" mb="30px">
         {t('cannotDeleteAccounts')}
       </Typography>
 
@@ -123,7 +117,7 @@ export const SettingRemoveAccount: FC = () => {
         </CostumButton>
       )}
       {showInput && (
-        <Stack direction="column" gap={'30px'} sx={{ width: '100%' }}>
+        <Stack direction="column" gap={'30px'} width="100%">
           <TextField
             label={t('currentPassword')}
             name="oldPassword"
@@ -152,11 +146,7 @@ export const SettingRemoveAccount: FC = () => {
               ),
             }}
           />
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            sx={{ width: '100%' }}
-          >
+          <Stack direction="row" justifyContent="space-between" width="100%">
             <CostumButton
               onClick={() => {
                 setShowInput(false), setShowPassword(false)

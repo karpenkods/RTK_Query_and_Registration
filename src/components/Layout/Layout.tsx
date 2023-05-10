@@ -1,10 +1,9 @@
 import { FC, PropsWithChildren } from 'react'
 
-import { Navbar } from '../Navbar'
-import { ILayoutProps, SEO, useAppSelector } from '../../common'
 import dark from '../../assets/dark.png'
 import light from '../../assets/light.png'
-
+import { ILayoutProps, SEO, useAppSelector } from '../../common'
+import { Navbar } from '../Navbar'
 import './layout.scss'
 
 export const Layout: FC<PropsWithChildren<ILayoutProps>> = ({

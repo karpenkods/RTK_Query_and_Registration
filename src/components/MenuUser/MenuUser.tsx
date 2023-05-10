@@ -1,4 +1,4 @@
-import { FC, Fragment, useState } from 'react'
+import { FC, Fragment } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { getAuth, signOut } from 'firebase/auth'
@@ -17,7 +17,9 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts'
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle'
 
 import {
-  openReducer,
+  IPropsMenuUser,
+  openLoginReducer,
+  openSettingsUserReducer,
   pushDangerNotification,
   pushInfoNotification,
   refreshReducer,
@@ -27,27 +29,20 @@ import {
 import { AvatarUser } from '../AvatarUser'
 import { SettingsUser } from '../SettingsUser'
 
-export const MenuUser: FC = () => {
-  const [openSettings, setOpenSettings] = useState(false)
-
-  const navigate = useNavigate()
+export const MenuUser: FC<IPropsMenuUser> = ({ anchorEl, changeAnchorEl }) => {
   const auth = getAuth()
   const currentUser = auth.currentUser
+  const navigate = useNavigate()
   const dispatch = useAppDispatch()
-  const open = useAppSelector((store) => store.menu.open)
+  const openMenu = Boolean(anchorEl)
   const darkTheme = useAppSelector((store) => store.theme.theme) === 'dark'
   const color = darkTheme ? grey[100] : grey[800]
   const { t } = useTranslation()
-
-  const handleClose = () => {
-    dispatch(openReducer(false))
-  }
 
   const handleSignOut = () => {
     signOut(auth)
       .then(() => {
         dispatch(pushInfoNotification(`${t('loggedOut')}`))
-        dispatch(openReducer(false))
         dispatch(refreshReducer(false))
         navigate('/')
       })
@@ -60,8 +55,9 @@ export const MenuUser: FC = () => {
     <Fragment>
       <Menu
         id="account-menu"
-        open={open}
-        onClose={handleClose}
+        open={openMenu}
+        anchorEl={anchorEl}
+        onClose={() => changeAnchorEl(null)}
         PaperProps={{
           elevation: 1,
           sx: {
@@ -74,48 +70,40 @@ export const MenuUser: FC = () => {
           },
         }}
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-        anchorOrigin={{ horizontal: 'right', vertical: 68 }}
+        anchorOrigin={{ horizontal: 100, vertical: 68 }}
       >
         {currentUser && (
           <Stack
             direction="column"
             justifyContent="center"
             alignItems="center"
-            sx={{
-              width: '300px',
-              paddingTop: '5px',
-            }}
+            width="300px"
+            pt="5px"
           >
-            <>
+            <Fragment>
               <AvatarUser fontSize={'450%'} />
               <Typography
                 variant="h6"
-                sx={{
-                  textAlign: 'center',
-                  margin: '10px 0 10px 0',
-                  color: color,
-                  lineHeight: 1.2,
-                }}
+                textAlign="center"
+                margin="10px 0 10px 0"
+                color={color}
+                lineHeight={1.2}
               >
                 {currentUser.displayName
                   ? currentUser.displayName
                   : `${t('anonymousUser')}`}
               </Typography>
-              <Typography variant="body1" sx={{ color: color }}>
+              <Typography variant="body1" color={color}>
                 {currentUser.email}
               </Typography>
-            </>
+            </Fragment>
             <Divider sx={{ margin: '10px 0 8px 0', width: '100%' }} />
-            <Stack
-              direction="column"
-              alignItems="flex-start"
-              sx={{ width: '100%' }}
-            >
+            <Stack direction="column" alignItems="flex-start" width="100%">
               <MenuItem
                 sx={{ height: '50px', width: '100%', color: color }}
                 disabled={currentUser?.isAnonymous}
                 onClick={() => {
-                  setOpenSettings(true), handleClose()
+                  changeAnchorEl(null), dispatch(openSettingsUserReducer(true))
                 }}
               >
                 <ListItemIcon>
@@ -127,6 +115,7 @@ export const MenuUser: FC = () => {
                 sx={{ height: '50px', width: '100%', color: color }}
                 onClick={() => {
                   navigate('/login')
+                  dispatch(openLoginReducer(true)), changeAnchorEl(null)
                 }}
               >
                 <ListItemIcon>
@@ -136,7 +125,9 @@ export const MenuUser: FC = () => {
               </MenuItem>
               <MenuItem
                 sx={{ height: '50px', width: '100%', color: color }}
-                onClick={handleSignOut}
+                onClick={() => {
+                  handleSignOut(), changeAnchorEl(null)
+                }}
               >
                 <ListItemIcon>
                   <Logout fontSize="medium" />
@@ -147,7 +138,7 @@ export const MenuUser: FC = () => {
           </Stack>
         )}
       </Menu>
-      <SettingsUser openSettings={openSettings} onChange={setOpenSettings} />
+      <SettingsUser />
     </Fragment>
   )
 }

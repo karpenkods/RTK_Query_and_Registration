@@ -29,7 +29,7 @@ import DoneAllIcon from '@mui/icons-material/DoneAll'
 import {
   CostumButton,
   IRegistrationValues,
-  openReducer,
+  openRegistrationReducer,
   pushDangerNotification,
   pushSuccessNotification,
   refreshReducer,
@@ -40,7 +40,6 @@ import {
 } from '../../common'
 
 export const Registration: FC = () => {
-  const [open, setOpen] = useState(true)
   const [showPassword, setShowPassword] = useState(false)
   const [successAuth, setSuccessAuth] = useState(false)
   const [errorAuth, setErrorAuth] = useState(false)
@@ -52,6 +51,9 @@ export const Registration: FC = () => {
   const focus = useAutoFocus()
   const { t } = useTranslation()
   const pathName = useAppSelector((store) => store.menu.pathName)
+  const openRegistration = useAppSelector(
+    (store) => store.menu.openRegistration,
+  )
 
   const formik = useFormik({
     initialValues: {
@@ -78,7 +80,6 @@ export const Registration: FC = () => {
         })
         setSuccessAuth(true)
         dispatch(refreshReducer(false))
-        dispatch(openReducer(false))
         setTimeout(() => navigate('/'), 1000)
         dispatch(pushSuccessNotification(`${t('successfullyLoggedIn')}`))
       })
@@ -89,8 +90,7 @@ export const Registration: FC = () => {
   }
 
   const handleClose = () => {
-    setOpen(false)
-    dispatch(openReducer(false))
+    dispatch(openRegistrationReducer(false))
     navigate(pathName)
   }
 
@@ -100,11 +100,8 @@ export const Registration: FC = () => {
   }
 
   return (
-    <Dialog open={open} keepMounted>
-      <DialogTitle
-        sx={{ padding: '20px 24px 0 24px', textAlign: 'center' }}
-        variant="h6"
-      >
+    <Dialog open={openRegistration} keepMounted>
+      <DialogTitle padding="20px 24px 0 24px" textAlign="center" variant="h6">
         {successAuth ? (
           <Typography color="green">{t('successfullyLoggedIn')}</Typography>
         ) : errorAuth ? (
@@ -122,7 +119,7 @@ export const Registration: FC = () => {
           },
         }}
       >
-        <Stack direction="column" gap={'15px'} sx={{ marginBottom: '10px' }}>
+        <Stack direction="column" gap="15px" mb="10px">
           <TextField
             label={t('yourName')}
             type="text"
@@ -212,11 +209,11 @@ export const Registration: FC = () => {
                 checked={check}
                 disabled={formik.isSubmitting}
                 onChange={() => setCheck((prev) => !prev)}
-                icon={<DoneIcon style={{ width: '30px', height: '30px' }} />}
+                icon={<DoneIcon sx={{ width: '30px', height: '30px' }} />}
                 checkedIcon={
                   <DoneAllIcon
                     color="info"
-                    style={{ width: '30px', height: '30px' }}
+                    sx={{ width: '30px', height: '30px' }}
                   />
                 }
               />
@@ -248,10 +245,8 @@ export const Registration: FC = () => {
         <Stack
           direction="row"
           justifyContent="space-between"
-          sx={{
-            width: '100%',
-            marginBottom: '20px',
-          }}
+          width="100%"
+          mb="20px"
         >
           <CostumButton
             onClick={handleClose}

@@ -1,7 +1,4 @@
-export interface IPropsSettings {
-  openSettings: boolean
-  onChange: (value: boolean) => void
-}
-export interface IPropsChangeEmail {
-  onChange: (value: boolean) => void
+export interface IPropsMenuUser {
+  anchorEl: null | HTMLElement
+  changeAnchorEl: (value: null | HTMLElement) => void
 }

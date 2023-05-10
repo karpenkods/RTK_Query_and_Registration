@@ -18,16 +18,14 @@ import CenterFocusWeakIcon from '@mui/icons-material/CenterFocusWeak'
 import {
   CostumButton,
   IPropsCropperModal,
+  openCropperReducer,
   pushDangerNotification,
   pushSuccessNotification,
   useAppDispatch,
+  useAppSelector,
 } from '../../common'
 
-export const CropperModal: FC<IPropsCropperModal> = ({
-  src,
-  modalOpen,
-  setModalOpen,
-}) => {
+export const CropperModal: FC<IPropsCropperModal> = ({ src }) => {
   const [slideValue, setSlideValue] = useState(10)
   const [loadingImage, setLoadingImage] = useState(false)
   const [file, setFile] = useState(null)
@@ -37,6 +35,7 @@ export const CropperModal: FC<IPropsCropperModal> = ({
   const cropRef = useRef<any>(null)
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
+  const openCropper = useAppSelector((state) => state.menu.openCropper)
 
   const handleSave = () => {
     if (cropRef.current) {
@@ -60,7 +59,7 @@ export const CropperModal: FC<IPropsCropperModal> = ({
             })
               .then(() => {
                 setLoadingImage(false)
-                setModalOpen(false)
+                dispatch(openCropperReducer(false))
                 dispatch(pushSuccessNotification(`${t('avatarChanged')}`))
               })
               .catch(() => {
@@ -77,7 +76,7 @@ export const CropperModal: FC<IPropsCropperModal> = ({
 
   return (
     <Modal
-      open={modalOpen}
+      open={openCropper}
       sx={{
         display: 'flex',
         justifyContent: 'center',
@@ -94,11 +93,9 @@ export const CropperModal: FC<IPropsCropperModal> = ({
           direction="column"
           justifyContent="center"
           alignItems="center"
-          sx={{
-            position: 'relative',
-            width: '350px',
-            height: '350px',
-          }}
+          position="relative"
+          width="350px"
+          height="350px"
         >
           <AvatarEditor
             ref={cropRef}
@@ -114,7 +111,7 @@ export const CropperModal: FC<IPropsCropperModal> = ({
             direction="row"
             justifyContent="space-between"
             alignItems="center"
-            sx={{ margin: '30px 0 20px 0' }}
+            margin="30px 0 20px 0"
           >
             <IconButton
               onClick={() => setSlideValue(slideValue === 10 ? 50 : 10)}
@@ -145,7 +142,9 @@ export const CropperModal: FC<IPropsCropperModal> = ({
           </Stack>
           <IconButton
             onClick={() => {
-              setModalOpen(false), setFile(null), setSlideValue(10)
+              dispatch(openCropperReducer(false)),
+                setFile(null),
+                setSlideValue(10)
             }}
             sx={{
               position: 'absolute',

@@ -46,7 +46,7 @@ export const Snackbar: FC = () => {
               closeSnackbar(key)
             }}
           >
-            <CloseIcon style={{ color: '#fff' }} />
+            <CloseIcon sx={{ color: '#fff' }} />
           </IconButton>
         ),
       })

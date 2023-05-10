@@ -1,4 +1,5 @@
 import { FC, Fragment, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { User, getAuth, onAuthStateChanged } from 'firebase/auth'
 import { useTranslation } from 'react-i18next'
 
@@ -6,21 +7,22 @@ import { CircularProgress, Link, Stack, Typography } from '@mui/material'
 
 import {
   closeFunction,
+  openLoginReducer,
+  openRegistrationReducer,
   pathNameReducer,
   useAppDispatch,
   useAppSelector,
 } from '../../common'
 import { EmailConfirmModal } from '../Modals'
-import { useNavigate } from 'react-router-dom'
 
 export const Home: FC = () => {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
 
-  const close = closeFunction(user ?? null)
   const auth = getAuth()
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
+  const close = closeFunction(user ?? null)
   const refresh = useAppSelector((store) => store.menu.refresh)
   const { t } = useTranslation()
 
@@ -37,12 +39,10 @@ export const Home: FC = () => {
         <Typography
           variant="h3"
           color="tomato"
-          sx={{
-            marginBottom: '30px',
-            fontFamily: 'marckScript !important',
-            fontSize: '72px',
-            fontWeight: 500,
-          }}
+          mb="30px"
+          fontFamily="marckScript !important"
+          fontSize="72px"
+          fontWeight={500}
         >
           {t('titleHome')}
         </Typography>
@@ -53,7 +53,7 @@ export const Home: FC = () => {
           />
         ) : user ? (
           <Fragment>
-            <Typography variant="h5" sx={{ margin: '0 20px 20px 20px' }}>
+            <Typography variant="h5" margin="0 20px 20px 20px">
               {t('welcome')}{' '}
               <span style={{ color: 'tomato', fontSize: '24px' }}>
                 {user.displayName
@@ -66,11 +66,9 @@ export const Home: FC = () => {
             <Link
               href={'/posts'}
               underline="hover"
-              sx={{
-                marginTop: '20px',
-                color: 'tomato',
-                fontSize: '22px',
-              }}
+              mt="20px"
+              color="tomato"
+              fontSize="24px"
             >
               {t('buttonPosts')}
             </Link>
@@ -80,23 +78,27 @@ export const Home: FC = () => {
           </Fragment>
         ) : (
           <Fragment>
-            <Typography variant="h5" sx={{ margin: '0 20px' }}>
+            <Typography variant="h5" margin="0 20px">
               {t('descriptionHomeNotAuth_1')}
             </Typography>
             <Stack
               direction="row"
               justifyContent="center"
               alignItems="center"
-              gap={'20px'}
-              sx={{ width: '100%', marginTop: '10px' }}
+              gap="20px"
+              width="100%"
+              mt="10px"
             >
               <Link
                 component="button"
                 onClick={() => {
-                  navigate('/login'), dispatch(pathNameReducer('/'))
+                  navigate('/login'),
+                    dispatch(pathNameReducer('/')),
+                    dispatch(openLoginReducer(true))
                 }}
                 underline="hover"
-                sx={{ fontSize: '24px', color: 'tomato' }}
+                fontSize="24px"
+                color="tomato"
               >
                 {t('descriptionHomeNotAuth_2')}
               </Link>
@@ -106,10 +108,13 @@ export const Home: FC = () => {
               <Link
                 component="button"
                 onClick={() => {
-                  navigate('/registration'), dispatch(pathNameReducer('/'))
+                  navigate('/registration'),
+                    dispatch(pathNameReducer('/')),
+                    dispatch(openRegistrationReducer(true))
                 }}
                 underline="hover"
-                sx={{ fontSize: '24px', color: 'tomato' }}
+                fontSize="24px"
+                color="tomato"
               >
                 {t('descriptionHomeNotAuth_4')}
               </Link>

@@ -1,12 +1,8 @@
 import { VariantType } from 'notistack'
-import { IPost } from './posts'
 import { IUser } from './user'
 
 export interface IPostsState {
-  post: IPost
-  createPost: boolean
-  deletePost: boolean
-  postId: number
+  postId: string
   limit: number
 }
 
@@ -23,7 +19,13 @@ export interface ISnackbar {
 }
 
 export interface IMenuState {
-  open: boolean
+  openLogin: boolean
+  openRegistration: boolean
+  openNewPassword: boolean
+  openSettingsUser: boolean
+  openCropper: boolean
+  openRemovePost: boolean
+  openChangePost: boolean
   refresh: boolean
   pathName: string
 }

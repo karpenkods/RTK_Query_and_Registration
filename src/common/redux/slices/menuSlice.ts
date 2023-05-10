@@ -2,7 +2,13 @@ import { createSlice } from '@reduxjs/toolkit'
 import { IMenuState } from '../../models/redux'
 
 const initialState: IMenuState = {
-  open: false,
+  openLogin: false,
+  openRegistration: false,
+  openNewPassword: false,
+  openSettingsUser: false,
+  openCropper: false,
+  openChangePost: false,
+  openRemovePost: false,
   refresh: false,
   pathName: '',
 }
@@ -11,8 +17,26 @@ const menuSlice = createSlice({
   name: 'menu',
   initialState,
   reducers: {
-    openReducer(state, action) {
-      state.open = action.payload
+    openLoginReducer(state, action) {
+      state.openLogin = action.payload
+    },
+    openRegistrationReducer(state, action) {
+      state.openRegistration = action.payload
+    },
+    openNewPasswordReducer(state, action) {
+      state.openNewPassword = action.payload
+    },
+    openSettingsUserReducer(state, action) {
+      state.openSettingsUser = action.payload
+    },
+    openCropperReducer(state, action) {
+      state.openCropper = action.payload
+    },
+    openChangePostReducer(state, action) {
+      state.openChangePost = action.payload
+    },
+    openRemovePostReducer(state, action) {
+      state.openRemovePost = action.payload
     },
     refreshReducer(state, action) {
       state.refresh = action.payload
@@ -23,7 +47,16 @@ const menuSlice = createSlice({
   },
 })
 
-export const { openReducer, refreshReducer, pathNameReducer } =
-  menuSlice.actions
+export const {
+  openLoginReducer,
+  openRegistrationReducer,
+  openNewPasswordReducer,
+  openSettingsUserReducer,
+  openCropperReducer,
+  openRemovePostReducer,
+  openChangePostReducer,
+  refreshReducer,
+  pathNameReducer,
+} = menuSlice.actions
 
 export default menuSlice.reducer

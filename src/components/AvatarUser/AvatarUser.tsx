@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, MouseEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { getAuth } from 'firebase/auth'
@@ -10,12 +10,12 @@ import {
   costumAvatar,
   CostumButton,
   IAvatarProps,
-  openReducer,
   refreshReducer,
   pathNameReducer,
+  openLoginReducer,
 } from '../../common'
 
-export const AvatarUser: FC<IAvatarProps> = ({ fontSize }) => {
+export const AvatarUser: FC<IAvatarProps> = ({ fontSize, changeAnchorEl }) => {
   const user = getAuth().currentUser
   const { t } = useTranslation()
   const avatar = costumAvatar(
@@ -25,8 +25,8 @@ export const AvatarUser: FC<IAvatarProps> = ({ fontSize }) => {
   const loaction = useLocation()
   const dispatch = useAppDispatch()
 
-  const handleClick = () => {
-    dispatch(openReducer(true))
+  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+    changeAnchorEl && changeAnchorEl(event.currentTarget)
     dispatch(refreshReducer(true))
     dispatch(pathNameReducer(loaction.pathname))
   }
@@ -60,7 +60,9 @@ export const AvatarUser: FC<IAvatarProps> = ({ fontSize }) => {
       variant="contained"
       color="error"
       onClick={() => {
-        navigate('/login'), dispatch(pathNameReducer('/'))
+        navigate('/login'),
+          dispatch(openLoginReducer(true)),
+          dispatch(pathNameReducer('/'))
       }}
     >
       {t('signIn')}
