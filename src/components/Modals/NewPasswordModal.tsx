@@ -109,7 +109,14 @@ export const NewPasswordModal: FC = () => {
       >
         <CloseIcon style={{ width: '30px', height: '30px' }} />
       </IconButton>
-      <DialogTitle padding="0 24px 0 24px" alignSelf="center">
+      <DialogTitle
+        alignSelf="center"
+        sx={{
+          '&.MuiDialogTitle-root': {
+            padding: 0,
+          },
+        }}
+      >
         {t('passwordReset')}
       </DialogTitle>
       <DialogContent

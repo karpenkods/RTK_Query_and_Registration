@@ -1,4 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { FC, Fragment, useEffect, useState, MouseEvent } from 'react'
+import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import moment from 'moment'
 
 import {
@@ -34,7 +37,6 @@ import {
 
 export const PostCard: FC<IPostProps> = ({
   post,
-  getNumber,
   onClickChip,
   onShow,
   searchText,
@@ -42,6 +44,7 @@ export const PostCard: FC<IPostProps> = ({
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
   const openMenu = Boolean(anchorEl)
+  const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const like = useAppSelector((store) => store.like.like)
 
@@ -66,10 +69,9 @@ export const PostCard: FC<IPostProps> = ({
   }
 
   useEffect(() => {
-    if (post?.id && getNumber) getNumber(post?.id as unknown as number)
     if (errorLikes)
-      dispatch(pushDangerNotification('Ошибка, сервер не отвечает'))
-  }, [dispatch, errorLikes, getNumber, post])
+      dispatch(pushDangerNotification(`${t('errorServerNotResponding')}`))
+  }, [dispatch, errorLikes])
 
   return (
     <Fragment>
@@ -82,7 +84,11 @@ export const PostCard: FC<IPostProps> = ({
             />
           }
           action={
-            <IconButton onClick={handleOpenMenu}>
+            <IconButton
+              onClick={(e) => {
+                handleOpenMenu(e), dispatch(postIdReducer(post?.id))
+              }}
+            >
               <MoreVertIcon />
             </IconButton>
           }
@@ -95,16 +101,18 @@ export const PostCard: FC<IPostProps> = ({
             },
           }}
         />
-        <CardMedia
-          component="img"
-          height={300}
-          image={post?.image}
-          alt="photo"
-        />
+        <Link to={`/post/${post?.id}`}>
+          <CardMedia
+            component="img"
+            height={300}
+            image={post?.image}
+            alt="photo"
+            sx={{ cursor: 'pointer' }}
+            onClick={() => dispatch(postIdReducer(post?.id))}
+          />
+        </Link>
         <CardContent sx={{ height: 80 }}>
-          <Typography variant="body2" color="text.secondary">
-            {post?.text}
-          </Typography>
+          <Typography variant="body2">{post?.text}</Typography>
         </CardContent>
         <CardActions>
           <IconButton
@@ -178,17 +186,15 @@ export const PostCard: FC<IPostProps> = ({
           }}
           sx={{ color: '#1976d2' }}
         >
-          Изменить пост
+          {t('edit')}
         </MenuItem>
         <MenuItem
           onClick={() => {
-            handleCloseMenu(),
-              dispatch(postIdReducer(post?.id)),
-              dispatch(openRemovePostReducer(true))
+            handleCloseMenu(), dispatch(openRemovePostReducer(true))
           }}
           sx={{ color: '#f44336' }}
         >
-          Удалить
+          {t('remove')}
         </MenuItem>
       </Menu>
     </Fragment>

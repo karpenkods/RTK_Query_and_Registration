@@ -70,7 +70,7 @@ export const MenuUser: FC<IPropsMenuUser> = ({ anchorEl, changeAnchorEl }) => {
           },
         }}
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-        anchorOrigin={{ horizontal: 100, vertical: 68 }}
+        anchorOrigin={{ horizontal: 85, vertical: 70 }}
       >
         {currentUser && (
           <Stack

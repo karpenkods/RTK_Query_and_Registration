@@ -1,3 +1,4 @@
+import { ReactNode } from 'react'
 import { IPost } from './posts'
 import { IUser } from './user'
 
@@ -10,4 +11,11 @@ export interface IPropsModal {
 
 export interface IPropsCropperModal {
   src: string | null
+}
+
+export interface IFileUploadProps {
+  setFile: Function
+  setUrl: Function
+  accept: string
+  children: ReactNode
 }

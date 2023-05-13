@@ -4,36 +4,30 @@ import { IUser } from '../../models/user'
 
 export const usersApi = createApi({
   reducerPath: 'usersApi',
-  tagTypes: ['Users'],
+  tagTypes: ['Users', 'User'],
   baseQuery: fetchBaseQuery({
     baseUrl: 'https://dummyapi.io/data/v1/',
     headers: { 'app-id': '6455b2b4bf5df73924396aeb' },
   }),
 
   endpoints: (build) => ({
-    getUsers: build.query<IUser[], number>({
-      query: (debounceLimit) => ({
+    getUsers: build.query<IUser[], string>({
+      query: () => ({
         url: '/user',
-        params: {
-          limit: debounceLimit,
-        },
       }),
       providesTags: ['Users'],
     }),
 
-    createUsers: build.mutation<string, IUser>({
-      query: (body) => ({
-        url: '/user',
-        method: 'POST',
-        body,
-      }),
-      invalidatesTags: () => ['Users'],
+    getUser: build.query<IUser, string>({
+      query: (id) => ({ url: `/user/${id}` }),
+      providesTags: ['User'],
     }),
 
-    deleteUser: build.mutation<IUser, number>({
-      query: (id) => ({
-        url: `/users/${id}`,
-        method: 'DELETE',
+    createUsers: build.mutation<IUser, IUser>({
+      query: (body) => ({
+        url: '/user/create',
+        method: 'POST',
+        body,
       }),
       invalidatesTags: () => ['Users'],
     }),
@@ -42,6 +36,7 @@ export const usersApi = createApi({
 
 export const {
   useGetUsersQuery,
+  useGetUserQuery,
+  useLazyGetUserQuery,
   useCreateUsersMutation,
-  useDeleteUserMutation,
 } = usersApi

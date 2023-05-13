@@ -96,3 +96,25 @@ export const settingsPasswordSchema = (t: TFunction<'translation'>) =>
       .oneOf([Yup.ref('password')], `${t('passwordMismatch')}`)
       .required(`${t('required')}`),
   })
+
+export const changePostSchema = (t: TFunction<'translation'>) =>
+  Yup.object().shape({
+    message: Yup.string()
+      .required(`${t('required')}`)
+      .min(6, `${t('messageShort')}`)
+      .max(500, `${t('messageLong')}`),
+    tags: Yup.array()
+      .required(`${t('required')}`)
+      .min(1, `${t('required')}`)
+      .max(3, `${t('maximumTags')}`),
+  })
+
+export const createPostSchema = changePostSchema
+
+export const createCommentSchema = (t: TFunction<'translation'>) =>
+  Yup.object().shape({
+    message: Yup.string()
+      .required(`${t('required')}`)
+      .min(6, `${t('messageShort')}`)
+      .max(500, `${t('messageLong')}`),
+  })

@@ -9,6 +9,8 @@ const initialState: IMenuState = {
   openCropper: false,
   openChangePost: false,
   openRemovePost: false,
+  openCreatePost: false,
+  openCreateComment: false,
   refresh: false,
   pathName: '',
 }
@@ -38,6 +40,12 @@ const menuSlice = createSlice({
     openRemovePostReducer(state, action) {
       state.openRemovePost = action.payload
     },
+    openCreatePostReducer(state, action) {
+      state.openCreatePost = action.payload
+    },
+    openCreateCommentReducer(state, action) {
+      state.openCreateComment = action.payload
+    },
     refreshReducer(state, action) {
       state.refresh = action.payload
     },
@@ -55,6 +63,8 @@ export const {
   openCropperReducer,
   openRemovePostReducer,
   openChangePostReducer,
+  openCreatePostReducer,
+  openCreateCommentReducer,
   refreshReducer,
   pathNameReducer,
 } = menuSlice.actions

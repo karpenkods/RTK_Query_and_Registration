@@ -15,7 +15,7 @@ import { postsApi } from './api/postsApi'
 import { usersApi } from './api/usersApi'
 import { commentsApi } from './api/commentsApi'
 import postsReducer from './slices/postsSlice'
-import usersReducer from './slices/usersSlice'
+import userPostReducer from './slices/userSlice'
 import snackbarReducer from './slices/snackbarSlice'
 import menuReducer from './slices/menuSlice'
 import themeAppReducer from './slices/themeSlice'
@@ -26,7 +26,7 @@ const rootReducer = combineReducers({
   [usersApi.reducerPath]: usersApi.reducer,
   [commentsApi.reducerPath]: commentsApi.reducer,
   posts: postsReducer,
-  users: usersReducer,
+  user: userPostReducer,
   snackbar: snackbarReducer,
   menu: menuReducer,
   theme: themeAppReducer,
@@ -41,7 +41,7 @@ const persistConfig = {
     usersApi.reducerPath,
     commentsApi.reducerPath,
   ],
-  whitelist: ['theme', 'like'],
+  whitelist: ['theme', 'like', 'user', 'posts'],
 }
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)

@@ -55,6 +55,7 @@ export const Navbar: FC = () => {
   const location = useLocation()
   const dispatch = useAppDispatch()
   const darkTheme = useAppSelector((store) => store.theme.theme) === 'dark'
+  const postId = useAppSelector((store) => store.posts.postId).slice(-5)
   const color = darkTheme ? grey[100] : grey[800]
 
   const changeLanguage = (language: string) => {
@@ -100,10 +101,10 @@ export const Navbar: FC = () => {
             fontFamily="marckScript !important"
           >
             {location.pathname.includes('posts')
-              ? 'Посты'
+              ? `${t('posts')}`
               : location.pathname.includes('post')
-              ? 'Пост_'
-              : 'Карпенко Д.С.'}
+              ? `${t('post_1')}${postId}`
+              : `${t('nameA')}`}
           </Typography>
           <Stack
             direction="row"

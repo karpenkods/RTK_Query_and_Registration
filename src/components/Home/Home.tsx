@@ -12,6 +12,9 @@ import {
   pathNameReducer,
   useAppDispatch,
   useAppSelector,
+  useCreateUsersMutation,
+  userAnonymousReducer,
+  userReducer,
 } from '../../common'
 import { EmailConfirmModal } from '../Modals'
 
@@ -26,12 +29,34 @@ export const Home: FC = () => {
   const refresh = useAppSelector((store) => store.menu.refresh)
   const { t } = useTranslation()
 
+  const [createUser, { data: userPost, isSuccess: successUserPost }] =
+    useCreateUsersMutation()
+
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       setUser(user)
       setLoading(false)
     })
   }, [auth, refresh])
+
+  useEffect(() => {
+    if (!!user && !user.isAnonymous && user.emailVerified)
+      createUser({
+        firstName: user.displayName ?? '',
+        lastName: '',
+        email: user.email ?? '',
+        picture: user.photoURL ?? '',
+      })
+    if (user?.isAnonymous) {
+      dispatch(userAnonymousReducer(true))
+    } else {
+      dispatch(userAnonymousReducer(false))
+    }
+  }, [createUser, dispatch, refresh, user])
+
+  useEffect(() => {
+    if (successUserPost) dispatch(userReducer(userPost))
+  }, [dispatch, successUserPost, userPost])
 
   return (
     <Fragment>

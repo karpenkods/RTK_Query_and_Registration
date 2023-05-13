@@ -11,7 +11,7 @@ export interface IPost {
   tags?: string[]
   text?: string
   publishDate?: string
-  owner?: OwnerPost
+  owner?: OwnerPost | any
 }
 
 interface OwnerPost {
@@ -24,7 +24,6 @@ interface OwnerPost {
 
 export interface IPostProps {
   post?: IPost
-  getNumber?: (value: number) => void
   onClickChip?: (value: string) => void
   onShow?: (value: boolean) => void
   searchText?: string
@@ -33,4 +32,8 @@ export interface IPostProps {
 export interface IPostCardProps {
   post?: IPost
   userId?: number
+}
+
+export interface IPostPageProps {
+  getNumber?: (value: number) => void
 }

@@ -1,20 +1,20 @@
-import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { Layout, PostCard } from '../components'
+import { Layout, Post } from '../components'
+import { useAppSelector } from '../common'
 
 export function PostPage() {
-  const [number, setNumber] = useState(0)
   const { t } = useTranslation()
+  const postId = useAppSelector((store) => store.posts.postId)
 
   return (
     <Layout
       container
       withNavbar
-      title={`${t('post')}${number === 0 ? '' : number}`}
+      title={`${t('post')}${postId}`}
       description={t('post')}
     >
-      <PostCard getNumber={setNumber} />
+      <Post />
     </Layout>
   )
 }

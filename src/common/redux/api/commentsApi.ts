@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
-import { IComment } from '../../models'
+import { IComment, ICommentCreate, IComments } from '../../models'
 
 export const commentsApi = createApi({
   reducerPath: 'commentsApi',
@@ -11,7 +11,7 @@ export const commentsApi = createApi({
   }),
 
   endpoints: (build) => ({
-    getComments: build.query<IComment[], number>({
+    getComments: build.query<IComments, number>({
       query: (debounceLimit) => ({
         url: '/comment',
         params: {
@@ -20,7 +20,25 @@ export const commentsApi = createApi({
       }),
       providesTags: ['Comments'],
     }),
+
+    getCommentsByPost: build.query<IComments, string>({
+      query: (id) => ({ url: `/post/${id}/comment` }),
+      providesTags: ['Comments'],
+    }),
+
+    createComment: build.mutation<IComment, ICommentCreate>({
+      query: (body) => ({
+        url: '/comment/create',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: () => ['Comments'],
+    }),
   }),
 })
 
-export const { useGetCommentsQuery } = commentsApi
+export const {
+  useGetCommentsQuery,
+  useLazyGetCommentsByPostQuery,
+  useCreateCommentMutation,
+} = commentsApi

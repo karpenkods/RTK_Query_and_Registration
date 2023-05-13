@@ -6,9 +6,9 @@ export interface IPostsState {
   limit: number
 }
 
-export interface IUsersState {
+export interface IUserState {
   user: IUser
-  userId: number
+  anonymous: boolean
 }
 
 export interface ISnackbar {
@@ -26,6 +26,8 @@ export interface IMenuState {
   openCropper: boolean
   openRemovePost: boolean
   openChangePost: boolean
+  openCreatePost: boolean
+  openCreateComment: boolean
   refresh: boolean
   pathName: string
 }

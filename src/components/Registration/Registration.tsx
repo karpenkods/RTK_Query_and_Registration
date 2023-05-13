@@ -225,7 +225,7 @@ export const Registration: FC = () => {
               style={{ color: '#1976D2' }}
               target="_blank"
               rel="noopener noreferrer"
-              to="https://apps.who.int/iris/bitstream/handle/10665/260442/WHO-RHR-17.03-rus.pdf;jsessionid=9726A654112AA0D0BDA8F83C2EEE8DB1?sequence=1"
+              to="https://roii.ru/dialogue/31/roii-dialogue-31_6.pdf"
             >
               {t('rules')}
             </Link>

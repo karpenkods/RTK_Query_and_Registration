@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   ChangeEvent,
   FC,
@@ -6,6 +7,8 @@ import {
   useEffect,
   useState,
 } from 'react'
+import { getAuth } from 'firebase/auth'
+import { useTranslation } from 'react-i18next'
 
 import {
   Grid,
@@ -27,15 +30,17 @@ import {
   IPost,
   SkeletonCardPosts,
   limitReducer,
+  openCreatePostReducer,
   pushDangerNotification,
   useAppDispatch,
   useAppSelector,
   useDebounce,
   useGetPostsQuery,
   useLazyGetPostsTagsQuery,
+  userAnonymousReducer,
 } from '../../common'
 import { PostCard } from './PostCard'
-import { RemovePostModal } from '../Modals'
+import { ChangePostModal, CreatePostModal, RemovePostModal } from '../Modals'
 
 export const Posts: FC = () => {
   const [searchPost, setSearchPost] = useState('')
@@ -45,8 +50,11 @@ export const Posts: FC = () => {
   const [show, setShow] = useState(false)
   const [page, setPage] = useState(1)
 
+  const user = getAuth().currentUser
+  const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const limit = useAppSelector((store) => store.posts.limit)
+  const userAnonymous = useAppSelector((store) => store.user.anonymous)
 
   const debounceLimitNumber = useDebounce<number>(limit)
   const debounceLimitString = useDebounce<string>(searchPost)
@@ -99,7 +107,7 @@ export const Posts: FC = () => {
     } else setPostsAll(posts?.data ?? [])
 
     if (errorPosts || errorPostsTags)
-      dispatch(pushDangerNotification('Ошибка, сервер не отвечает'))
+      dispatch(pushDangerNotification(t('errorServerNotResponding')))
   }, [
     debounceLimitNumber,
     debounceLimitString,
@@ -111,6 +119,14 @@ export const Posts: FC = () => {
     posts?.data,
     postsTags?.data,
   ])
+
+  useEffect(() => {
+    if (user?.isAnonymous) {
+      dispatch(userAnonymousReducer(true))
+    } else {
+      dispatch(userAnonymousReducer(false))
+    }
+  }, [dispatch, user?.isAnonymous])
 
   if (loadingPosts || loadingPostsTags) return <SkeletonCardPosts />
 
@@ -136,17 +152,23 @@ export const Posts: FC = () => {
               >
                 <CloseIcon style={{ width: 35, height: 35 }} />
               </IconButton>
-              <CostumButton variant="contained" color="success">
-                Создать пост
+              <CostumButton
+                variant="contained"
+                color="success"
+                disabled={userAnonymous}
+                sx={{ color: 'white' }}
+                onClick={() => dispatch(openCreatePostReducer(true))}
+              >
+                {t('createPost')}
               </CostumButton>
               <TextField
                 id="search"
-                placeholder="Найти пост по тегу"
+                placeholder={`${t('findPostsTag')}`}
                 variant="standard"
                 type="text"
                 value={searchPost}
                 sx={{ width: 300 }}
-                helperText="Поиск по всем постам"
+                helperText={`${t('searchAllPosts')}`}
                 disabled={!!searchText.length}
                 onChange={(event: ChangeEvent<HTMLInputElement>) =>
                   setSearchPost(event.target.value)
@@ -173,12 +195,12 @@ export const Posts: FC = () => {
               />
               <TextField
                 id="limit"
-                placeholder="Количество постов"
+                placeholder={`${t('numberPosts')}`}
                 variant="standard"
                 type="number"
                 value={limit === 12 ? '' : limit}
                 onChange={handleLimit}
-                helperText="Диапазон: 5-50 постов на странице"
+                helperText={`$t('rangePosts)`}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -187,7 +209,7 @@ export const Posts: FC = () => {
                         onClick={() => dispatch(limitReducer(12))}
                         sx={{ padding: 0 }}
                       >
-                        Сбросить
+                        {t('reset')}
                       </CostumButton>
                     </InputAdornment>
                   ),
@@ -195,12 +217,12 @@ export const Posts: FC = () => {
               />
               <TextField
                 id="search"
-                placeholder="Найти пост по тексту"
+                placeholder={`${t('findPostsText')}`}
                 variant="standard"
                 type="text"
                 value={searchText}
                 disabled={!!searchPost.length}
-                helperText="Поиск по каждой странице"
+                helperText={`${t('searchPage')}`}
                 onChange={(event: ChangeEvent<HTMLInputElement>) =>
                   setSearchText(event.target.value)
                 }
@@ -239,8 +261,7 @@ export const Posts: FC = () => {
                 <MenuOpenIcon style={{ width: 35, height: 35 }} />
               </IconButton>
               <Typography variant="body2" color="primary">
-                Особенность сервера: после применения фильтров, сервер не всегда
-                корректно отдаёт количество постов или страниц
+                {t('serverFeature')}
               </Typography>
             </Stack>
           )}
@@ -255,7 +276,7 @@ export const Posts: FC = () => {
             color="tomato"
             sx={{ fontFamily: 'marckScript !important' }}
           >
-            Постов нет
+            {t('noPosts')}
           </Typography>
         ) : (
           <Fragment>
@@ -325,6 +346,8 @@ export const Posts: FC = () => {
         )}
       </Stack>
       <RemovePostModal />
+      <ChangePostModal />
+      <CreatePostModal />
     </Fragment>
   )
 }

@@ -1,4 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { FC, forwardRef, ReactElement, Ref, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { Dialog, DialogActions, DialogTitle, Slide } from '@mui/material'
 import { TransitionProps } from '@mui/material/transitions'
@@ -23,6 +25,7 @@ const Transition = forwardRef(function Transition(
 })
 
 export const RemovePostModal: FC = () => {
+  const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const openRemovePost = useAppSelector((store) => store.menu.openRemovePost)
   const postId = useAppSelector((store) => store.posts.postId)
@@ -36,17 +39,18 @@ export const RemovePostModal: FC = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      dispatch(pushSuccessNotification('Пост удалён'))
+      dispatch(pushSuccessNotification(`${t('postDeleted')}`))
       dispatch(openRemovePostReducer(false))
     }
 
-    if (isError) dispatch(pushDangerNotification('Ошибка, сервер не отвечает'))
+    if (isError)
+      dispatch(pushDangerNotification(`${t('errorServerNotResponding')}`))
   }, [dispatch, isError, isSuccess])
 
   return (
     <Dialog open={openRemovePost} TransitionComponent={Transition} keepMounted>
       <DialogTitle padding="20px 0" alignSelf="center" fontSize="24px">
-        {isLoading ? 'Подождите...' : 'Удалить пост?'}
+        {isLoading ? `${t('wait')}` : `${t('deletePost')}`}
       </DialogTitle>
       <DialogActions
         sx={{
@@ -65,7 +69,7 @@ export const RemovePostModal: FC = () => {
           disabled={isLoading}
           sx={{ fontSize: '18px', color: 'white' }}
         >
-          Отмена
+          {t('cancel')}
         </CostumButton>
         <CostumButton
           onClick={handleDeletePost}
@@ -75,7 +79,7 @@ export const RemovePostModal: FC = () => {
           disabled={isLoading}
           sx={{ fontSize: '18px', color: 'white' }}
         >
-          Удалить
+          {t('delete')}
         </CostumButton>
       </DialogActions>
     </Dialog>

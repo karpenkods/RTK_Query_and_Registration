@@ -39,9 +39,18 @@ export const postsApi = createApi({
       providesTags: ['Posts'],
     }),
 
-    getPost: build.query<IPost, number>({
-      query: (id) => ({ url: `/posts/:${id}` }),
+    getPost: build.query<IPost, string>({
+      query: (id) => ({ url: `/post/${id}` }),
       providesTags: ['Post'],
+    }),
+
+    createPost: build.mutation<IPost, IPost>({
+      query: (body) => ({
+        url: '/post/create',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: () => ['Posts'],
     }),
 
     updatePost: build.mutation<IPost, IPost>({
@@ -50,7 +59,7 @@ export const postsApi = createApi({
         method: 'PUT',
         body,
       }),
-      invalidatesTags: () => ['Posts'],
+      invalidatesTags: () => ['Posts', 'Post'],
     }),
 
     removePost: build.mutation<IPost, string>({
@@ -60,23 +69,13 @@ export const postsApi = createApi({
       }),
       invalidatesTags: () => ['Posts'],
     }),
-
-    // ____________________________________________________________
-
-    createPost: build.mutation<IPost, IPost>({
-      query: (body) => ({
-        url: '/posts',
-        method: 'POST',
-        body,
-      }),
-      invalidatesTags: () => ['Posts'],
-    }),
   }),
 })
 
 export const {
   useGetPostsQuery,
   useLazyGetPostsTagsQuery,
+  useLazyGetPostQuery,
   useGetPostQuery,
   useUpdatePostMutation,
   useCreatePostMutation,
