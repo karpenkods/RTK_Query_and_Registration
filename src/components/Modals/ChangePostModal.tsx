@@ -12,6 +12,8 @@ import {
   Slide,
   Stack,
   TextField,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material'
 import { TransitionProps } from '@mui/material/transitions'
 
@@ -41,6 +43,9 @@ export const ChangePostModal: FC = () => {
   const dispatch = useAppDispatch()
   const openChangePost = useAppSelector((store) => store.menu.openChangePost)
   const postId = useAppSelector((store) => store.posts.postId)
+
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down(768))
 
   const [getPost, { data: post, isLoading: loadingPost, isError: errorPost }] =
     useLazyGetPostQuery()
@@ -91,7 +96,7 @@ export const ChangePostModal: FC = () => {
         <Stack
           justifyContent="center"
           alignItems="center"
-          width="330px"
+          width={isMobile ? '100%' : '330px'}
           height="250px"
         >
           <CircularProgress size={50} color="success" />
@@ -99,7 +104,11 @@ export const ChangePostModal: FC = () => {
       ) : (
         <Fragment>
           <DialogContent
-            sx={{ padding: '0 20px', textAlign: 'center', width: '500px' }}
+            sx={{
+              padding: '0 20px',
+              textAlign: 'center',
+              width: isMobile ? '100%' : '500px',
+            }}
           >
             <TextField
               variant="standard"

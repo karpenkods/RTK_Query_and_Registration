@@ -3,7 +3,14 @@ import { useNavigate } from 'react-router-dom'
 import { User, getAuth, onAuthStateChanged } from 'firebase/auth'
 import { useTranslation } from 'react-i18next'
 
-import { CircularProgress, Link, Stack, Typography } from '@mui/material'
+import {
+  CircularProgress,
+  Link,
+  Stack,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material'
 
 import {
   closeFunction,
@@ -28,6 +35,9 @@ export const Home: FC = () => {
   const close = closeFunction(user ?? null)
   const refresh = useAppSelector((store) => store.menu.refresh)
   const { t } = useTranslation()
+
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down(768))
 
   const [createUser, { data: userPost, isSuccess: successUserPost }] =
     useCreateUsersMutation()
@@ -60,14 +70,15 @@ export const Home: FC = () => {
 
   return (
     <Fragment>
-      <Stack direction="column" alignItems="center">
+      <Stack direction="column" alignItems="center" justifyContent="center">
         <Typography
           variant="h3"
           color="tomato"
           mb="30px"
           fontFamily="marckScript !important"
-          fontSize="72px"
+          fontSize={isMobile ? '48px' : '72px'}
           fontWeight={500}
+          textAlign="center"
         >
           {t('titleHome')}
         </Typography>
@@ -78,7 +89,11 @@ export const Home: FC = () => {
           />
         ) : user ? (
           <Fragment>
-            <Typography variant="h5" margin="0 20px 20px 20px">
+            <Typography
+              variant={isMobile ? 'h6' : 'h5'}
+              margin="0 20px 20px 20px"
+              textAlign="center"
+            >
               {t('welcome')}{' '}
               <span style={{ color: 'tomato', fontSize: '24px' }}>
                 {user.displayName
@@ -86,14 +101,18 @@ export const Home: FC = () => {
                   : `${t('anonymousUser')}`}
               </span>
             </Typography>
-            <Typography variant="h5">{t('descriptionHome_1')}</Typography>
-            <Typography variant="h5">{t('descriptionHome_2')}</Typography>
+            <Typography variant={isMobile ? 'h6' : 'h5'} textAlign="center">
+              {t('descriptionHome_1')}
+            </Typography>
+            <Typography variant={isMobile ? 'h6' : 'h5'} textAlign="center">
+              {t('descriptionHome_2')}
+            </Typography>
             <Link
               href={'/posts'}
               underline="hover"
               mt="20px"
               color="tomato"
-              fontSize="24px"
+              fontSize={isMobile ? '18px' : '24px'}
             >
               {t('buttonPosts')}
             </Link>
@@ -103,7 +122,11 @@ export const Home: FC = () => {
           </Fragment>
         ) : (
           <Fragment>
-            <Typography variant="h5" margin="0 20px">
+            <Typography
+              variant={isMobile ? 'h6' : 'h5'}
+              margin="0 20px"
+              textAlign="center"
+            >
               {t('descriptionHomeNotAuth_1')}
             </Typography>
             <Stack
@@ -122,12 +145,12 @@ export const Home: FC = () => {
                     dispatch(openLoginReducer(true))
                 }}
                 underline="hover"
-                fontSize="24px"
+                fontSize={isMobile ? '18px' : '24px'}
                 color="tomato"
               >
                 {t('descriptionHomeNotAuth_2')}
               </Link>
-              <Typography variant="h5">
+              <Typography variant={isMobile ? 'h6' : 'h5'}>
                 {t('descriptionHomeNotAuth_3')}
               </Typography>
               <Link
@@ -138,7 +161,7 @@ export const Home: FC = () => {
                     dispatch(openRegistrationReducer(true))
                 }}
                 underline="hover"
-                fontSize="24px"
+                fontSize={isMobile ? '18px' : '24px'}
                 color="tomato"
               >
                 {t('descriptionHomeNotAuth_4')}

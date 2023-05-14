@@ -9,6 +9,8 @@ import {
   DialogTitle,
   Slide,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material'
 import { TransitionProps } from '@mui/material/transitions'
 
@@ -35,6 +37,9 @@ export const EmailConfirmModal: FC = () => {
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
 
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down(768))
+
   const handleDeleteUser = () => {
     if (currentUser) {
       deleteUser(currentUser)
@@ -57,7 +62,7 @@ export const EmailConfirmModal: FC = () => {
 
   return (
     <Dialog open={openModal} TransitionComponent={Transition} keepMounted>
-      <DialogTitle padding="20px 0" alignSelf="center" fontSize="24px">
+      <DialogTitle padding="20px 0" textAlign="center" fontSize="24px">
         {t('confirmEmail')}
       </DialogTitle>
       <DialogContent sx={{ padding: '0 20px', textAlign: 'center' }}>
@@ -80,7 +85,7 @@ export const EmailConfirmModal: FC = () => {
           variant="contained"
           color="error"
           size="large"
-          sx={{ fontSize: '20px', color: 'white' }}
+          sx={{ fontSize: isMobile ? '16px' : '20px', color: 'white' }}
         >
           {t('notWant')}
         </CostumButton>
@@ -89,7 +94,7 @@ export const EmailConfirmModal: FC = () => {
           variant="contained"
           color="success"
           size="large"
-          sx={{ fontSize: '20px', color: 'white' }}
+          sx={{ fontSize: isMobile ? '16px' : '20px', color: 'white' }}
         >
           {t('confirm')}
         </CostumButton>

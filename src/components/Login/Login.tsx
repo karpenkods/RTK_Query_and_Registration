@@ -22,6 +22,8 @@ import {
   TextField,
   Tooltip,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material'
 import Visibility from '@mui/icons-material/Visibility'
 import VisibilityOff from '@mui/icons-material/VisibilityOff'
@@ -61,6 +63,9 @@ export const Login: FC = () => {
   const { t } = useTranslation()
   const pathName = useAppSelector((store) => store.menu.pathName)
   const openLogin = useAppSelector((store) => store.menu.openLogin)
+
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down(768))
 
   const providerGoogle = new GoogleAuthProvider()
   const providerGitHub = new GithubAuthProvider()
@@ -172,7 +177,7 @@ export const Login: FC = () => {
         </DialogTitle>
         <DialogContent
           sx={{
-            width: '450px',
+            width: isMobile ? '100%' : '450px',
             padding: '0 20px',
             '&.MuiDialogContent-root': {
               paddingTop: '20px',
@@ -297,7 +302,12 @@ export const Login: FC = () => {
               {t('signIn')}
             </CostumButton>
           </Stack>
-          <Stack direction="row" alignItems="center" alignSelf="flex-start">
+          <Stack
+            direction="row"
+            alignItems="center"
+            alignSelf="flex-start"
+            mb={isMobile ? '10px' : 0}
+          >
             <Typography variant="body1">{t('notAccount')}</Typography>
             <CostumButton
               variant="text"
@@ -306,7 +316,7 @@ export const Login: FC = () => {
                   dispatch(openRegistrationReducer(true))
               }}
               disabled={disabledGit || formik.isSubmitting}
-              sx={{ fontSize: '16px' }}
+              sx={{ fontSize: '16px', height: '38px', whiteSpace: 'nowrap' }}
             >
               {t('logIn')}
             </CostumButton>

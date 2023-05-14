@@ -16,6 +16,8 @@ import {
   Toolbar,
   Typography,
   Skeleton,
+  useTheme,
+  useMediaQuery,
 } from '@mui/material'
 import DarkModeIcon from '@mui/icons-material/DarkMode'
 import LightModeIcon from '@mui/icons-material/LightMode'
@@ -54,9 +56,14 @@ export const Navbar: FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const dispatch = useAppDispatch()
-  const darkTheme = useAppSelector((store) => store.theme.theme) === 'dark'
   const postId = useAppSelector((store) => store.posts.postId).slice(-5)
+
+  const darkTheme = useAppSelector((store) => store.theme.theme) === 'dark'
   const color = darkTheme ? grey[100] : grey[800]
+
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down(768))
+  const isTablet = useMediaQuery(theme.breakpoints.down(970))
 
   const changeLanguage = (language: string) => {
     i18n.changeLanguage(language)
@@ -86,25 +93,39 @@ export const Navbar: FC = () => {
             alignItems: 'center',
           }}
         >
-          <Typography
-            variant="h3"
-            fontFamily="marckScript !important"
-            sx={{ cursor: 'pointer' }}
-            onClick={() => navigate('/')}
-          >
-            QUERIES
-          </Typography>
+          {isMobile ? (
+            !open && (
+              <Typography
+                variant="h4"
+                fontFamily="marckScript !important"
+                sx={{ cursor: 'pointer' }}
+                onClick={() => navigate('/')}
+              >
+                QUERIES
+              </Typography>
+            )
+          ) : (
+            <Typography
+              variant="h3"
+              fontFamily="marckScript !important"
+              sx={{ cursor: 'pointer' }}
+              onClick={() => navigate('/')}
+            >
+              QUERIES
+            </Typography>
+          )}
           <Typography
             variant="h2"
             color="tomato"
             alignSelf="center"
             fontFamily="marckScript !important"
           >
-            {location.pathname.includes('posts')
-              ? `${t('posts')}`
-              : location.pathname.includes('post')
-              ? `${t('post_1')}${postId}`
-              : `${t('nameA')}`}
+            {!isTablet &&
+              (location.pathname.includes('posts')
+                ? `${t('posts')}`
+                : location.pathname.includes('post')
+                ? `${t('post_1')}${postId}`
+                : `${t('nameA')}`)}
           </Typography>
           <Stack
             direction="row"

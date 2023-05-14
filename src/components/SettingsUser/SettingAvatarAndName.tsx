@@ -4,7 +4,15 @@ import { getAuth, updateProfile } from 'firebase/auth'
 import { useTranslation } from 'react-i18next'
 import { useFormik } from 'formik'
 
-import { Avatar, Typography, TextField, Stack, Button } from '@mui/material'
+import {
+  Avatar,
+  Typography,
+  TextField,
+  Stack,
+  Button,
+  useTheme,
+  useMediaQuery,
+} from '@mui/material'
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount'
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline'
 import CreateIcon from '@mui/icons-material/Create'
@@ -34,6 +42,9 @@ export const SettingAvatarAndName: FC = () => {
   const focus = useFocus(showInput)
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
+
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down(768))
 
   const formik = useFormik({
     initialValues: {
@@ -103,7 +114,7 @@ export const SettingAvatarAndName: FC = () => {
 
   return (
     <Fragment>
-      <Stack direction="column" alignItems="center" sx={{ width: '100%' }}>
+      <Stack direction="column" alignItems="center">
         {user?.photoURL ? (
           <Avatar
             alt="avatar"
@@ -151,7 +162,7 @@ export const SettingAvatarAndName: FC = () => {
               direction="row"
               justifyContent="space-between"
               width="100%"
-              mb="20px"
+              mb={isMobile ? '50px' : '20px'}
             >
               <CostumButton
                 onClick={() => {
@@ -175,9 +186,9 @@ export const SettingAvatarAndName: FC = () => {
           </Fragment>
         )}
         <Stack
-          direction="row"
+          direction={isMobile ? 'column' : 'row'}
           justifyContent="space-between"
-          width="100%"
+          width={isMobile ? 'fit-content' : '100%'}
           mb="25px"
         >
           <Button
@@ -186,6 +197,7 @@ export const SettingAvatarAndName: FC = () => {
             startIcon={<SupervisorAccountIcon sx={{ color: 'white' }} />}
             disabled={showInput || disabled || showDelete}
             sx={{
+              marginBottom: isMobile ? '25px' : 0,
               textTransform: 'none',
               padding: '5px 15px',
               color: 'white',
@@ -220,7 +232,10 @@ export const SettingAvatarAndName: FC = () => {
           }
           onClick={() => setShowDelete(true)}
           color="error"
-          sx={{ alignSelf: 'flex-start', marginBottom: '30px' }}
+          sx={{
+            alignSelf: isMobile ? 'center' : 'flex-start',
+            marginBottom: '30px',
+          }}
         >
           {t('removeAvatar')}
         </CostumButton>

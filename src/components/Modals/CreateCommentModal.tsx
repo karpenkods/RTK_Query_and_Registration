@@ -14,6 +14,8 @@ import {
   Stack,
   TextField,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material'
 import { TransitionProps } from '@mui/material/transitions'
 
@@ -48,6 +50,9 @@ export const CreateCommentModal: FC = () => {
   const userComment = useAppSelector((store) => store.user.user)
   const postId = useAppSelector((store) => store.posts.postId)
   const focus = useFocus(openCreateComment)
+
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down(768))
 
   const [createComment, { isSuccess, isError }] = useCreateCommentMutation()
 
@@ -87,7 +92,11 @@ export const CreateCommentModal: FC = () => {
           {t('comment')}
         </DialogTitle>
         <DialogContent
-          sx={{ padding: '0 20px', textAlign: 'center', width: '500px' }}
+          sx={{
+            padding: '0 20px',
+            textAlign: 'center',
+            width: isMobile ? '100%' : '500px',
+          }}
         >
           <Stack direction="column" alignItems="center" mb="50px">
             <Avatar

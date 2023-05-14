@@ -140,7 +140,7 @@ export const SettingEmailAndPassword: FC = () => {
   }, [formikEmail, formikPassword, refresh])
 
   return (
-    <Stack direction="column" alignItems="center">
+    <Stack direction="column" alignItems="center" width="100%">
       <Typography
         color="primary"
         sx={{

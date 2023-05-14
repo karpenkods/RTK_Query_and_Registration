@@ -22,6 +22,8 @@ import {
   Stack,
   TextField,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material'
 import DoneIcon from '@mui/icons-material/Done'
 import DoneAllIcon from '@mui/icons-material/DoneAll'
@@ -54,6 +56,9 @@ export const Registration: FC = () => {
   const openRegistration = useAppSelector(
     (store) => store.menu.openRegistration,
   )
+
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down(768))
 
   const formik = useFormik({
     initialValues: {
@@ -112,7 +117,7 @@ export const Registration: FC = () => {
       </DialogTitle>
       <DialogContent
         sx={{
-          width: '500px',
+          width: isMobile ? '100%' : '500px',
           padding: '20px 20px 0px 20px',
           '&.MuiDialogContent-root': {
             paddingTop: '20px',
@@ -203,17 +208,32 @@ export const Registration: FC = () => {
         </Stack>
         <Stack direction="row" alignItems="center">
           <FormControlLabel
-            sx={{ marginRight: '6px' }}
+            sx={{
+              marginRight: '6px',
+              '.MuiTypography-root': {
+                fontSize: isMobile ? '0.8rem' : '1rem',
+              },
+            }}
             control={
               <Checkbox
                 checked={check}
                 disabled={formik.isSubmitting}
                 onChange={() => setCheck((prev) => !prev)}
-                icon={<DoneIcon sx={{ width: '30px', height: '30px' }} />}
+                icon={
+                  <DoneIcon
+                    sx={{
+                      width: isMobile ? '20px' : '30px',
+                      height: isMobile ? '20px"' : '30px',
+                    }}
+                  />
+                }
                 checkedIcon={
                   <DoneAllIcon
                     color="info"
-                    sx={{ width: '30px', height: '30px' }}
+                    sx={{
+                      width: isMobile ? '20px' : '30px',
+                      height: isMobile ? '20px"' : '30px',
+                    }}
                   />
                 }
               />
@@ -246,7 +266,7 @@ export const Registration: FC = () => {
           direction="row"
           justifyContent="space-between"
           width="100%"
-          mb="20px"
+          mb={isMobile ? '30px' : '20px'}
         >
           <CostumButton
             onClick={handleClose}
@@ -259,6 +279,7 @@ export const Registration: FC = () => {
           <CostumButton
             variant="contained"
             color="success"
+            sx={{ whiteSpace: 'nowrap' }}
             disabled={formik.isSubmitting || !formik.dirty || !check}
             onClick={() => formik.handleSubmit()}
           >
@@ -271,7 +292,7 @@ export const Registration: FC = () => {
             variant="text"
             onClick={() => navigate('/login')}
             disabled={formik.isSubmitting}
-            sx={{ fontSize: '16px' }}
+            sx={{ fontSize: '16px', height: '38px', whiteSpace: 'nowrap' }}
           >
             {t('signIn')}
           </CostumButton>

@@ -12,6 +12,8 @@ import {
   ListItemIcon,
   MenuItem,
   Slide,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material'
 import { TransitionProps } from '@mui/material/transitions'
 import AccountBoxIcon from '@mui/icons-material/AccountBox'
@@ -47,34 +49,53 @@ export const SettingsUser: FC = () => {
   const openSettings = useAppSelector((store) => store.menu.openSettingsUser)
   const pathName = useAppSelector((store) => store.menu.pathName)
 
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down(768))
+
   const handleMenuItemClick = (index: number) => {
     setSelectedIndex(index)
   }
 
+  const syleIcon = {
+    width: '50px',
+    height: '50px',
+  }
+
   const items = [
     {
-      icon: <AccountBoxIcon sx={{ width: '50px', height: '50px' }} />,
+      icon: <AccountBoxIcon sx={syleIcon} />,
     },
     {
-      icon: <AlternateEmailIcon sx={{ width: '50px', height: '50px' }} />,
+      icon: <AlternateEmailIcon sx={syleIcon} />,
     },
     {
-      icon: <PersonRemoveIcon sx={{ width: '50px', height: '50px' }} />,
+      icon: <PersonRemoveIcon sx={syleIcon} />,
     },
   ]
 
   return (
     <Dialog open={openSettings} TransitionComponent={Transition} keepMounted>
-      <DialogTitle padding="20px 0" alignSelf="center" fontSize="28px">
+      <DialogTitle
+        padding="20px 0"
+        alignSelf="center"
+        fontSize={isMobile ? '24px' : '28px'}
+      >
         {t('accountSettings')}
       </DialogTitle>
-      <DialogContent sx={{ display: 'flex', padding: 0 }}>
+      <DialogContent
+        sx={{
+          display: 'flex',
+          flexDirection: isMobile ? 'column' : 'row',
+          padding: 0,
+        }}
+      >
         <Box mt="20px">
           {items.map((item, index) => (
             <MenuItem
               key={index}
               sx={{
                 marginBottom: '10px',
+                width: isMobile ? '30%' : '100%',
                 fontSize: '18px',
                 borderTopRightRadius: '100px',
                 borderBottomRightRadius: '100px',
@@ -89,13 +110,19 @@ export const SettingsUser: FC = () => {
             </MenuItem>
           ))}
         </Box>
-        <Divider
-          orientation="vertical"
-          variant="middle"
-          flexItem
-          sx={{ margin: '0 0 0 15px' }}
-        />
-        <Box width="60vw" height="60vh" padding="20px">
+        {!isMobile && (
+          <Divider
+            orientation="vertical"
+            variant="middle"
+            flexItem
+            sx={{ margin: '0 0 0 15px' }}
+          />
+        )}
+        <Box
+          width={isMobile ? '80vw' : '60vw'}
+          height={isMobile ? '100vh' : '60vh'}
+          padding="20px"
+        >
           {selectedIndex === 0 && <SettingAvatarAndName />}
           {selectedIndex === 1 && <SettingEmailAndPassword />}
           {selectedIndex === 2 && <SettingRemoveAccount />}
@@ -103,7 +130,7 @@ export const SettingsUser: FC = () => {
       </DialogContent>
       <DialogActions
         sx={{
-          padding: '20px',
+          padding: isMobile ? '50px 20px 20px 20px' : '20px',
         }}
       >
         <CostumButton

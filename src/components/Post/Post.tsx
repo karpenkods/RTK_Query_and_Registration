@@ -10,6 +10,8 @@ import {
   Skeleton,
   Stack,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material'
 
 import {
@@ -31,6 +33,10 @@ export const Post: FC<IPostPageProps> = () => {
   const dispatch = useAppDispatch()
   const postId = useAppSelector((store) => store.posts.postId)
   const userAnonymous = useAppSelector((store) => store.user.anonymous)
+
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down(600))
+  const isTablet = useMediaQuery(theme.breakpoints.down(960))
 
   const {
     data: post,
@@ -58,7 +64,7 @@ export const Post: FC<IPostPageProps> = () => {
   }, [errorComment, errorPost])
 
   return (
-    <Stack direction="row" width="100%" mb="100px">
+    <Stack direction={isTablet ? 'column' : 'row'} width="100%" mb="100px">
       <Stack
         direction="column"
         justifyContent="center"
@@ -86,7 +92,7 @@ export const Post: FC<IPostPageProps> = () => {
           direction="row"
           justifyContent="space-between"
           alignItems="center"
-          width="500px"
+          width={isMobile ? '100%' : '500px'}
           padding="30px"
           borderRadius="10px"
           mb="50px"
@@ -97,7 +103,10 @@ export const Post: FC<IPostPageProps> = () => {
         >
           <Avatar
             src={user?.picture}
-            sx={{ width: '120px', height: '120px' }}
+            sx={{
+              width: isMobile ? '80px' : '120px',
+              height: isMobile ? '80px' : '120px',
+            }}
           />
           <Stack>
             <Stack direction="row" mb="20px">
@@ -107,7 +116,9 @@ export const Post: FC<IPostPageProps> = () => {
               <Typography variant="h5">{user?.lastName}</Typography>
             </Stack>
             <Stack>
-              <Typography variant="subtitle1">{user?.email}</Typography>
+              {!isMobile && (
+                <Typography variant="subtitle1">{user?.email}</Typography>
+              )}
               <Typography variant="subtitle1">{user?.phone}</Typography>
             </Stack>
           </Stack>
@@ -147,6 +158,7 @@ export const Post: FC<IPostPageProps> = () => {
           color="tomato"
           fontFamily="marckScript !important"
           mb="20px"
+          mt={isTablet ? '50px' : 0}
         >
           {t('comments')}
         </Typography>

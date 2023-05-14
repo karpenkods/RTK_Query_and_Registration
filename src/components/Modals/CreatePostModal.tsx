@@ -15,6 +15,8 @@ import {
   Stack,
   TextField,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material'
 import { TransitionProps } from '@mui/material/transitions'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
@@ -52,6 +54,9 @@ export const CreatePostModal: FC = () => {
   const openCreatePost = useAppSelector((store) => store.menu.openCreatePost)
   const userPost = useAppSelector((store) => store.user.user)
   const focus = useFocus(openCreatePost)
+
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down(600))
 
   const [createPost, { isSuccess, isError }] = useCreatePostMutation()
 
@@ -100,7 +105,11 @@ export const CreatePostModal: FC = () => {
           {t('newPost')}
         </DialogTitle>
         <DialogContent
-          sx={{ padding: '0 20px', textAlign: 'center', width: '500px' }}
+          sx={{
+            padding: '0 20px',
+            textAlign: 'center',
+            width: isMobile ? '100%' : '500px',
+          }}
         >
           <Stack direction="column" alignItems="center" mb="20px">
             <Avatar
@@ -122,7 +131,7 @@ export const CreatePostModal: FC = () => {
             </Typography>
             <Typography variant="body1">{user?.email}</Typography>
           </Stack>
-          <Stack>
+          <Stack mt={isMobile ? '40px' : 0}>
             <TextField
               variant="standard"
               type="text"
@@ -133,7 +142,7 @@ export const CreatePostModal: FC = () => {
               placeholder={`${t('message')}`}
               inputRef={focus}
               maxRows={10}
-              sx={{ marginBottom: '10px' }}
+              sx={{ marginBottom: isMobile ? '20px' : '10px' }}
               value={formik.values.message}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur('message')}
@@ -147,7 +156,11 @@ export const CreatePostModal: FC = () => {
             />
             <PostTags disabled={formik.isSubmitting} />
             {urlPicture ? (
-              <Stack direction="column" alignItems="center">
+              <Stack
+                direction="column"
+                alignItems="center"
+                mt={isMobile ? '20px' : 0}
+              >
                 <img
                   src={urlPicture}
                   width={250}
@@ -169,7 +182,11 @@ export const CreatePostModal: FC = () => {
                 </Stack>
               </Stack>
             ) : (
-              <Stack direction="column" alignItems="center">
+              <Stack
+                direction="column"
+                alignItems="center"
+                mt={isMobile ? '20px' : 0}
+              >
                 <img
                   src="https://mobimg.b-cdn.net/v3/fetch/74/74739e1770f31cdbfdde99cc0b2925d3.jpeg?w=1470&r=0.5625"
                   width={250}

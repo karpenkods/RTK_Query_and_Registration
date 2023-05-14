@@ -14,6 +14,8 @@ import {
   Stack,
   TextField,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 
@@ -42,6 +44,9 @@ export const NewPasswordModal: FC = () => {
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
   const openNewPassword = useAppSelector((store) => store.menu.openNewPassword)
+
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down(768))
 
   const formik = useFormik({
     initialValues: {
@@ -123,7 +128,7 @@ export const NewPasswordModal: FC = () => {
         sx={{
           display: 'flex',
           flexDirection: 'column',
-          width: '450px',
+          width: isMobile ? '100%' : '450px',
           padding: '20px 20px 10px 20px',
           '&.MuiDialogContent-root': {
             paddingTop: '20px',
@@ -211,9 +216,9 @@ export const NewPasswordModal: FC = () => {
         }}
       >
         <Stack
-          direction="row"
+          direction={isMobile ? 'column' : 'row'}
           justifyContent="space-between"
-          width="100%"
+          width={isMobile ? 'fit-content' : '100%'}
           mb="20px"
         >
           <CostumButton
@@ -221,7 +226,7 @@ export const NewPasswordModal: FC = () => {
             disabled={showContent || diasbledButton}
             variant="contained"
             color="info"
-            sx={{ color: 'white' }}
+            sx={{ color: 'white', marginBottom: isMobile ? '20px' : 0 }}
           >
             {t('logIn')}
           </CostumButton>
@@ -237,9 +242,9 @@ export const NewPasswordModal: FC = () => {
           </CostumButton>
         </Stack>
         <Stack
-          direction="row"
+          direction={isMobile ? 'column-reverse' : 'row'}
           justifyContent="space-between"
-          width="100%"
+          width={isMobile ? 'fit-content' : '100%'}
           margin="0 0 10px 0"
         >
           <CostumButton
@@ -255,6 +260,7 @@ export const NewPasswordModal: FC = () => {
             color="warning"
             disabled={showContent || diasbledButton}
             onClick={handleSubmitAnonymous}
+            sx={{ marginBottom: isMobile ? '20px' : 0 }}
           >
             {t('loginAnonymous')}
           </CostumButton>

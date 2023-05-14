@@ -19,6 +19,8 @@ import {
   IconButton,
   Pagination,
   Typography,
+  useTheme,
+  useMediaQuery,
 } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
 import CloseIcon from '@mui/icons-material/Close'
@@ -55,6 +57,10 @@ export const Posts: FC = () => {
   const dispatch = useAppDispatch()
   const limit = useAppSelector((store) => store.posts.limit)
   const userAnonymous = useAppSelector((store) => store.user.anonymous)
+
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down(768))
+  const isTablet = useMediaQuery(theme.breakpoints.down(1200))
 
   const debounceLimitNumber = useDebounce<number>(limit)
   const debounceLimitString = useDebounce<string>(searchPost)
@@ -136,19 +142,23 @@ export const Posts: FC = () => {
         <AppBar position="fixed">
           {show ? (
             <Stack
-              direction="row"
+              direction={isTablet ? 'column' : 'row'}
               justifyContent="space-between"
               alignItems="center"
-              margin="95px 30px 10px 30px"
+              margin={isTablet ? '80px 16px 10px 16px' : '95px 30px 10px 30px'}
             >
               <IconButton
                 onClick={() => {
                   setShow(false),
-                    setSearchPost(''),
-                    dispatch(limitReducer(12)),
-                    setSearchText('')
+                    !isTablet && setSearchPost(''),
+                    !isTablet && dispatch(limitReducer(12)),
+                    !isTablet && setSearchText('')
                 }}
-                sx={{ padding: 0 }}
+                sx={{
+                  padding: 0,
+                  alignSelf: isTablet ? 'flex-end' : '',
+                  marginRight: isTablet ? '10px' : 0,
+                }}
               >
                 <CloseIcon style={{ width: 35, height: 35 }} />
               </IconButton>
@@ -156,7 +166,7 @@ export const Posts: FC = () => {
                 variant="contained"
                 color="success"
                 disabled={userAnonymous}
-                sx={{ color: 'white' }}
+                sx={{ color: 'white', marginBottom: isTablet ? '40px' : 0 }}
                 onClick={() => dispatch(openCreatePostReducer(true))}
               >
                 {t('createPost')}
@@ -167,7 +177,10 @@ export const Posts: FC = () => {
                 variant="standard"
                 type="text"
                 value={searchPost}
-                sx={{ width: 300 }}
+                sx={{
+                  width: isTablet ? '90%' : 300,
+                  marginBottom: isTablet ? '20px' : 0,
+                }}
                 helperText={`${t('searchAllPosts')}`}
                 disabled={!!searchText.length}
                 onChange={(event: ChangeEvent<HTMLInputElement>) =>
@@ -200,7 +213,11 @@ export const Posts: FC = () => {
                 type="number"
                 value={limit === 12 ? '' : limit}
                 onChange={handleLimit}
-                helperText={`$t('rangePosts)`}
+                sx={{
+                  width: isTablet ? '90%' : 300,
+                  marginBottom: isTablet ? '20px' : 0,
+                }}
+                helperText={`${t('rangePosts')}`}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -222,6 +239,10 @@ export const Posts: FC = () => {
                 type="text"
                 value={searchText}
                 disabled={!!searchPost.length}
+                sx={{
+                  width: isTablet ? '90%' : 300,
+                  marginBottom: isTablet ? '20px' : 0,
+                }}
                 helperText={`${t('searchPage')}`}
                 onChange={(event: ChangeEvent<HTMLInputElement>) =>
                   setSearchText(event.target.value)
@@ -260,7 +281,7 @@ export const Posts: FC = () => {
               >
                 <MenuOpenIcon style={{ width: 35, height: 35 }} />
               </IconButton>
-              <Typography variant="body2" color="primary">
+              <Typography variant="body2" color="primary" ml="20px">
                 {t('serverFeature')}
               </Typography>
             </Stack>
@@ -272,7 +293,7 @@ export const Posts: FC = () => {
         !postsAll.length ||
         (!!searchText.length && !postsAllSearchText.length) ? (
           <Typography
-            variant="h1"
+            variant={isMobile ? 'h3' : 'h1'}
             color="tomato"
             sx={{ fontFamily: 'marckScript !important' }}
           >
@@ -284,7 +305,7 @@ export const Posts: FC = () => {
               container
               justifyContent="center"
               spacing={4}
-              mt="50px"
+              mt={isTablet && show ? '330px' : '50px'}
               mb="50px"
               width={
                 postsAll.length < 4 ||
@@ -332,8 +353,12 @@ export const Posts: FC = () => {
                 onChange={(event: ChangeEvent<unknown>, value: number) =>
                   setPage(value)
                 }
-                showFirstButton
-                showLastButton
+                showFirstButton={
+                  !isMobile && (!!posts?.total || !!postsTags?.total)
+                }
+                showLastButton={
+                  !isMobile && (!!posts?.total || !!postsTags?.total)
+                }
                 sx={{
                   '.MuiPaginationItem-root': {
                     fontSize: 18,
