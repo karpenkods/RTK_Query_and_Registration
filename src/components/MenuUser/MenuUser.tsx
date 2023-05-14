@@ -44,7 +44,7 @@ export const MenuUser: FC<IPropsMenuUser> = ({ anchorEl, changeAnchorEl }) => {
       .then(() => {
         dispatch(pushInfoNotification(`${t('loggedOut')}`))
         dispatch(refreshReducer(false))
-        navigate('/')
+        navigate('/home')
       })
       .catch(() => {
         dispatch(pushDangerNotification(`${t('errorTryLater')}`))

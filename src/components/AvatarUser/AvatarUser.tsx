@@ -62,7 +62,7 @@ export const AvatarUser: FC<IAvatarProps> = ({ fontSize, changeAnchorEl }) => {
       onClick={() => {
         navigate('/login'),
           dispatch(openLoginReducer(true)),
-          dispatch(pathNameReducer('/'))
+          dispatch(pathNameReducer('/home'))
       }}
     >
       {t('signIn')}

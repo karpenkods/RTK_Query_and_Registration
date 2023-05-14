@@ -81,11 +81,11 @@ export const Registration: FC = () => {
         })
         sendEmailVerification(user, {
           handleCodeInApp: true,
-          url: 'http://localhost:3000/',
+          url: 'https://queries-18e77.web.app/',
         })
         setSuccessAuth(true)
         dispatch(refreshReducer(false))
-        setTimeout(() => navigate('/'), 1000)
+        setTimeout(() => navigate('/home'), 1000)
         dispatch(pushSuccessNotification(`${t('successfullyLoggedIn')}`))
       })
       .catch(() => {

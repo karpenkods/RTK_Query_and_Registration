@@ -39,7 +39,7 @@ export const ServiceUnable: FC = () => {
         <CostumButton
           color="primary"
           variant="contained"
-          onClick={() => navigate('/')}
+          onClick={() => navigate('/home')}
           sx={{ fontSize: 20, width: 'fit-content', marginRight: '100px' }}
         >
           {t('homePage')}

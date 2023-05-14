@@ -86,7 +86,7 @@ export const SettingEmailAndPassword: FC = () => {
               dispatch(pushSuccessNotification(`${t('emailChanged')}`))
               sendEmailVerification(user, {
                 handleCodeInApp: true,
-                url: 'http://localhost:3000/',
+                url: 'https://queries-18e77.web.app/',
               })
               dispatch(refreshReducer(false))
             })

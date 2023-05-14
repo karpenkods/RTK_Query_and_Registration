@@ -42,12 +42,13 @@ function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="home" element={<HomePage />} />
+          <Route path="" element={<HomePage />} />
           <Route path="posts" element={<PostsPage />} />
           <Route path="post/:id" element={<PostPage />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="registration" element={<RegistrationPage />} />
-          <Route path={'*' || '404'} element={<ServiceUnablePage />} />
+          <Route path="404" element={<ServiceUnablePage />} />
         </Routes>
       </ThemeProvider>
     </Suspense>

@@ -311,6 +311,8 @@ export const Posts: FC = () => {
                 postsAll.length < 4 ||
                 (!!searchText.length && postsAllSearchText.length < 4)
                   ? '90vw'
+                  : isMobile
+                  ? '100%'
                   : undefined
               }
             >

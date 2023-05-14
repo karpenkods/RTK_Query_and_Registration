@@ -65,7 +65,7 @@ export const SettingRemoveAccount: FC = () => {
             .then(() => {
               dispatch(pushSuccessNotification(`${t('accountDeleted')}`))
               dispatch(refreshReducer(false))
-              navigate('/')
+              navigate('/home')
             })
             .catch(() => {
               dispatch(pushDangerNotification(`${t('errorTryLater')}`))

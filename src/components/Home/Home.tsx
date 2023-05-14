@@ -141,7 +141,7 @@ export const Home: FC = () => {
                 component="button"
                 onClick={() => {
                   navigate('/login'),
-                    dispatch(pathNameReducer('/')),
+                    dispatch(pathNameReducer('/home')),
                     dispatch(openLoginReducer(true))
                 }}
                 underline="hover"
@@ -157,7 +157,7 @@ export const Home: FC = () => {
                 component="button"
                 onClick={() => {
                   navigate('/registration'),
-                    dispatch(pathNameReducer('/')),
+                    dispatch(pathNameReducer('/home')),
                     dispatch(openRegistrationReducer(true))
                 }}
                 underline="hover"

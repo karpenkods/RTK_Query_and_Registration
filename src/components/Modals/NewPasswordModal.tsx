@@ -64,7 +64,7 @@ export const NewPasswordModal: FC = () => {
     signInAnonymously(auth)
       .then(() => {
         dispatch(refreshReducer(false))
-        setTimeout(() => navigate('/login'), 1000)
+        setTimeout(() => navigate('/home'), 1000)
         dispatch(pushSuccessNotification(`${t('loggedAnonymousUser')}`))
       })
       .catch(() => {
@@ -87,7 +87,7 @@ export const NewPasswordModal: FC = () => {
         .then(() => {
           dispatch(openNewPasswordReducer(false))
           dispatch(refreshReducer(false))
-          setTimeout(() => navigate('/'), 1000)
+          setTimeout(() => navigate('/home'), 1000)
           dispatch(pushInfoNotification(`${t('messageSent')}`))
         })
         .catch(() => {

@@ -99,7 +99,7 @@ export const Navbar: FC = () => {
                 variant="h4"
                 fontFamily="marckScript !important"
                 sx={{ cursor: 'pointer' }}
-                onClick={() => navigate('/')}
+                onClick={() => navigate('/home')}
               >
                 QUERIES
               </Typography>
@@ -109,7 +109,7 @@ export const Navbar: FC = () => {
               variant="h3"
               fontFamily="marckScript !important"
               sx={{ cursor: 'pointer' }}
-              onClick={() => navigate('/')}
+              onClick={() => navigate('/home')}
             >
               QUERIES
             </Typography>
@@ -182,7 +182,7 @@ export const Navbar: FC = () => {
           <List>
             <ListItem disablePadding sx={{ display: 'block' }}>
               <ListItemButton
-                onClick={() => navigate('/')}
+                onClick={() => navigate('/home')}
                 sx={{
                   minHeight: 48,
                   justifyContent: open ? 'initial' : 'center',
@@ -198,7 +198,11 @@ export const Navbar: FC = () => {
                 >
                   <HomeIcon
                     sx={{
-                      color: location.pathname === '/' ? '#1976d2' : 'inherit',
+                      color:
+                        location.pathname === '/home' ||
+                        location.pathname === ''
+                          ? '#1976d2'
+                          : 'inherit',
                     }}
                   />
                 </ListItemIcon>
@@ -209,7 +213,7 @@ export const Navbar: FC = () => {
                   }}
                 >
                   <NavLink
-                    to="/"
+                    to="/home"
                     style={({ isActive }) => {
                       return {
                         textDecoration: 'none',
