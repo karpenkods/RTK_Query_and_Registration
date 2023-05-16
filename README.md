@@ -8,4 +8,4 @@ ReactJS, TypeScript, Redux Toolkit, RTK Query, Material UI, Formik
 ***
 Авторизация реализована с помощью Firebase от Google
 ***
-Сайт: 
+Сайт: https://queries-18e77.web.app/
